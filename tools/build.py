@@ -105,6 +105,7 @@ def header(root, current):
       {LOGO}
       <span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span>
     </a>
+    <a class="header-cta" href="{root}contact.html">体験レッスン</a>
     <button class="menu-toggle" type="button" aria-controls="gnav" aria-expanded="false"><span class="menu-toggle__bar" aria-hidden="true"></span><span class="sr-only">メニューを開く</span></button>
     <nav class="gnav" id="gnav" aria-label="メインメニュー">
       <ul class="gnav__list">
