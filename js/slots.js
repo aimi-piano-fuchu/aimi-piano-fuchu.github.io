@@ -10,7 +10,6 @@
     updated: '',
     note: 'その他の時間はご相談ください。',
     days: [
-      { day: '木曜', slots: [{ time: '15:30〜', open: false }, { time: '16:00〜', open: true }, { time: '17:30〜', open: true }] },
       { day: '金曜', slots: [{ time: '17:00〜', open: true }, { time: '18:00〜', open: true }] },
       { day: '土曜', slots: [{ time: '9:00〜', open: true }, { time: '11:10〜', open: true }] }
     ]
