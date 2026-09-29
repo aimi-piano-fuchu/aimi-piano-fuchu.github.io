@@ -79,8 +79,9 @@ body {
   font-family: var(--f-body);
   font-size: 16px;
   line-height: 1.95;
-  letter-spacing: .03em;
-  font-feature-settings: "palt" 0;
+  letter-spacing: .04em;
+  /* 約物（「」、。）の前後の余白を詰めて、日本語の字面を自然にする */
+  font-feature-settings: "palt" 1;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
