@@ -21,7 +21,7 @@ SITE = {
     "area": "東京都府中市四谷",
     "instagram": "https://www.instagram.com/aimi_piano_/",
     # 独自ドメインを取ったらここに入れる（例: "https://aimi-piano.com"）。空なら canonical/OGP の絶対URLを出さない
-    "base_url": "https://aimi-piano-fuchu.github.io",
+    "base_url": "https://aimipiano-fuchu.com",
     # サイトのルートのパス。https://aimi-piano-fuchu.github.io/ や独自ドメインなら "/"、https://<user>.github.io/<repo>/ なら "/<repo>/"
     # 404.html はどの深さのURLでも表示されるので、ここから絶対パスでCSSや画像を読む
     "abs_root": "/",
