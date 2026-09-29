@@ -129,7 +129,7 @@ ul, ol { margin: 0; padding: 0; }
 .site-header.is-scrolled { border-bottom-color: var(--line); }
 .site-header__inner { display: flex; align-items: center; gap: 24px; min-height: var(--header-h); max-width: 1280px; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); flex-shrink: 0; }
-.brand__mark { width: 38px; height: 38px; flex-shrink: 0; }
+.brand__mark { width: 40px; height: 40px; flex-shrink: 0; color: var(--dusty-deep); }
 .brand__text { display: grid; line-height: 1.2; }
 .brand__ja { font-family: var(--f-display); font-weight: 600; font-size: 19px; letter-spacing: .12em; }
 .brand__en { font-family: var(--f-latin); font-style: italic; font-size: 13px; letter-spacing: .08em; color: var(--muted); }
