@@ -66,7 +66,7 @@
 
   function render(el, data) {
     if (!data || !data.days || !data.days.length) {
-      el.innerHTML = '<p class="slots__fallback">最新の空き状況は、お問い合わせフォームからお気軽にお尋ねください。</p>';
+      el.innerHTML = '<p class="slots__fallback">' + esc(el.getAttribute('data-fallback') || '最新の空き状況は、お問い合わせフォームからお気軽にお尋ねください。') + '</p>';
       return;
     }
     var openCount = 0;
