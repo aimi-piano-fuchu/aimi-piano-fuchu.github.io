@@ -28,15 +28,28 @@ SITE = {
 }
 
 NAV = [
-    ("index.html", "ホーム"),
-    ("about.html", "教室について"),
-    ("lesson.html", "レッスン・月謝"),
-    ("teacher.html", "講師紹介"),
-    ("recital.html", "イベント"),
-    ("news/index.html", "お知らせ"),
-    ("faq.html", "よくある質問"),
-    ("access.html", "アクセス"),
+    ("index.html", "ホーム", "Home", "home"),
+    ("about.html", "教室について", "About", "about"),
+    ("lesson.html", "レッスン・月謝", "Lesson", "lesson"),
+    ("teacher.html", "講師紹介", "Teacher", "teacher"),
+    ("recital.html", "イベント", "Event", "event"),
+    ("news/index.html", "お知らせ", "News", "news"),
+    ("faq.html", "よくある質問", "FAQ", "faq"),
+    ("access.html", "アクセス", "Access", "access"),
 ]
+
+# スマホのメニューで項目の左に出す小さな絵（線画）
+_NI = '<svg class="gnav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{}</svg>'
+NAV_ICONS = {
+    "home": _NI.format('<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>'),
+    "about": _NI.format('<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'),
+    "lesson": _NI.format('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v9M12 5v9M16 5v9"/><path d="M8 14v5M12 14v5M16 14v5" opacity=".5"/>'),
+    "teacher": _NI.format('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'),
+    "event": _NI.format('<path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.3 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z"/>'),
+    "news": _NI.format('<path d="M4 10v4h3l6 4V6L7 10z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>'),
+    "faq": _NI.format('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>'),
+    "access": _NI.format('<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'),
+}
 
 ICONS = {
     "arrow": '<svg class="btn__arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg>',
@@ -89,9 +102,10 @@ def e(s):
 
 def header(root, current):
     items = []
-    for href, label in NAV:
+    for href, label, en, icon in NAV:
         cur = ' aria-current="page"' if href == current or (current.startswith("news/") and href.startswith("news/")) else ""
-        items.append(f'<li><a href="{root}{href}"{cur}>{label}</a></li>')
+        cls = ' class="gnav__home"' if href == "index.html" else ""
+        items.append(f'<li{cls}><a href="{root}{href}"{cur}>{NAV_ICONS[icon]}<span class="gnav__label">{label}</span><span class="gnav__en">{en}</span></a></li>')
     items.append(
         f'<li class="gnav__ig"><a href="{SITE["instagram"]}" target="_blank" rel="noopener" aria-label="Instagram（新しいタブで開きます）">{ICONS["ig"]}<span class="gnav__ig-label">Instagram</span></a></li>'
     )
@@ -106,6 +120,7 @@ def header(root, current):
       <span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span>
     </a>
     <a class="header-cta" href="{root}contact.html">体験レッスン</a>
+    <a class="header-home" href="{root}index.html">{NAV_ICONS["home"]}ホーム</a>
     <button class="menu-toggle" type="button" aria-controls="gnav" aria-expanded="false"><span class="menu-toggle__bar" aria-hidden="true"></span><span class="sr-only">メニューを開く</span></button>
     <nav class="gnav" id="gnav" aria-label="メインメニュー">
       <ul class="gnav__list">
@@ -262,8 +277,8 @@ def clean_links(html_text):
 
 _BUDOUX = None
 # 長いカタカナ語は、狭い画面ではこの切れ目で折ってよい
-SPLIT_WORDS = ["プライバシー|ポリシー", "ヤングアーチスト|ピアノ|コンクール", "ピアノ|コンクール", "オンライン|レッスン", "ダルクローズ|リトミック"]
-KEEP_WORDS = ["習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
+SPLIT_WORDS = ["発表会|無事", "プライバシー|ポリシー", "ヤングアーチスト|ピアノ|コンクール", "ピアノ|コンクール", "オンライン|レッスン", "ダルクローズ|リトミック"]
+KEEP_WORDS = ["その他", "習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
               "ソルフェージュ", "コインパーキング", "ステップアップ", "グレード", "コンクール", "アイムホール", "バルトホール",
               "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅"]
 
@@ -326,12 +341,18 @@ def phrase_breaks(html_text):
                 for m in re.finditer(r"(ように|ことが|ことを|ための|について|として|なって|てきた|られる|できる)(?=.)", c):
                     if 3 <= m.end() <= len(c) - 3:
                         pos.add(n + m.end())
+                # 「ウイルス｜感染拡大」「ピアノ｜発表会」のように、カタカナと漢字の境目でも折ってよい
+                for k in range(3, len(c) - 2):
+                    a, b = c[k - 1], c[k]
+                    if (kan.match(a) and kata.match(b) and b != "ー") or (kata.match(a) and kan.match(b)):
+                        pos.add(n + k)
             n += len(c)
         # 数字・英字の途中では切らない
         for m in re.finditer(r"[0-9A-Za-z,:.〜~\-]+", text):
             pos -= set(range(m.start() + 1, m.end()))
         # 句読点や閉じかっこの前、開きかっこの後では切らない
-        return {i for i in pos if 0 < i < len(text) and text[i] not in NO_BEFORE and text[i - 1] not in NO_AFTER
+        emoji = re.compile(r"[\U0001F300-\U0001FAFF\u2600-\u27BF\u2728\u2B50]")
+        return {i for i in pos if 0 < i < len(text) and text[i] not in NO_BEFORE and not emoji.match(text[i]) and text[i - 1] not in NO_AFTER
                 and not text[i].isspace() and not text[i - 1].isspace()}
 
     head_end = html_text.find("<body")
