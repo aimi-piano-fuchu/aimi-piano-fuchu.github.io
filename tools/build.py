@@ -76,12 +76,8 @@ def hero_rings():
 
 
 LOGO = (
-    '<svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true">'
-    '<circle cx="20" cy="20" r="19" fill="#8A9AB0"/>'
-    '<circle cx="20" cy="20" r="13.5" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1"/>'
-    '<circle cx="20" cy="20" r="8.5" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1"/>'
-    '<path d="M21.5 11v11.2a3.3 3.3 0 11-1.6-2.8V11h1.6z" fill="#fff"/>'
-    '<path d="M21.5 11c1.8 1.2 4 2 4.3 4.6" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>'
+    '<svg class="brand__mark" viewBox="-4 -7 108 108" aria-hidden="true">'
+    '<path d="M 60.5 10.6 A 40 40 0 1 0 87.5 36" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/> <path d="M 22 93 L 57.5 3.5 L 63.5 71" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="miter" stroke-miterlimit="10"/> <ellipse cx="53.5" cy="74.5" rx="12.5" ry="9" transform="rotate(-24 53.5 74.5)" fill="currentColor"/> <path d="M 58.2 8.5 C 64 16, 78 18, 83.5 30 C 86.5 37, 84 44, 79 49 C 81 38, 74 30, 60.3 28.5 Z" fill="currentColor"/> <path d="M 33.5 64 L 62 60" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'
     "</svg>"
 )
 
