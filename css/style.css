@@ -724,6 +724,18 @@ ul, ol { margin: 0; padding: 0; }
 .admin-del { font: inherit; font-size: 13px; padding: 10px 8px; border: 0; background: none; color: var(--err); cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
 .admin-day .btn { justify-self: start; }
 
+/* ---------- admin: tabs & news ---------- */
+.admin-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); }
+.admin-tabs button { font: inherit; font-size: 15px; font-weight: 500; padding: 12px 20px; border: 0; background: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+.admin-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent-deep); }
+.news-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.news-thumbs img { aspect-ratio: 1; object-fit: cover; border-radius: 8px; width: 100%; }
+.admin-posts { list-style: none; display: grid; gap: 8px; }
+.admin-post { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.admin-post small { color: var(--muted); font-size: 12px; }
+.admin-post .admin-del { grid-row: span 2; }
+.panel .btn { margin-top: 8px; }
+
 /* ---------- reveal (content stays visible without JS) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   /* 4つの要素リスト：1行ずつ順に現れ、2番目が一度だけ脈打つ */

@@ -70,6 +70,7 @@
   var list = document.getElementById('news-list');
   if (list) {
     var rows = [].slice.call(list.children);
+    document.addEventListener('news:updated', function () { rows = [].slice.call(list.children); render(); });
     var per = parseInt(list.getAttribute('data-per-page'), 10) || 20;
     var pager = document.getElementById('pager');
     var count = document.getElementById('news-count');
