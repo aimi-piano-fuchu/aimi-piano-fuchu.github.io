@@ -723,6 +723,9 @@ ul, ol { margin: 0; padding: 0; }
 .admin-toggle.is-open { background: var(--accent-deep); border-color: var(--accent-deep); color: var(--surface); }
 .admin-del { font: inherit; font-size: 13px; padding: 10px 8px; border: 0; background: none; color: var(--err); cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
 .admin-day .btn { justify-self: start; }
+.admin-day__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.admin-day__head .select { width: auto; min-width: 130px; font-family: var(--f-display); font-weight: 600; font-size: 18px; padding: 8px 12px; }
+.admin-addday { justify-self: start; }
 
 /* ---------- admin: tabs & news ---------- */
 .admin-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); }

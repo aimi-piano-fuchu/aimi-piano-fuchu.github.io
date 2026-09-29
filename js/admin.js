@@ -28,13 +28,37 @@
 
   function refreshPreview() { S.render(previewEl, data); }
 
+  var WEEK = ['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜'];
+  function sortDays() {
+    data.days.sort(function (a, b) {
+      var x = WEEK.indexOf(a.day), y = WEEK.indexOf(b.day);
+      return (x < 0 ? 99 : x) - (y < 0 ? 99 : y);
+    });
+  }
+  function dayOptions(cur) {
+    var list = WEEK.indexOf(cur) < 0 && cur ? [cur].concat(WEEK) : WEEK;
+    return list.map(function (w) {
+      var used = w !== cur && data.days.some(function (d) { return d.day === w; });
+      return '<option' + (w === cur ? ' selected' : '') + (used ? ' disabled' : '') + '>' + S.esc(w) + (used ? '（あり）' : '') + '</option>';
+    }).join('');
+  }
+
   function draw() {
     daysEl.innerHTML = '';
     data.days.forEach(function (d, di) {
       var box = document.createElement('section');
       box.className = 'admin-day';
-      box.innerHTML = '<h2 class="h3">' + S.esc(d.day) + '</h2><ul class="admin-slots"></ul>' +
+      box.innerHTML = '<div class="admin-day__head"><label class="sr-only" for="day-' + di + '">曜日</label>' +
+        '<select class="select admin-dayname" id="day-' + di + '">' + dayOptions(d.day) + '</select>' +
+        '<button type="button" class="admin-del admin-delday">この曜日を削除</button></div>' +
+        '<ul class="admin-slots"></ul>' +
         '<button type="button" class="btn btn--ghost btn--sm admin-add">＋ 時間を追加</button>';
+      box.querySelector('.admin-dayname').addEventListener('change', function (e) { d.day = e.target.value; sortDays(); draw(); });
+      var delDay = box.querySelector('.admin-delday'), armed = false;
+      delDay.addEventListener('click', function () {
+        if (!armed) { armed = true; delDay.textContent = 'もう一度押すと削除'; setTimeout(function () { armed = false; delDay.textContent = 'この曜日を削除'; }, 4000); return; }
+        data.days.splice(di, 1); draw();
+      });
       var ul = box.querySelector('ul');
       d.slots.forEach(function (s, si) {
         var li = document.createElement('li');
@@ -58,6 +82,18 @@
       });
       daysEl.appendChild(box);
     });
+    var free = WEEK.filter(function (w) { return !data.days.some(function (d) { return d.day === w; }); });
+    if (free.length) {
+      var add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'btn btn--ghost admin-addday';
+      add.textContent = '＋ 曜日を追加';
+      add.addEventListener('click', function () {
+        data.days.push({ day: free[0], slots: [{ time: '', open: true }] });
+        sortDays(); draw();
+      });
+      daysEl.appendChild(add);
+    }
     noteEl.value = data.note || '';
     refreshPreview();
   }
@@ -103,6 +139,7 @@
   saveBtn.addEventListener('click', function () {
     if (!data) return;
     data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); });
+    sortDays();
     if (demo) {
       var t = new Date();
       data.updated = t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
