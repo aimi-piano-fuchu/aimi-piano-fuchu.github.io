@@ -109,9 +109,11 @@ a { color: var(--dusty-deep); text-underline-offset: .25em; text-decoration-thic
 a:hover { color: var(--ink); }
 :focus-visible { outline: 2px solid var(--dusty-deep); outline-offset: 3px; border-radius: 4px; }
 h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; line-height: 1.5; letter-spacing: .06em; text-wrap: pretty; margin: 0; }
+/* 明朝には palt を効かせない（カタカナの字間が不揃いになるため） */
+h1, h2, h3, h4, .concept__quote, .cycle__node, .facts__value, .merits li, .day__name, .teacher__name, .slots__title, .timeline__what, .poster figcaption b, .brand__ja, .hero__badge strong, .course__price .yen, .cta__price, .step__no, .numbered li::before { font-feature-settings: normal; }
 /* 文節で改行できるブラウザ(Chrome等)だけ行をそろえる。できないSafariでbalanceを使うと単語の途中で切れる */
 @supports (word-break: auto-phrase) {
-  h1, h2, h3, h4, .article__body, .faq summary, li, .dl dd, .consent span, .note-list li { word-break: auto-phrase; }
+  h1, h2, h3, h4, p, .article__body, .faq summary, li, .dl dd, .consent span { word-break: auto-phrase; }
   h1, h2, h3, h4 { text-wrap: balance; }
 }
 p { margin: 0; text-wrap: pretty; }
@@ -246,7 +248,7 @@ ul, ol { margin: 0; padding: 0; }
 .page-hero__inner { position: relative; display: grid; gap: 14px; }
 .page-hero h1 { font-size: clamp(28px, 4.4vw, 44px); }
 .page-hero p { color: var(--muted); max-width: 36em; }
-.crumbs { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.crumbs { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .crumbs li + li::before { content: "／"; margin-right: 6px; opacity: .6; }
 .crumbs a { color: var(--muted); display: inline-block; padding-block: 8px; }
 
@@ -364,12 +366,12 @@ ul, ol { margin: 0; padding: 0; }
 .feature ul { grid-column: 2; list-style: none; display: grid; gap: 4px; font-size: 14px; margin-top: 6px; }
 .feature li { padding-left: 1.2em; position: relative; }
 .feature li::before { content: ""; position: absolute; left: 0; top: .85em; width: 6px; height: 6px; border-radius: 50%; background: var(--dusty); }
-@media (max-width: 760px) {
-  .features { grid-template-columns: 1fr; }
+@media (max-width: 900px) {
   .feature { grid-template-columns: 1fr; }
   .feature__icon { grid-row: auto; }
   .feature p, .feature ul { grid-column: 1; }
 }
+@media (max-width: 760px) { .features { grid-template-columns: 1fr; } }
 
 /* ---------- split media ---------- */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
@@ -377,7 +379,7 @@ ul, ol { margin: 0; padding: 0; }
 .split__media { border-radius: var(--radius); overflow: hidden; background: var(--mist-2); }
 .split__media img { width: 100%; height: 100%; object-fit: cover; }
 .split__body { display: grid; gap: 22px; align-content: start; }
-@media (max-width: 860px) { .split { grid-template-columns: 1fr; } .split--reverse > :first-child { order: 0; } }
+@media (max-width: 860px) { .split { grid-template-columns: 1fr; } .split--reverse > :first-child { order: 0; } .split__media { aspect-ratio: 16 / 10; max-height: 380px; } }
 
 /* ---------- courses / price ---------- */
 .courses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -390,7 +392,8 @@ ul, ol { margin: 0; padding: 0; }
 .course__price { display: flex; align-items: baseline; gap: 6px; border-top: 1px solid var(--line); padding-top: 16px; }
 .course__price .yen { font-family: var(--f-display); font-size: 38px; font-weight: 600; line-height: 1; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 .course__price .unit { font-size: 13px; color: var(--muted); }
-@media (max-width: 900px) { .courses { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .courses { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .course { padding: 24px 20px; } }
 
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
 .table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 520px; }
@@ -506,6 +509,7 @@ ul, ol { margin: 0; padding: 0; }
   -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 }
 .news-tools .filter-btn { flex-shrink: 0; white-space: nowrap; }
+@media (hover: hover) and (min-width: 768px) { .news-tools { flex-wrap: wrap; overflow: visible; mask-image: none; -webkit-mask-image: none; } }
 .preview-note { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
 .filter-btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 14px; min-height: 40px; font: inherit; font-size: 13px; cursor: pointer; }
 .filter-btn[aria-pressed="true"] { background: var(--dusty-deep); border-color: var(--dusty-deep); color: var(--surface); }
@@ -518,6 +522,7 @@ ul, ol { margin: 0; padding: 0; }
 .article h1 { font-size: clamp(24px, 3.4vw, 32px); }
 .article__body { white-space: pre-line; line-height: 2.05; font-size: 16px; }
 .article__images { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.article__images:has(img:nth-child(4):last-child), .article__images:has(img:nth-child(2):last-child) { grid-template-columns: 1fr 1fr; }
 .article__images img { border-radius: 10px; width: 100%; background: var(--mist-2); }
 .article__nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 16px; }
 .article__nav a { display: inline-block; padding-block: 10px; }
@@ -651,6 +656,9 @@ ul, ol { margin: 0; padding: 0; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 @media (max-width: 860px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.grid-2--photos { max-width: 720px; }
+@media (max-width: 860px) { .grid-2--photos { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .grid-2--photos { grid-template-columns: 1fr; max-width: 320px; margin-inline: auto; } }
 .box { background: var(--surface); border-radius: var(--radius); padding: clamp(22px, 3vw, 32px); display: grid; gap: 12px; align-content: start; }
 .box--line { border: 1px solid var(--line); }
 .box h3 { font-size: 18px; }
