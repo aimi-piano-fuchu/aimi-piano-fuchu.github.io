@@ -22,9 +22,9 @@ SITE = {
     "instagram": "https://www.instagram.com/aimi_piano_/",
     # 独自ドメインを取ったらここに入れる（例: "https://aimi-piano.com"）。空なら canonical/OGP の絶対URLを出さない
     "base_url": "",
-    # サイトのルートのパス。GitHub Pages の https://<user>.github.io/aimi-piano/ なら "/aimi-piano/"、独自ドメインなら "/"
+    # サイトのルートのパス。https://aimi-piano-fuchu.github.io/ や独自ドメインなら "/"、https://<user>.github.io/<repo>/ なら "/<repo>/"
     # 404.html はどの深さのURLでも表示されるので、ここから絶対パスでCSSや画像を読む
-    "abs_root": "/aimi-piano/",
+    "abs_root": "/",
 }
 
 NAV = [
