@@ -38,6 +38,8 @@
   // 静的な記事と日付順に混ぜる
   function merge(list, posts, limit) {
     list.querySelectorAll('li[data-dyn]').forEach(function (li) { li.remove(); });
+    // すでに静的ページになっている投稿は二重に出さない
+    posts = posts.filter(function (p) { return !list.querySelector('li[data-id="' + p.id + '"]'); });
     var tmp = document.createElement('ul');
     tmp.innerHTML = posts.map(row).join('');
     [].slice.call(tmp.children).forEach(function (li) {

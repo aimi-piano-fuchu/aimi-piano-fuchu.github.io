@@ -101,7 +101,7 @@ def header(root, current):
     return f"""<a class="skip" href="#main">本文へスキップ</a>
 <header class="site-header" id="top">
   <div class="wrap site-header__inner">
-    <a class="brand" href="{root}index.html" aria-label="{SITE['name']} トップページ">
+    <a class="brand" href="{root}index.html">
       {LOGO}
       <span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span>
     </a>
@@ -191,19 +191,19 @@ def breadcrumb_ld(body, current):
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False) + "</script>"
 
 
-def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None):
+def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None, og_image=None):
     if not full_title:
         full_title = f"{title}｜{SITE['name']}" if title else f"府中市四谷のピアノ教室｜{SITE['name']}"
     canonical = ""
     og_url = ""
     og_image = f"{root}images/og.jpg"
-    if SITE["base_url"]:
+    if SITE["base_url"] and current != "404.html":
         path = current if current else "index.html"
         clean = path.replace("index.html", "")
         clean = clean[:-5] if clean.endswith(".html") else clean
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_url = f'<meta property="og:url" content="{SITE["base_url"]}/{clean}">'
-        og_image = f'{SITE["base_url"]}/images/og.jpg'
+        og_image = og_image or f'{SITE["base_url"]}/images/og.jpg'
     return bust_cache(clean_links(f"""<!DOCTYPE html>
 <html lang="ja" data-root="{root}">
 <head>
@@ -225,10 +225,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{root}images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{root}images/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
 <link rel="stylesheet" href="{root}css/style.css">
 <script>document.documentElement.classList.add('js')</script>
 {extra_head}
@@ -301,6 +298,26 @@ def clean_body(body):
     return text.strip()
 
 
+def fetch_admin_posts():
+    """管理画面から投稿したお知らせを GAS から取得（静的ページにして検索に載せる）。失敗しても build は続ける。"""
+    import urllib.request
+    cfg = (ROOT / "js" / "config.js").read_text(encoding="utf-8")
+    m = re.search(r"formEndpoint:\s*'([^']+)'", cfg)
+    if not m:
+        return []
+    try:
+        with urllib.request.urlopen(m.group(1) + "?action=news", timeout=60) as r:
+            data = json.loads(r.read().decode("utf-8"))
+        posts = data.get("posts") or []
+        print("admin posts:", len(posts))
+        posts = [p for p in posts if "テスト" not in p.get("title", "")]  # 動作確認用の投稿は載せない
+        return [{"id": p["id"], "title": p["title"], "date": p["date"], "categories": [p.get("category") or "お知らせ"],
+                 "body": p.get("body", ""), "images": p.get("images", []), "embeds": [], "admin": True} for p in posts]
+    except Exception as err:
+        print("admin posts: skipped", err)
+        return []
+
+
 def load_news():
     posts = json.loads((ROOT / "news-data" / "posts.json").read_text(encoding="utf-8"))
     extra_path = SRC / "news-extra.json"
@@ -320,6 +337,7 @@ def load_news():
             "images": ["images/news/" + Path(i).name for i in p.get("images", []) if Path(i).name not in hide],
             "embeds": p.get("embeds", []),
         })
+    items += fetch_admin_posts()
     items.sort(key=lambda x: x["date"], reverse=True)
     return items
 
@@ -331,7 +349,7 @@ def fmt_date(d):
 def news_row(item, root):
     cat = item["categories"][0]
     return (
-        f'<li data-cat="{e(cat)}"><a class="news-item" href="{root}news/{item["id"]}.html">'
+        f'<li data-cat="{e(cat)}" data-id="{e(item["id"])}"><a class="news-item" href="{root}news/{item["id"]}.html">'
         f'<time datetime="{item["date"]}">{fmt_date(item["date"])}</time>'
         f'<span class="news-item__cat">{e(cat)}</span>'
         f'<span class="news-item__title">{e(item["title"])}</span>{ICONS["chev"]}</a></li>'
@@ -398,6 +416,10 @@ def build_news(items):
     for it in items:
         o = overrides.get(it["id"], {})
         it["page_title"] = o.get("title") or (f'{it["title"]}（{int(it["date"][:4])}年{int(it["date"][5:7])}月）' if counts[it["title"]] > 1 else it["title"])
+    month_counts = Counter(it["page_title"] for it in items)
+    for it in items:
+        if month_counts[it["page_title"]] > 1 and it["page_title"].endswith("月）"):
+            it["page_title"] = it["page_title"][:-1] + f'{int(it["date"][8:10])}日）'
         it["note"] = o.get("note", "")
         # 本文がほぼ無い記事・動画告知・古い募集記事は検索に出さない（一覧には残す）
         it["noindex"] = bool(o.get("noindex")) or (len(it["body"]) < 80 and not it["id"].startswith("20")) or "Instagramに動画" in it["title"]
@@ -406,7 +428,7 @@ def build_news(items):
         newer = items[i - 1] if i > 0 else None
         older = items[i + 1] if i + 1 < len(items) else None
         imgs = "".join(
-            f'<img src="{root}{src}" alt="「{e(it["title"])}」の写真 {n + 1}" loading="lazy">' for n, src in enumerate(it["images"])
+            f'<img src="{src if src.startswith("http") else root + src}" alt="「{e(it["title"])}」の写真 {n + 1}" loading="lazy" referrerpolicy="no-referrer">' for n, src in enumerate(it["images"])
         )
         embeds = ""
         ig = [x for x in it["embeds"] if x.get("type") == "instagram"]
@@ -440,10 +462,11 @@ def build_news(items):
               "datePublished": it["date"], "author": {"@type": "Person", "name": "野口愛実"},
               "publisher": {"@type": "Organization", "name": SITE["name"]},
               "mainEntityOfPage": f'{SITE["base_url"]}/news/{it["id"]}'}
-        if it["images"]:
-            ld["image"] = [f'{SITE["base_url"]}/{src}' for src in it["images"][:3]]
+        abs_imgs = [src if src.startswith("http") else f'{SITE["base_url"]}/{src}' for src in it["images"][:3]]
+        if abs_imgs:
+            ld["image"] = abs_imgs
         (out_dir / f'{it["id"]}.html').write_text(
-            page(it["page_title"], desc, art, root, "news/" + it["id"] + ".html",
+            page(it["page_title"], desc, art, root, "news/" + it["id"] + ".html", og_image=(abs_imgs[0] if abs_imgs else None),
                  extra_head=('<meta name="robots" content="noindex">' if it["noindex"] else "") + '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"),
             encoding="utf-8",
         )
@@ -451,32 +474,69 @@ def build_news(items):
 
 
 def subset_font():
-    """見出し用の明朝体を、サイトで使っている文字だけにして fonts/ に書き出す（1ファイルで一度に読めるように）。"""
+    """フォントを自前で配信するために、使う文字だけに絞って fonts/ に書き出す。
+    明朝（見出し用）は見出しなど明朝で表示する部分の文字だけ、Cormorant（英字ラベル）は英数字だけ。"""
     import glob as _glob
     import html as _html
+    from html.parser import HTMLParser
     try:
         from fontTools import subset as _subset
+        from fontTools.varLib import instancer
+        from fontTools.ttLib import TTFont
     except ImportError:
         print("fontTools がないのでフォントの作り直しは省略")
         return
-    chars = set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?.,:;()[]'\"-+/&%#@*=_~ 　、。・「」『』（）！？：；ー―〜～／…")
-    files = _glob.glob(str(ROOT / "*.html")) + _glob.glob(str(ROOT / "news" / "*.html")) + _glob.glob(str(ROOT / "js" / "*.js"))
-    for f in files:
-        t = Path(f).read_text(encoding="utf-8")
-        t = re.sub(r"<script type=\"application/ld\+json\">.*?</script>", "", t, flags=re.S)
-        chars |= set(_html.unescape(re.sub(r"<[^>]+>", " ", t)))
+
+    display_tags = {"h1", "h2", "h3", "h4"}
+    display_classes = {"brand__ja", "concept__quote", "cycle__node", "facts__value", "merits", "day__name", "teacher__name",
+                       "timeline__what", "poster", "hero__badge", "course__price", "cta__price", "step__no", "numbered",
+                       "slots__title", "admin-day__head", "admin-tabs", "cycle__center"}
+
+    class P(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.stack, self.chars = [], set()
+        def handle_starttag(self, tag, attrs):
+            if tag in ("br", "img", "input", "meta", "link", "wbr", "source"):
+                return
+            cls = set((dict(attrs).get("class") or "").split())
+            self.stack.append(tag in display_tags or bool(cls & display_classes))
+        def handle_endtag(self, tag):
+            if self.stack and tag not in ("br", "img", "input", "meta", "link", "wbr", "source"):
+                self.stack.pop()
+        def handle_data(self, data):
+            if any(self.stack):
+                self.chars |= set(data)
+
+    chars = set("0123456789０１２３４５６７８９!?.,:;()[]'\"-+/&%#@*=_~ 　、。・「」『』（）！？：；ー―〜～／…①②③④")
+    chars |= {chr(c) for c in range(0x3041, 0x3097)} | {chr(c) for c in range(0x30A1, 0x30FB)}  # ひらがな・カタカナ全部
+    chars |= set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+    for f in _glob.glob(str(ROOT / "*.html")) + _glob.glob(str(ROOT / "news" / "*.html")):
+        pp = P()
+        pp.feed(Path(f).read_text(encoding="utf-8"))
+        chars |= pp.chars
+    for f in _glob.glob(str(ROOT / "js" / "*.js")):  # 画面に出す見出し（完了パネルなど）
+        chars |= set("".join(re.findall(r"'([^'\n]*)'", Path(f).read_text(encoding="utf-8"))))
     text = "".join(sorted(c for c in chars if ord(c) >= 0x20))
     (ROOT / "fonts").mkdir(exist_ok=True)
-    opts = _subset.Options()
-    opts.flavor = "woff2"
-    opts.layout_features = ["palt", "kern", "liga"]
-    font = _subset.load_font(str(ROOT / "tools" / "fonts" / "ShipporiMincho-SemiBold.ttf"), opts)
-    sub = _subset.Subsetter(opts)
-    sub.populate(text=text)
-    sub.subset(font)
-    _subset.save_font(font, str(ROOT / "fonts" / "shippori-600.woff2"), opts)
-    print("font subset:", len(text), "chars")
 
+    def save(src, out, txt, wght=None):
+        opts = _subset.Options()
+        opts.flavor = "woff2"
+        opts.layout_features = ["kern", "liga", "palt"]
+        font = TTFont(str(ROOT / "tools" / "fonts" / src))
+        if wght and "fvar" in font:
+            font = instancer.instantiateVariableFont(font, {"wght": wght})
+        sub = _subset.Subsetter(opts)
+        sub.populate(text=txt)
+        sub.subset(font)
+        _subset.save_font(font, str(ROOT / "fonts" / out), opts)
+
+    save("ShipporiMincho-SemiBold.ttf", "shippori-600.woff2", text)
+    latin = "".join(chr(c) for c in range(0x20, 0x7F)) + "–—’“”…·&"
+    save("CormorantGaramond-VF.ttf", "cormorant-500.woff2", latin, wght=500)
+    save("CormorantGaramond-Italic-VF.ttf", "cormorant-500i.woff2", latin, wght=500)
+    print("font subset:", len(text), "chars", {p.name: p.stat().st_size for p in (ROOT / "fonts").glob("*.woff2")})
 
 def main():
     items = load_news()
@@ -521,13 +581,16 @@ def write_sitemap(items):
     """sitemap.xml と robots.txt。URLは .html なし。管理画面と404は載せない。"""
     base = SITE["base_url"]
     pages = ["", "about", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
-    urls = [f"{base}/{p}" for p in pages] + [f"{base}/news/{it['id']}" for it in items if not it.get("noindex")]
-    body = "".join(f"  <url><loc>{e(u)}</loc></url>\n" for u in urls)
+    import datetime
+    today = datetime.date.today().isoformat()
+    entries = [(f"{base}/{p}", today) for p in pages] + [(f"{base}/news/{it['id']}", it["date"]) for it in items if not it.get("noindex")]
+    urls = [u for u, _ in entries]
+    body = "".join(f"  <url><loc>{e(u)}</loc><lastmod>{d}</lastmod></url>\n" for u, d in entries)
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n",
         encoding="utf-8",
     )
-    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: {base}/sitemap.xml\n", encoding="utf-8")
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n", encoding="utf-8")
     print("sitemap:", len(urls), "urls")
 
 
