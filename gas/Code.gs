@@ -1,8 +1,8 @@
 /**
  * あいみピアノ教室 お問い合わせフォーム受信（Google Apps Script）
  *
- * 1. 教室用の Google アカウントで新しいスプレッドシートを作り、
- *    「拡張機能 → Apps Script」を開いてこのファイルの中身を貼る。
+ * 1. Google アカウントで script.new を開き（単体のスクリプト）、このファイルの中身を貼る。
+ *    受付記録のスプレッドシートは初回のお問い合わせで自動作成される。
  * 2. 「プロジェクトの設定 → スクリプト プロパティ」に
  *      NOTIFY_EMAILS = 通知を受け取るアドレス（複数ならカンマ区切り）
  *    を追加する。（個人のアドレスを公開リポジトリに書かないため、コードには入れない）
@@ -14,8 +14,8 @@
  *    （「新しいデプロイ」を作ると URL が変わってフォームが止まる）
  *
  * 5. 空き枠の管理画面（admin.html）用に、「プロジェクトの設定 → スクリプト プロパティ」で
- *      ADMIN_ACCOUNTS = 管理画面に入れる人。1行に「メールアドレス パスコード」を1人ずつ
- *                       例）hanako@example.com abcd1234
+ *      ADMIN_ACCOUNTS = 管理画面に入れる人。「メールアドレス パスコード」を1人ずつ（改行かスペース区切り）
+ *                       例）hanako@example.com abcd1234 taro@example.com efgh5678
  *    （パスコードはここにだけ置く。サイトやGitHubには書かない）
  *    を追加する。空き枠データもスクリプト プロパティ（SLOTS）に保存される。
  *
@@ -47,12 +47,13 @@ function checkPass_(id, pass) {
   var cache = CacheService.getScriptCache();
   var fails = Number(cache.get('pass_fails') || 0);
   if (fails >= 10) return false;
-  var lines = String(PropertiesService.getScriptProperties().getProperty('ADMIN_ACCOUNTS') || '').split(/[\r\n]+/);
+  // 「メール パスコード」の組を順に読む（改行でもスペース区切りの1行でも可）
+  var words = String(PropertiesService.getScriptProperties().getProperty('ADMIN_ACCOUNTS') || '').trim().split(/\s+/);
   var who = String(id || '').trim().toLowerCase();
-  var ok = !!who && !!pass && lines.some(function (line) {
-    var parts = line.trim().split(/\s+/);
-    return parts.length === 2 && parts[0].toLowerCase() === who && parts[1] === pass;
-  });
+  var ok = false;
+  for (var i = 0; i + 1 < words.length; i += 2) {
+    if (who && pass && words[i].toLowerCase() === who && words[i + 1] === pass) ok = true;
+  }
   if (!ok) cache.put('pass_fails', String(fails + 1), 600);
   return ok;
 }
@@ -113,8 +114,18 @@ function contact_(p) {
   }
 }
 
+// 受付記録のスプレッドシート。単体のスクリプトなら初回に自動で作り、IDを覚えておく
 function sheet_() {
+  var props = PropertiesService.getScriptProperties();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    var id = props.getProperty('SHEET_ID');
+    ss = id ? SpreadsheetApp.openById(id) : null;
+    if (!ss) {
+      ss = SpreadsheetApp.create('あいみピアノ教室 お問い合わせ記録');
+      props.setProperty('SHEET_ID', ss.getId());
+    }
+  }
   var sh = ss.getSheetByName(SHEET_NAME);
   if (!sh) {
     sh = ss.insertSheet(SHEET_NAME);
@@ -122,6 +133,12 @@ function sheet_() {
     sh.setFrozenRows(1);
   }
   return sh;
+}
+
+// 最初に一度だけ手動で実行して、メール送信とスプレッドシートの権限を許可する
+function setup() {
+  sheet_();
+  MailApp.getRemainingDailyQuota();
 }
 
 function json_(obj) {
