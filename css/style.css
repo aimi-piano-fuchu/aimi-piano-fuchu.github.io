@@ -292,6 +292,12 @@ ul, ol { margin: 0; padding: 0; }
 .hero__badge strong { display: block; font-family: var(--f-display); font-size: 13px; color: var(--ink); }
 .hero__badge-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--dusty); display: grid; place-items: center; color: var(--on-dusty); flex-shrink: 0; }
 .hero__badge-dot svg { width: 15px; height: 15px; }
+@media (min-width: 861px) {
+  .hero__badge { padding: 9px 22px 9px 9px; gap: 12px; bottom: -20px; }
+  .hero__badge strong { font-size: 16px; letter-spacing: .06em; }
+  .hero__badge-dot { width: 36px; height: 36px; }
+  .hero__badge-dot svg { width: 18px; height: 18px; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .hero__rings .wave { animation: wave 6s linear infinite; opacity: 0; }
