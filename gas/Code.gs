@@ -104,8 +104,11 @@ function contact_(p) {
       '以下の内容で受け付けました。\n\n' +
       '――――――――――\n' + body.replace('ホームページからお問い合わせがありました。\n\n', '') + '――――――――――\n\n' +
       '※まだ予約は確定していません。内容を確認のうえ、あらためてご連絡いたします。\n' +
-      '※このメールは送信専用です。\n\n' + SCHOOL + '\nhttps://www.instagram.com/aimi_piano_/\n';
-    MailApp.sendEmail(p.email, '【' + SCHOOL + '】お問い合わせを受け付けました', reply, { name: SCHOOL });
+      '※このメールに返信すると、講師に届きます。\n\n' + SCHOOL + '\nhttps://aimi-piano-fuchu.github.io/\nhttps://www.instagram.com/aimi_piano_/\n';
+    // お客さんが返信したら講師（通知先の1つ目）に届くようにする
+    var replyOpts = { name: SCHOOL };
+    if (notify) replyOpts.replyTo = notify.split(',')[0].trim();
+    MailApp.sendEmail(p.email, '【' + SCHOOL + '】お問い合わせを受け付けました', reply, replyOpts);
 
     return json_({ result: 'success' });
   } catch (err) {
