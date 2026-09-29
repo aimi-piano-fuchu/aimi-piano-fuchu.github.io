@@ -116,6 +116,9 @@ body {
   font-feature-settings: "palt" 1;
   -webkit-font-smoothing: antialiased;
   line-break: strict;
+  /* 改行は build 時に入れた <wbr>（文節の切れ目）でだけ。はみ出しそうな時だけ例外的に折る */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
   overflow-x: hidden;
 }
 img { max-width: 100%; height: auto; display: block; }
@@ -126,10 +129,7 @@ h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 600; line-height: 1
 /* 明朝には palt を効かせない（カタカナの字間が不揃いになるため） */
 h1, h2, h3, h4, .concept__quote, .cycle__node, .facts__value, .merits li, .day__name, .teacher__name, .slots__title, .timeline__what, .poster figcaption b, .brand__ja, .hero__badge strong, .course__price .yen, .cta__price, .step__no, .numbered li::before { font-feature-settings: normal; }
 /* 文節で改行できるブラウザ(Chrome等)だけ行をそろえる。できないSafariでbalanceを使うと単語の途中で切れる */
-@supports (word-break: auto-phrase) {
-  h1, h2, h3, h4, p, .article__body, .faq summary, li, .dl dd, .consent span { word-break: auto-phrase; }
-  h1, h2, h3, h4 { text-wrap: balance; }
-}
+h1, h2, h3, h4 { text-wrap: balance; }
 p { margin: 0; text-wrap: pretty; }
 .nw { display: inline-block; }
 figure, blockquote { margin: 0; }

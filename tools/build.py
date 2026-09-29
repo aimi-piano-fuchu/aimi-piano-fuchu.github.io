@@ -205,7 +205,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_url = f'<meta property="og:url" content="{SITE["base_url"]}/{clean}">'
         og_image = og_image or f'{SITE["base_url"]}/images/og.jpg'
-    return bust_cache(clean_links(f"""<!DOCTYPE html>
+    return phrase_breaks(bust_cache(clean_links(f"""<!DOCTYPE html>
 <html lang="ja" data-root="{root}">
 <head>
 <meta charset="utf-8">
@@ -242,7 +242,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 {extra_js}
 </body>
 </html>
-"""))
+""")))
 
 
 def clean_links(html_text):
@@ -258,6 +258,53 @@ def clean_links(html_text):
             url = url[: -len(".html")]
         return f'href="{url}{frag}"'
     return re.sub(r'href="([^"#?]+?\.html)(#[^"]*)?"', fix, html_text)
+
+
+_BUDOUX = None
+KEEP_WORDS = ["お問い合わせ", "問い合わせ", "体験レッスン", "オンラインレッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
+              "ソルフェージュ", "コインパーキング", "ステップアップ", "グレード", "コンクール", "アイムホール", "バルトホール",
+              "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅"]
+
+
+def phrase_breaks(html_text):
+    """日本語の文章に、文節の切れ目だけ <wbr> を入れる（BudouX）。
+    CSS の word-break: keep-all と組み合わせて、iPhone の Safari でも単語の途中で改行されないようにする。"""
+    global _BUDOUX
+    try:
+        import budoux
+    except ImportError:
+        print("budoux がないので文節改行は省略（pip3 install budoux）")
+        return html_text
+    if _BUDOUX is None:
+        _BUDOUX = budoux.load_default_japanese_parser()
+    jp = re.compile(r"[\u3040-\u30ff\u3400-\u9fff]")
+    ent = re.compile(r"(&[#\w]+;)")
+
+    def brk(text):
+        if not jp.search(text):
+            return text
+        out = []
+        for part in ent.split(text):
+            if ent.fullmatch(part) or not part:
+                out.append(part)
+                continue
+            chunks = _BUDOUX.parse(part)
+            out.append("<wbr>".join(chunks))
+        t = "".join(out)
+        # 短いかっこ書き（〜）「〜」の中では切らない
+        t = re.sub(r"（[^（）]{1,20}）|「[^「」]{1,14}」", lambda m: m.group(0).replace("<wbr>", ""), t)
+        # 1語として扱いたい言葉（BudouX が途中で切ることがある）
+        for w in KEEP_WORDS:
+            pat = "(?:<wbr>)?".join(map(re.escape, w))
+            t = re.sub(pat, w, t)
+        return t
+
+    head_end = html_text.find("<body")
+    if head_end < 0:
+        return html_text
+    head, body = html_text[:head_end], html_text[head_end:]
+    parts = re.split(r"(<script\b.*?</script>|<style\b.*?</style>|<textarea\b.*?</textarea>|<[^>]+>)", body, flags=re.S)
+    return head + "".join(p if (p.startswith("<") or not p.strip()) else brk(p) for p in parts)
 
 
 def bust_cache(html_text):
