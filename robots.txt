@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Sitemap: https://aimi-piano-fuchu.github.io/sitemap.xml
