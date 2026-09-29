@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=a190d145">
+<link rel="stylesheet" href="css/style.css?v=c220961d">
 <script>document.documentElement.classList.add('js')</script>
 
 </head>
@@ -73,17 +73,34 @@
       <h2 class="h2"><span class="nw">ピアノを演奏するために</span><span class="nw">必要な4つのこと</span></h2>
       <p class="lead">当教室では、この4つがそろうことで演奏が楽しくなると考えています。</p>
     </div>
-    <div class="grid-2">
-      <ol class="numbered reveal">
-        <li><span><span class="nw">音楽・ピアノが</span><span class="nw">好きな気持ち</span></span></li>
-        <li class="is-focus"><span>ソルフェージュ能力<span class="numbered__tag">リトミックで育てる</span></span></li>
-        <li>演奏技術</li>
-        <li>練習できること</li>
+    <div class="elements reveal" data-elements>
+      <ol class="numbered" role="tablist" aria-label="ピアノを演奏するために必要な4つのこと">
+        <li><button type="button" role="tab" id="el-tab-1" aria-controls="el-panel-1" aria-selected="false"><span><span class="nw">音楽・ピアノが</span><span class="nw">好きな気持ち</span></span></button></li>
+        <li class="is-focus"><button type="button" role="tab" id="el-tab-2" aria-controls="el-panel-2" aria-selected="true"><span>ソルフェージュ能力<span class="numbered__tag">リトミックで育てる</span></span></button></li>
+        <li><button type="button" role="tab" id="el-tab-3" aria-controls="el-panel-3" aria-selected="false"><span>演奏技術</span></button></li>
+        <li><button type="button" role="tab" id="el-tab-4" aria-controls="el-panel-4" aria-selected="false"><span>練習できること</span></button></li>
       </ol>
-      <div class="box reveal">
-        <h3><span class="nw">②ソルフェージュ能力を、</span><span class="nw">リトミックで育てる</span></h3>
-        <p>ソルフェージュ（楽譜を読む・リズムをとる・音を聴き分ける力）は、ピアノの技術的なレッスンだけでは鍛えられません。一般的には座学で学びますが、当教室ではそれに加えてレッスンの中にリトミックを取り入れ、音を<strong>「聴く」</strong>ことを中心に、音楽を楽しみながら力を伸ばします。</p>
-        <p>この力がつくと、自分で譜読みができるようになり、音楽を頭で理解できるようになります。そうなると、音楽はどんどん楽しくなりますよ。</p>
+      <div class="elements__panels">
+        <div class="box elements__panel" role="tabpanel" id="el-panel-1" aria-labelledby="el-tab-1" hidden>
+          <h3>①音楽・ピアノが好きな気持ち</h3>
+          <p>いちばん大切にしているのは、<strong>音楽そのものを楽しむ気持ち</strong>です。年齢や性格に合わせて、「できた！」→「もっとやってみたい！」→「楽しい」の流れを毎回のレッスンで作ります。</p>
+          <p>YOASOBIやAdoなど、いま好きな曲をワンフレーズ弾けるだけでも楽しいもの。好きな曲があれば、ぜひ教えてください。</p>
+        </div>
+        <div class="box elements__panel" role="tabpanel" id="el-panel-2" aria-labelledby="el-tab-2">
+          <h3>②ソルフェージュ能力を、リトミックで育てる</h3>
+          <p>ソルフェージュ（楽譜を読む・リズムをとる・音を聴き分ける力）は、ピアノの技術的なレッスンだけでは鍛えられません。一般的には座学で学びますが、当教室ではそれに加えてレッスンの中にリトミックを取り入れ、音を<strong>「聴く」</strong>ことを中心に、音楽を楽しみながら力を伸ばします。</p>
+          <p>この力がつくと、自分で譜読みができるようになり、音楽を頭で理解できるようになります。そうなると、音楽はどんどん楽しくなりますよ。</p>
+        </div>
+        <div class="box elements__panel" role="tabpanel" id="el-panel-3" aria-labelledby="el-tab-3" hidden>
+          <h3>③演奏技術</h3>
+          <p>生徒さんのレベルや目的に合わせて、<strong>教本や進み方をその都度調整</strong>します。楽譜が読めない方、ピアノが初めての方も、1から丁寧にお教えします。</p>
+          <p>目標がほしい方は、グレード試験やコンクールにも挑戦できます（任意）。練習の仕方までしっかり身につけたい方には、60分コースがおすすめです。</p>
+        </div>
+        <div class="box elements__panel" role="tabpanel" id="el-panel-4" aria-labelledby="el-tab-4" hidden>
+          <h3>④練習できること</h3>
+          <p>毎日の練習は上達に必要ですが、<strong>休む時間も必要</strong>です。1か0かではなく、続けることを大切にしています。</p>
+          <p>月18日以上の練習で合格シール、ステップ修了で賞状と、がんばりが目に見える仕組みがあります。送迎が難しい日も、オンラインレッスンや動画添削で練習を途切れさせません。</p>
+        </div>
       </div>
     </div>
     <div class="photo-row mt-l">
@@ -219,6 +236,6 @@
 </footer>
 <div class="float-cta"><a class="btn btn--primary" href="contact">体験レッスンを申し込む<svg class="btn__arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div>
 <script src="js/main.js?v=fd0bb4be" defer></script>
-
+<script src="js/elements.js?v=0a237071" defer></script>
 </body>
 </html>
