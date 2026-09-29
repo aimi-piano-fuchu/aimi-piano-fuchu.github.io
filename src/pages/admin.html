@@ -1,0 +1,38 @@
+<!-- {"title": "空き枠の管理", "description": "あいみピアノ教室 管理用ページ", "cta": false, "head": "<meta name=\"robots\" content=\"noindex, nofollow\">", "js": "<script src=\"js/config.js\"></script><script src=\"js/slots.js\"></script><script src=\"js/admin.js\" defer></script>"} -->
+<section class="section section--tight">
+  <div class="wrap wrap--narrow stack">
+    <div class="stack-s">
+      <span class="eyebrow">Admin</span>
+      <h1 class="h2">空き枠の管理</h1>
+      <p class="lead">「空きあり／満席」をタップで切り替えて、「保存する」を押すと、レッスン・月謝ページとお申し込みページの空き枠が更新されます。</p>
+      <p class="pill-note" id="admin-demo" hidden>テスト版：IDとパスコードは何を入れても入れます。保存はこの端末のブラウザにだけされます</p>
+    </div>
+
+    <div class="form" id="admin-login">
+      <form id="admin-login-form" class="stack-s" novalidate>
+        <label class="field__label" for="admin-id">ID（メールアドレス）</label>
+        <input class="input" type="email" id="admin-id" autocomplete="username" inputmode="email">
+        <label class="field__label mt-m" for="admin-pass">パスコード</label>
+        <input class="input" type="password" id="admin-pass" autocomplete="current-password">
+        <p class="field__error" id="admin-login-error" aria-live="polite"></p>
+        <button class="btn btn--primary" type="submit">ログイン</button>
+      </form>
+    </div>
+
+    <div id="admin-editor" class="stack" hidden>
+      <div id="admin-days" class="admin-days"></div>
+      <div class="field">
+        <label class="field__label" for="admin-note">ひとこと（空き枠の下に表示）</label>
+        <input class="input" id="admin-note" placeholder="例）その他の時間はご相談ください。">
+      </div>
+      <div class="form__actions">
+        <button class="btn btn--primary" type="button" id="admin-save">保存する</button>
+      </div>
+      <div id="admin-status" aria-live="polite"></div>
+      <div class="stack-s">
+        <h2 class="h3">サイトでの見え方</h2>
+        <div class="slots" id="admin-preview"></div>
+      </div>
+    </div>
+  </div>
+</section>
