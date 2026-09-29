@@ -261,14 +261,17 @@ def clean_links(html_text):
 
 
 _BUDOUX = None
-KEEP_WORDS = ["お問い合わせ", "問い合わせ", "体験レッスン", "オンラインレッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
+# 長いカタカナ語は、狭い画面ではこの切れ目で折ってよい
+SPLIT_WORDS = ["プライバシー|ポリシー", "ヤングアーチスト|ピアノ|コンクール", "ピアノ|コンクール", "オンライン|レッスン", "ダルクローズ|リトミック"]
+KEEP_WORDS = ["習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
               "ソルフェージュ", "コインパーキング", "ステップアップ", "グレード", "コンクール", "アイムホール", "バルトホール",
               "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅"]
 
 
 def phrase_breaks(html_text):
     """日本語の文章に、文節の切れ目だけ <wbr> を入れる（BudouX）。
-    CSS の word-break: keep-all と組み合わせて、iPhone の Safari でも単語の途中で改行されないようにする。"""
+    CSS の word-break: keep-all と組み合わせて、iPhone の Safari でも単語の途中で改行されないようにする。
+    <strong> などをまたいだ段落全体で文節を判定する（タグごとに切ると「体｜験料」のようにおかしくなる）。"""
     global _BUDOUX
     try:
         import budoux
@@ -278,33 +281,126 @@ def phrase_breaks(html_text):
     if _BUDOUX is None:
         _BUDOUX = budoux.load_default_japanese_parser()
     jp = re.compile(r"[\u3040-\u30ff\u3400-\u9fff]")
-    ent = re.compile(r"(&[#\w]+;)")
+    ent = re.compile(r"&[#\w]+;")
+    INLINE = {"strong", "b", "em", "i", "u", "span", "a", "small", "time", "mark", "wbr", "sup", "sub", "abbr", "cite", "q", "s"}
+    NO_BEFORE = set("。、，．）」』】〕！？!?,.)ー～〜…・ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ％%円")
+    NO_AFTER = set("（「『【〔(")
 
-    def brk(text):
+    def breaks_for(text):
+        """text（エンティティは1文字に置換済み）の、改行してよい位置の集合"""
         if not jp.search(text):
-            return text
-        out = []
-        for part in ent.split(text):
-            if ent.fullmatch(part) or not part:
-                out.append(part)
-                continue
-            chunks = _BUDOUX.parse(part)
-            out.append("<wbr>".join(chunks))
-        t = "".join(out)
-        # 短いかっこ書き（〜）「〜」の中では切らない
-        t = re.sub(r"（[^（）]{1,20}）|「[^「」]{1,14}」", lambda m: m.group(0).replace("<wbr>", ""), t)
-        # 1語として扱いたい言葉（BudouX が途中で切ることがある）
+            return set()
+        pos, n = set(), 0
+        for c in _BUDOUX.parse(text)[:-1]:
+            n += len(c)
+            pos.add(n)
+        # 短いかっこ書き・1語として扱う言葉の中では切らない
+        for m in re.finditer(r"（[^（）]{1,8}）|「[^「」]{1,10}」|\([^()]{1,8}\)", text):
+            pos -= set(range(m.start() + 1, m.end()))
         for w in KEEP_WORDS:
-            pat = "(?:<wbr>)?".join(map(re.escape, w))
-            t = re.sub(pat, w, t)
-        return t
+            for m in re.finditer(re.escape(w), text):
+                pos -= set(range(m.start() + 1, m.end()))
+        # 漢字どうし・カタカナどうしの間では切らない（「年｜齢」「ソルフェー｜ジュ」を防ぐ）
+        kan = re.compile(r"[\u3400-\u9fff々]")
+        kata = re.compile(r"[\u30a0-\u30ffー]")
+        def run(i, step):
+            n, j = 0, i
+            while 0 <= j < len(text) and kan.match(text[j]):
+                n += 1
+                j += step
+            return n
+        # 漢字の間は、どちらかが1文字だけのとき（「年｜齢」）は切らない。「以上｜練習」のような2字熟語どうしは切ってよい
+        pos = {i for i in pos if not (0 < i < len(text) and (
+            (kan.match(text[i - 1]) and kan.match(text[i]) and (run(i - 1, -1) < 2 or run(i, 1) < 2))
+            or (kata.match(text[i - 1]) and kata.match(text[i]))))}
+        for w in SPLIT_WORDS:
+            for m in re.finditer(re.escape(w.replace("|", "")), text):
+                k = m.start()
+                for piece in w.split("|")[:-1]:
+                    k += len(piece)
+                    pos.add(k)
+        # 長い文節（狭い画面で押し出されて変な位置で折れる）は「ように」などの後で折れるようにする
+        n = 0
+        for c in _BUDOUX.parse(text):
+            if len(c) >= 9:
+                for m in re.finditer(r"(ように|ことが|ことを|ための|について|として|なって|てきた|られる|できる)(?=.)", c):
+                    if 3 <= m.end() <= len(c) - 3:
+                        pos.add(n + m.end())
+            n += len(c)
+        # 数字・英字の途中では切らない
+        for m in re.finditer(r"[0-9A-Za-z,:.〜~\-]+", text):
+            pos -= set(range(m.start() + 1, m.end()))
+        # 句読点や閉じかっこの前、開きかっこの後では切らない
+        return {i for i in pos if 0 < i < len(text) and text[i] not in NO_BEFORE and text[i - 1] not in NO_AFTER
+                and not text[i].isspace() and not text[i - 1].isspace()}
 
     head_end = html_text.find("<body")
     if head_end < 0:
         return html_text
     head, body = html_text[:head_end], html_text[head_end:]
-    parts = re.split(r"(<script\b.*?</script>|<style\b.*?</style>|<textarea\b.*?</textarea>|<[^>]+>)", body, flags=re.S)
-    return head + "".join(p if (p.startswith("<") or not p.strip()) else brk(p) for p in parts)
+    parts = re.split(r"(<script\b.*?</script>|<style\b.*?</style>|<textarea\b.*?</textarea>|<!--.*?-->|<[^>]+>)", body, flags=re.S)
+
+    def is_inline(tag):
+        m = re.match(r"</?\s*([a-zA-Z0-9]+)", tag)
+        return bool(m) and m.group(1).lower() in INLINE
+
+    out, group = [], []  # group: 同じ段落のテキスト部分の添字
+
+    def flush():
+        if not group:
+            return
+        # エンティティを1文字に置き換えて、段落全体の文字列を作る
+        segs = []
+        for gi in group:
+            toks = re.split(r"(&[#\w]+;)", out[gi])
+            segs.append(toks)
+        flat = "".join("\uE000" if ent.fullmatch(t) else t for toks in segs for t in toks)
+        pos = breaks_for(flat)
+        off = 0
+        for gi, toks in zip(group, segs):
+            res = []
+            for t in toks:
+                if ent.fullmatch(t):
+                    if off in pos and res:
+                        res.append("<wbr>")
+                    res.append(t)
+                    off += 1
+                    continue
+                for ch in t:
+                    if off in pos and (res or True):
+                        res.append("<wbr>")
+                    res.append(ch)
+                    off += 1
+            out[gi] = "".join(res)
+        group.clear()
+
+    for p in parts:
+        if not p:
+            continue
+        if p.startswith("<"):
+            if not is_inline(p):
+                flush()
+            out.append(p)
+        else:
+            out.append(p)
+            group.append(len(out) - 1)
+    flush()
+    t = "".join(out)
+    # タグの直前・直後に重なった <wbr> を整理
+    t = re.sub(r"(<wbr>)+", "<wbr>", t)
+    t = re.sub(r"<wbr>(\s*<wbr>)+", "<wbr>", t)
+    # 「9:00〜18:00」「30〜40分」の〜の前後と、「／」の前では折らない（U+2060 WORD JOINER）
+    def wj(x):
+        if x.startswith("<"):
+            return x
+        x = re.sub(r"(?<=[0-9０-９])〜(?=[0-9０-９])", "\u2060〜\u2060", x)
+        x = re.sub(r"(?<=\S)〜(?=[0-9０-９])", "\u2060〜\u2060", x)
+        # 閉じかっこの直後の助詞、文の直後の絵文字の前では折らない
+        x = re.sub(r"(?<=[』」）)])(?=[\u3041-\u309f])", "\u2060", x)
+        x = re.sub(r"(?<=[\u3040-\u9fff！？!?。、♪])(?=[\U0001F300-\U0001FAFF\u2600-\u27BF])", "\u2060", x)
+        return re.sub(r"(?<=\S)／", "\u2060／", x)
+    t = "".join(wj(x) for x in re.split(r"(<script\b.*?</script>|<style\b.*?</style>|<[^>]+>)", t, flags=re.S))
+    return head + t
 
 
 def bust_cache(html_text):
