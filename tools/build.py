@@ -197,7 +197,8 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <link rel="apple-touch-icon" href="{root}images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap">
 <link rel="stylesheet" href="{root}css/style.css">
 <script>document.documentElement.classList.add('js')</script>
 {extra_head}
@@ -371,6 +372,34 @@ def build_news(items):
     return items
 
 
+def subset_font():
+    """見出し用の明朝体を、サイトで使っている文字だけにして fonts/ に書き出す（1ファイルで一度に読めるように）。"""
+    import glob as _glob
+    import html as _html
+    try:
+        from fontTools import subset as _subset
+    except ImportError:
+        print("fontTools がないのでフォントの作り直しは省略")
+        return
+    chars = set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!?.,:;()[]'\"-+/&%#@*=_~ 　、。・「」『』（）！？：；ー―〜～／…")
+    files = _glob.glob(str(ROOT / "*.html")) + _glob.glob(str(ROOT / "news" / "*.html")) + _glob.glob(str(ROOT / "js" / "*.js"))
+    for f in files:
+        t = Path(f).read_text(encoding="utf-8")
+        t = re.sub(r"<script type=\"application/ld\+json\">.*?</script>", "", t, flags=re.S)
+        chars |= set(_html.unescape(re.sub(r"<[^>]+>", " ", t)))
+    text = "".join(sorted(c for c in chars if ord(c) >= 0x20))
+    (ROOT / "fonts").mkdir(exist_ok=True)
+    opts = _subset.Options()
+    opts.flavor = "woff2"
+    opts.layout_features = ["palt", "kern", "liga"]
+    font = _subset.load_font(str(ROOT / "tools" / "fonts" / "ShipporiMincho-SemiBold.ttf"), opts)
+    sub = _subset.Subsetter(opts)
+    sub.populate(text=text)
+    sub.subset(font)
+    _subset.save_font(font, str(ROOT / "fonts" / "shippori-600.woff2"), opts)
+    print("font subset:", len(text), "chars")
+
+
 def main():
     items = load_news()
     build_news(items)
@@ -399,6 +428,7 @@ def main():
         (ROOT / name).write_text(out, encoding="utf-8")
         print("built", name)
     print("built news:", len(items), "items")
+    subset_font()
 
 
 if __name__ == "__main__":
