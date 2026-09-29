@@ -175,7 +175,7 @@ ul, ol { margin: 0; padding: 0; }
 .menu-open .menu-toggle__bar::before { transform: translateY(6px) rotate(45deg); }
 .menu-open .menu-toggle__bar::after { transform: translateY(-6px) rotate(-45deg); }
 
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
   .menu-toggle { display: inline-flex; }
   .gnav {
     position: fixed; inset: calc(var(--header-h) + env(safe-area-inset-top, 0px)) 0 0 0;
