@@ -408,7 +408,7 @@ def build_news(items):
     out_dir = ROOT / "news"
     out_dir.mkdir(exist_ok=True)
     root = "../"
-    cats = ["お知らせ", "とある日のレッスン", "イベント", "NEW生徒さん"]
+    cats = []
     for it in items:
         c = it["categories"][0]
         if c not in cats:
@@ -468,6 +468,7 @@ def build_news(items):
     for it in items:
         if month_counts[it["page_title"]] > 1 and it["page_title"].endswith("月）"):
             it["page_title"] = it["page_title"][:-1] + f'{int(it["date"][8:10])}日）'
+        o = overrides.get(it["id"], {})
         it["note"] = o.get("note", "")
         # 本文がほぼ無い記事・動画告知・古い募集記事は検索に出さない（一覧には残す）
         it["noindex"] = bool(o.get("noindex")) or (len(it["body"]) < 80 and not it["id"].startswith("20")) or "Instagramに動画" in it["title"]

@@ -66,6 +66,8 @@
 
   function render(el, data) {
     if (!data || !data.days || !data.days.length) {
+      // まだ空き枠が登録されていない時は、枠ごと出さない
+      if (!cfg.demo && !el.hasAttribute('data-keep')) { el.hidden = true; return; }
       el.innerHTML = '<p class="slots__fallback">' + esc(el.getAttribute('data-fallback') || '最新の空き状況は、お問い合わせフォームからお気軽にお尋ねください。') + '</p>';
       return;
     }

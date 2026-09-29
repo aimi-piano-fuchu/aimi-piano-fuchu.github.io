@@ -15,12 +15,14 @@
       a.addEventListener('click', function () {
         body.classList.remove('menu-open');
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.sr-only').textContent = 'メニューを開く';
       });
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && body.classList.contains('menu-open')) {
         body.classList.remove('menu-open');
         toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.sr-only').textContent = 'メニューを開く';
         toggle.focus();
       }
     });
