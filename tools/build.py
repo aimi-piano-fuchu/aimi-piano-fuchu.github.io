@@ -175,7 +175,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
         clean = clean[:-5] if clean.endswith(".html") else clean
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_image = f'{SITE["base_url"]}/images/og.jpg'
-    return clean_links(f"""<!DOCTYPE html>
+    return bust_cache(clean_links(f"""<!DOCTYPE html>
 <html lang="ja" data-root="{root}">
 <head>
 <meta charset="utf-8">
@@ -212,7 +212,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 {extra_js}
 </body>
 </html>
-""")
+"""))
 
 
 def clean_links(html_text):
@@ -228,6 +228,19 @@ def clean_links(html_text):
             url = url[: -len(".html")]
         return f'href="{url}{frag}"'
     return re.sub(r'href="([^"#?]+?\.html)(#[^"]*)?"', fix, html_text)
+
+
+def bust_cache(html_text):
+    """css/js の URL に中身のハッシュを付ける。更新したら必ず新しいファイルが読まれる（GitHub Pages は10分キャッシュするため）。"""
+    import hashlib
+    def fix(m):
+        attr, url = m.group(1), m.group(2)
+        local = ROOT / re.sub(r"^(\.\./|/)+", "", url)
+        if not local.exists():
+            return m.group(0)
+        h = hashlib.md5(local.read_bytes()).hexdigest()[:8]
+        return f'{attr}="{url}?v={h}"'
+    return re.sub(r'(src|href)="((?:\.\./|/)?(?:css|js)/[^"?#]+\.(?:css|js))"', fix, html_text)
 
 
 def fill(text, root):
