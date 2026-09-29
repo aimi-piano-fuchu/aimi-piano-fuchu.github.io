@@ -21,7 +21,7 @@ SITE = {
     "area": "東京都府中市四谷",
     "instagram": "https://www.instagram.com/aimi_piano_/",
     # 独自ドメインを取ったらここに入れる（例: "https://aimi-piano.com"）。空なら canonical/OGP の絶対URLを出さない
-    "base_url": "",
+    "base_url": "https://aimi-piano-fuchu.github.io",
     # サイトのルートのパス。https://aimi-piano-fuchu.github.io/ や独自ドメインなら "/"、https://<user>.github.io/<repo>/ なら "/<repo>/"
     # 404.html はどの深さのURLでも表示されるので、ここから絶対パスでCSSや画像を読む
     "abs_root": "/",
@@ -32,7 +32,7 @@ NAV = [
     ("about.html", "教室について"),
     ("lesson.html", "レッスン・月謝"),
     ("teacher.html", "講師紹介"),
-    ("recital.html", "発表会"),
+    ("recital.html", "イベント"),
     ("news/index.html", "お知らせ"),
     ("faq.html", "よくある質問"),
 ]
@@ -142,7 +142,7 @@ def footer(root, float_cta=True):
           <li><a href="{root}about.html">教室について</a></li>
           <li><a href="{root}lesson.html">レッスン・月謝</a></li>
           <li><a href="{root}teacher.html">講師紹介</a></li>
-          <li><a href="{root}recital.html">発表会・イベント</a></li>
+          <li><a href="{root}recital.html">イベント</a></li>
         </ul>
       </div>
       <div>
@@ -166,12 +166,14 @@ def footer(root, float_cta=True):
 
 
 def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js=""):
-    full_title = f"{title}｜{SITE['name']}（{SITE['area']}）" if title else f"{SITE['name']}｜{SITE['area']}のピアノ教室"
+    full_title = f"{title}｜{SITE['name']}（府中市四谷）" if title else f"{SITE['name']}｜府中市四谷のピアノ教室（万願寺・中河原・矢川・谷保から通えます）"
     canonical = ""
     og_image = f"{root}images/og.jpg"
     if SITE["base_url"]:
         path = current if current else "index.html"
-        canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{path.replace("index.html", "")}">'
+        clean = path.replace("index.html", "")
+        clean = clean[:-5] if clean.endswith(".html") else clean
+        canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_image = f'{SITE["base_url"]}/images/og.jpg'
     return clean_links(f"""<!DOCTYPE html>
 <html lang="ja">
@@ -425,6 +427,21 @@ def main():
         print("built", name)
     print("built news:", len(items), "items")
     subset_font()
+    write_sitemap(items)
+
+
+def write_sitemap(items):
+    """sitemap.xml と robots.txt。URLは .html なし。管理画面と404は載せない。"""
+    base = SITE["base_url"]
+    pages = ["", "about", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
+    urls = [f"{base}/{p}" for p in pages] + [f"{base}/news/{it['id']}" for it in items]
+    body = "".join(f"  <url><loc>{e(u)}</loc></url>\n" for u in urls)
+    (ROOT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n",
+        encoding="utf-8",
+    )
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: {base}/sitemap.xml\n", encoding="utf-8")
+    print("sitemap:", len(urls), "urls")
 
 
 if __name__ == "__main__":
