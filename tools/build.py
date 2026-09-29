@@ -28,6 +28,7 @@ SITE = {
 }
 
 NAV = [
+    ("index.html", "ホーム"),
     ("about.html", "教室について"),
     ("lesson.html", "レッスン・月謝"),
     ("teacher.html", "講師紹介"),
