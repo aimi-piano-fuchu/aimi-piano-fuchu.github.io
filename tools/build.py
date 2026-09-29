@@ -183,6 +183,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <title>{e(full_title)}</title>
 <meta name="description" content="{e(description)}">
 <meta name="theme-color" content="#8A9AB0">
+<meta name="msvalidate.01" content="BE1878E3A6D76EAEF1C8F0F5BFEA0041">
 {canonical}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{SITE['name']}">
