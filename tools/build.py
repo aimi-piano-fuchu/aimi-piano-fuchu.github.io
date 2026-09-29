@@ -35,6 +35,7 @@ NAV = [
     ("recital.html", "イベント"),
     ("news/index.html", "お知らせ"),
     ("faq.html", "よくある質問"),
+    ("access.html", "アクセス"),
 ]
 
 ICONS = {
@@ -190,8 +191,9 @@ def breadcrumb_ld(body, current):
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False) + "</script>"
 
 
-def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js=""):
-    full_title = f"{title}｜{SITE['name']}（府中市四谷）" if title else f"{SITE['name']}｜府中市四谷のピアノ教室（万願寺・中河原・矢川・谷保から通えます）"
+def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None):
+    if not full_title:
+        full_title = f"{title}｜{SITE['name']}" if title else f"府中市四谷のピアノ教室｜{SITE['name']}"
     canonical = ""
     og_url = ""
     og_image = f"{root}images/og.jpg"
@@ -388,6 +390,18 @@ def build_news(items):
         encoding="utf-8",
     )
 
+    # 同じ題名の記事（NEW生徒さん♪ など）は年月を付けて区別する
+    from collections import Counter
+    counts = Counter(it["title"] for it in items)
+    ov_path = SRC / "news-overrides.json"
+    overrides = json.loads(ov_path.read_text(encoding="utf-8")) if ov_path.exists() else {}
+    for it in items:
+        o = overrides.get(it["id"], {})
+        it["page_title"] = o.get("title") or (f'{it["title"]}（{int(it["date"][:4])}年{int(it["date"][5:7])}月）' if counts[it["title"]] > 1 else it["title"])
+        it["note"] = o.get("note", "")
+        # 本文がほぼ無い記事・動画告知・古い募集記事は検索に出さない（一覧には残す）
+        it["noindex"] = bool(o.get("noindex")) or (len(it["body"]) < 80 and not it["id"].startswith("20")) or "Instagramに動画" in it["title"]
+
     for i, it in enumerate(items):
         newer = items[i - 1] if i > 0 else None
         older = items[i + 1] if i + 1 < len(items) else None
@@ -411,12 +425,14 @@ def build_news(items):
     <ol class="crumbs"><li><a href="{root}index.html">ホーム</a></li><li><a href="index.html">お知らせ</a></li><li>{e(it["title"][:20])}</li></ol>
     <article class="article">
       <div class="article__meta"><time datetime="{it["date"]}" class="num">{fmt_date(it["date"])}</time><span class="news-item__cat">{e(it["categories"][0])}</span></div>
-      <h1>{e(it["title"])}</h1>
+      <h1>{e(it["page_title"])}</h1>
+      {f'<p class="pill-note">{e(it["note"])}</p>' if it["note"] else ''}
       {f'<div class="article__body">{body_text}</div>' if body_text else ''}
       {f'<div class="article__images">{imgs}</div>' if imgs else ''}
       {embeds}
       {nav}
       <p><a class="btn btn--ghost btn--sm" href="index.html">お知らせ一覧へ戻る</a></p>
+      <p class="field__hint">あいみピアノ教室は府中市四谷のピアノ教室です。<a href="{root}contact.html">体験レッスンのお申し込み</a>／<a href="{root}access.html">アクセス</a>／<a href="{root}lesson.html">レッスン・月謝</a></p>
     </article>
   </div>
 </section>"""
@@ -427,8 +443,8 @@ def build_news(items):
         if it["images"]:
             ld["image"] = [f'{SITE["base_url"]}/{src}' for src in it["images"][:3]]
         (out_dir / f'{it["id"]}.html').write_text(
-            page(it["title"], desc, art, root, "news/" + it["id"] + ".html",
-                 extra_head='<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"),
+            page(it["page_title"], desc, art, root, "news/" + it["id"] + ".html",
+                 extra_head=('<meta name="robots" content="noindex">' if it["noindex"] else "") + '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"),
             encoding="utf-8",
         )
     return items
@@ -491,6 +507,7 @@ def main():
             name,
             cta=meta.get("cta", True),
             extra_head=meta.get("head", ""),
+            full_title=meta.get("full_title"),
             extra_js=meta.get("js", ""),
         )
         (ROOT / name).write_text(out, encoding="utf-8")
@@ -504,7 +521,7 @@ def write_sitemap(items):
     """sitemap.xml と robots.txt。URLは .html なし。管理画面と404は載せない。"""
     base = SITE["base_url"]
     pages = ["", "about", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
-    urls = [f"{base}/{p}" for p in pages] + [f"{base}/news/{it['id']}" for it in items]
+    urls = [f"{base}/{p}" for p in pages] + [f"{base}/news/{it['id']}" for it in items if not it.get("noindex")]
     body = "".join(f"  <url><loc>{e(u)}</loc></url>\n" for u in urls)
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n",
