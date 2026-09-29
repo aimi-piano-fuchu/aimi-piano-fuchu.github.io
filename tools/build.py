@@ -165,15 +165,42 @@ def footer(root, float_cta=True):
 """ + (f'<div class="float-cta"><a class="btn btn--primary" href="{root}contact.html">体験レッスンを申し込む{ICONS["arrow"]}</a></div>' if float_cta else "")
 
 
+def breadcrumb_ld(body, current):
+    """本文のパンくず（.crumbs）から BreadcrumbList の構造化データを作る。"""
+    m = re.search(r'<ol class="crumbs">(.*?)</ol>', body, re.S)
+    if not m or not SITE["base_url"]:
+        return ""
+    items = re.findall(r'<li>(?:<a href="([^"]*)">)?([^<]+)(?:</a>)?</li>', m.group(1))
+    base = SITE["base_url"]
+    here = current.replace("index.html", "")
+    here = here[:-5] if here.endswith(".html") else here
+    out = []
+    for i, (href, name) in enumerate(items):
+        if href:
+            h = href.replace("../", "").replace("index.html", "")
+            if h.endswith(".html"):
+                h = h[:-5]
+            if current.startswith("news/") and not href.startswith("../") and href != "":
+                h = "news/" + h
+            url = f"{base}/{h}"
+        else:
+            url = f"{base}/{here}"
+        out.append({"@type": "ListItem", "position": i + 1, "name": html.unescape(name.strip()), "item": url})
+    data = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": out}
+    return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False) + "</script>"
+
+
 def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js=""):
     full_title = f"{title}｜{SITE['name']}（府中市四谷）" if title else f"{SITE['name']}｜府中市四谷のピアノ教室（万願寺・中河原・矢川・谷保から通えます）"
     canonical = ""
+    og_url = ""
     og_image = f"{root}images/og.jpg"
     if SITE["base_url"]:
         path = current if current else "index.html"
         clean = path.replace("index.html", "")
         clean = clean[:-5] if clean.endswith(".html") else clean
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
+        og_url = f'<meta property="og:url" content="{SITE["base_url"]}/{clean}">'
         og_image = f'{SITE["base_url"]}/images/og.jpg'
     return bust_cache(clean_links(f"""<!DOCTYPE html>
 <html lang="ja" data-root="{root}">
@@ -190,6 +217,8 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <meta property="og:title" content="{e(full_title)}">
 <meta property="og:description" content="{e(description)}">
 <meta property="og:image" content="{og_image}">
+{og_url}
+{breadcrumb_ld(body, current)}
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{root}images/favicon.svg" type="image/svg+xml">
@@ -391,8 +420,16 @@ def build_news(items):
     </article>
   </div>
 </section>"""
+        ld = {"@context": "https://schema.org", "@type": "BlogPosting", "headline": it["title"][:110],
+              "datePublished": it["date"], "author": {"@type": "Person", "name": "野口愛実"},
+              "publisher": {"@type": "Organization", "name": SITE["name"]},
+              "mainEntityOfPage": f'{SITE["base_url"]}/news/{it["id"]}'}
+        if it["images"]:
+            ld["image"] = [f'{SITE["base_url"]}/{src}' for src in it["images"][:3]]
         (out_dir / f'{it["id"]}.html').write_text(
-            page(it["title"], desc, art, root, "news/" + it["id"] + ".html"), encoding="utf-8"
+            page(it["title"], desc, art, root, "news/" + it["id"] + ".html",
+                 extra_head='<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"),
+            encoding="utf-8",
         )
     return items
 
@@ -438,6 +475,12 @@ def main():
         body = fill(body, "").replace("{{latest-news}}", latest)
         name = src.name
         root = SITE["abs_root"] if name == "404.html" else ""
+        if name == "faq.html":
+            qa = re.findall(r"<summary>(.*?)</summary>\s*<div class=\"answer\">(.*?)</div>", body, re.S)
+            ents = [{"@type": "Question", "name": html.unescape(re.sub(r"<[^>]+>", "", q)).strip(),
+                     "acceptedAnswer": {"@type": "Answer", "text": html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", a))).strip()}} for q, a in qa]
+            meta["head"] = meta.get("head", "") + '<script type="application/ld+json">' + json.dumps(
+                {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents}, ensure_ascii=False) + "</script>"
         if root:
             body = fill(raw[m.end():] if m else raw, root)
         out = page(
