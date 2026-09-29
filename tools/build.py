@@ -177,7 +177,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
         path = current if current else "index.html"
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{path.replace("index.html", "")}">'
         og_image = f'{SITE["base_url"]}/images/og.jpg'
-    return f"""<!DOCTYPE html>
+    return clean_links(f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
@@ -213,7 +213,22 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 {extra_js}
 </body>
 </html>
-"""
+""")
+
+
+def clean_links(html_text):
+    """サイト内リンクの .html を外す（GitHub Pages は /about で about.html を返す）。
+    index.html はフォルダ名だけにする（index.html → ./、news/index.html → news/）。"""
+    def fix(m):
+        url, frag = m.group(1), m.group(2) or ""
+        if ":" in url or url.startswith("//"):
+            return m.group(0)
+        if url.endswith("index.html"):
+            url = url[: -len("index.html")] or "./"
+        elif url.endswith(".html"):
+            url = url[: -len(".html")]
+        return f'href="{url}{frag}"'
+    return re.sub(r'href="([^"#?]+?\.html)(#[^"]*)?"', fix, html_text)
 
 
 def fill(text, root):
