@@ -1,0 +1,104 @@
+<!-- {"title": "体験レッスン・お問い合わせ", "description": "あいみピアノ教室の体験レッスン（30分1,000円）のお申し込みとお問い合わせはこちらから。", "cta": false, "js": "<script src=\"js/config.js\"></script><script src=\"js/slots.js\" defer></script><script src=\"js/contact.js\" defer></script>"} -->
+<section class="page-hero">
+  {{ripple}}
+  <div class="wrap page-hero__inner">
+    <ol class="crumbs"><li><a href="index.html">ホーム</a></li><li>体験レッスン・お問い合わせ</li></ol>
+    <span class="eyebrow">Contact</span>
+    <h1>体験レッスン・お問い合わせ</h1>
+    <p>体験レッスンは30分1,000円です。ご希望の曜日・時間帯をお知らせください。内容を確認して、日程と教室の詳しい場所をご連絡します。</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap wrap--narrow stack">
+    <ul class="note-list">
+      <li>お申し込みの時点では、予約は確定していません。講師が日程を確認し、あらためてご連絡します。</li>
+      <li>体験レッスンは30〜40分ほど（説明の時間を含みます）。時間ちょうどを目安にお越しください。</li>
+      <li>大人の方のレッスンは女性限定です。</li>
+      <li>送信後、ご入力のメールアドレスに自動返信メールが届きます。届かない場合は、アドレスをご確認のうえ再度お送りいただくか、<a href="https://www.instagram.com/aimi_piano_/" target="_blank" rel="noopener">InstagramのDM</a>でご連絡ください。</li>
+    </ul>
+
+    <div class="slots" data-slots></div>
+
+    <form class="form" id="contact-form" novalidate>
+      <div class="field" data-field="type">
+        <p class="field__label" id="lbl-type">お問い合わせ内容 <span class="req">必須</span></p>
+        <div class="choices" role="radiogroup" aria-labelledby="lbl-type">
+          <label class="choice"><input type="radio" id="type-trial" name="type" value="体験レッスンの申し込み" checked><span>体験レッスン（30分 1,000円）</span></label>
+          <label class="choice"><input type="radio" id="type-other" name="type" value="お問い合わせ・その他"><span>お問い合わせ・その他</span></label>
+        </div>
+      </div>
+
+      <div class="field" data-field="name">
+        <label class="field__label" for="name">お名前 <span class="req">必須</span></label>
+        <p class="field__hint">お子さまの場合は、保護者の方のお名前をご記入ください。</p>
+        <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="例）府中 花子" required>
+      </div>
+
+      <div class="field" data-field="kana">
+        <label class="field__label" for="kana">フリガナ <span class="opt">任意</span></label>
+        <input class="input" type="text" id="kana" name="kana" placeholder="例）フチュウ ハナコ">
+      </div>
+
+      <div class="row-2">
+        <div class="field" data-field="age">
+          <label class="field__label" for="age">レッスンを受ける方の年齢 <span class="req">必須</span></label>
+          <select class="select" id="age" name="age" required>
+            <option value="">選択してください</option>
+            <option>3歳</option><option>4歳</option><option>5歳</option><option>6歳（未就学）</option>
+            <option>小学1年生</option><option>小学2年生</option><option>小学3年生</option><option>小学4年生</option><option>小学5年生</option><option>小学6年生</option>
+            <option>中学生</option><option>高校生</option><option>大人（女性）</option>
+          </select>
+        </div>
+        <div class="field" data-field="experience">
+          <label class="field__label" for="experience">ピアノの経験 <span class="opt">任意</span></label>
+          <select class="select" id="experience" name="experience">
+            <option value="">選択してください</option>
+            <option>未経験</option><option>経験あり</option><option>ピアノ以外の音楽経験あり</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" data-field="days">
+        <p class="field__label" id="lbl-days">ご希望の曜日 <span class="opt">任意・複数可</span></p>
+        <div class="choices" role="group" aria-labelledby="lbl-days">
+          <label class="choice"><input type="checkbox" id="day-thu" name="days" value="木曜"><span>木曜</span></label>
+          <label class="choice"><input type="checkbox" id="day-fri" name="days" value="金曜"><span>金曜</span></label>
+          <label class="choice"><input type="checkbox" id="day-sat" name="days" value="土曜"><span>土曜</span></label>
+        </div>
+      </div>
+
+      <div class="field" data-field="times">
+        <label class="field__label" for="times">ご希望の日時・時間帯 <span class="opt">任意</span></label>
+        <p class="field__hint">木・金は14:00〜20:00頃、土は9:00〜18:00です。候補をいくつかいただけると調整がスムーズです。</p>
+        <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降">
+      </div>
+
+      <div class="row-2">
+        <div class="field" data-field="email">
+          <label class="field__label" for="email">メールアドレス <span class="req">必須</span></label>
+          <input class="input" type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="例）example@mail.com" required>
+        </div>
+        <div class="field" data-field="tel">
+          <label class="field__label" for="tel">電話番号 <span class="opt">任意</span></label>
+          <input class="input" type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="例）090-1234-5678">
+        </div>
+      </div>
+
+      <div class="field" data-field="message">
+        <label class="field__label" for="message">ご要望・ご質問 <span class="opt">任意</span></label>
+        <textarea class="textarea" id="message" name="message" placeholder="例）弾いてみたい曲がある、発表会について知りたい など"></textarea>
+      </div>
+
+      <label class="consent" for="agree"><input type="checkbox" id="agree" name="agree" required><span><a href="privacy.html">プライバシーポリシー</a>に同意して送信します</span></label>
+
+      <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
+
+      <div id="form-status" aria-live="polite"></div>
+
+      <div class="form__actions">
+        <button class="btn btn--primary" type="submit" id="submit-btn">この内容で送信する</button>
+      </div>
+    </form>
+  </div>
+</section>
