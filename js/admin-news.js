@@ -5,6 +5,9 @@
   var cfg = window.SITE_CONFIG || {};
   var S = window.AimiSlots;
   var cred = null;
+  var loaded = false;
+  // ログイン情報は admin.js が先に用意していることがある（ページを開き直したとき）
+  function getCred() { return cred || window.AimiAdminCred || null; }
   var files = [];          // 選んだ写真（縮小済みの File）
   var dataUrls = [];       // 送信用の JPEG データ
 
@@ -27,7 +30,7 @@
     paneNews.hidden = !news;
   }
   tabSlots.addEventListener('click', function () { showTab(false); });
-  tabNews.addEventListener('click', function () { showTab(true); });
+  tabNews.addEventListener('click', function () { showTab(true); if (!loaded && cfg.formEndpoint) loadPosts(); });
 
   var today = new Date();
   document.getElementById('news-date').value = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
@@ -104,7 +107,8 @@
       b.addEventListener('click', function () {
         if (!armed) { armed = true; b.textContent = 'もう一度押すと削除'; setTimeout(function () { armed = false; b.textContent = '削除'; }, 4000); return; }
         b.disabled = true; b.textContent = '削除しています…';
-        S.post({ action: 'deleteNews', id: cred.id, pass: cred.pass, postId: b.getAttribute('data-id') })
+        var c = getCred();
+        S.post({ action: 'deleteNews', id: c.id, pass: c.pass, postId: b.getAttribute('data-id') })
           .then(function (res) { if (res.result !== 'success') throw 0; renderPosts(res.posts); })
           .catch(function () { b.disabled = false; b.textContent = '削除'; msg('err', '削除できませんでした', '<p>少し待ってからもう一度お試しください。</p>'); });
       });
@@ -112,6 +116,7 @@
   }
 
   function loadPosts() {
+    loaded = true;
     fetch(cfg.formEndpoint + '?action=news').then(function (r) { return r.json(); })
       .then(function (res) { renderPosts(res.posts || []); })
       .catch(function () { postsEl.innerHTML = '<li class="field__hint">一覧を読み込めませんでした。ページを開き直してください。</li>'; });
@@ -127,7 +132,8 @@
     var title = document.getElementById('news-title').value.trim();
     var body = document.getElementById('news-body').value.trim();
     if (!title) { msg('err', '題名を入れてください'); document.getElementById('news-title').focus(); return; }
-    if (!cred || !cfg.formEndpoint) { msg('err', '投稿できません', '<p>ログインし直してください。</p>'); return; }
+    var c = getCred();
+    if (!c || !cfg.formEndpoint) { msg('err', '投稿できません', '<p>ログインし直してください。</p>'); return; }
     var post = {
       title: title, body: body,
       category: document.getElementById('news-cat').value,
@@ -137,7 +143,7 @@
     var wantIg = document.getElementById('news-ig').checked;
     var shareFiles = files.slice();
     submit.disabled = true; submit.textContent = '投稿しています…';
-    S.post({ action: 'postNews', id: cred.id, pass: cred.pass, post: JSON.stringify(post) })
+    S.post({ action: 'postNews', id: c.id, pass: c.pass, post: JSON.stringify(post) })
       .then(function (res) {
         if (!res || res.result !== 'success') throw new Error(res && res.message);
         renderPosts(res.posts);

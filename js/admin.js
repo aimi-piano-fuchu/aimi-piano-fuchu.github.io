@@ -68,7 +68,8 @@
     loginBox.hidden = true;
     editor.hidden = false;
     document.getElementById('admin-tabs').hidden = false;
-    document.dispatchEvent(new CustomEvent('admin:login', { detail: { id: adminId, pass: pass } }));
+    window.AimiAdminCred = { id: adminId, pass: pass };
+    document.dispatchEvent(new CustomEvent('admin:login', { detail: window.AimiAdminCred }));
     S.load().then(function (d) {
       data = d || JSON.parse(JSON.stringify(S.sample));
       if (!data.days) data.days = [];
