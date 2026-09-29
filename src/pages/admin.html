@@ -1,10 +1,9 @@
-<!-- {"title": "空き枠の管理", "description": "あいみピアノ教室 管理用ページ", "cta": false, "head": "<meta name=\"robots\" content=\"noindex, nofollow\">", "js": "<script src=\"js/config.js\"></script><script src=\"js/slots.js\"></script><script src=\"js/admin.js\" defer></script>"} -->
+<!-- {"title": "空き枠の管理", "description": "あいみピアノ教室 管理用ページ", "cta": false, "head": "<meta name=\"robots\" content=\"noindex, nofollow\">", "js": "<script src=\"js/config.js\"></script><script src=\"js/slots.js\"></script><script src=\"js/admin.js\" defer></script><script src=\"js/admin-news.js\" defer></script>"} -->
 <section class="section section--tight">
   <div class="wrap wrap--narrow stack">
     <div class="stack-s">
       <span class="eyebrow">Admin</span>
-      <h1 class="h2">空き枠の管理</h1>
-      <p class="lead">「空きあり／満席」をタップで切り替えて、「保存する」を押すと、レッスン・月謝ページとお申し込みページの空き枠が更新されます。</p>
+      <h1 class="h2">管理画面</h1>
       <p class="pill-note" id="admin-demo" hidden>テスト版：IDとパスコードは何を入れても入れます。保存はこの端末のブラウザにだけされます</p>
     </div>
 
@@ -19,7 +18,13 @@
       </form>
     </div>
 
+    <div class="admin-tabs" id="admin-tabs" role="tablist" hidden>
+      <button type="button" role="tab" id="tab-btn-slots" aria-selected="true" aria-controls="admin-editor">空き枠</button>
+      <button type="button" role="tab" id="tab-btn-news" aria-selected="false" aria-controls="admin-news">お知らせ</button>
+    </div>
+
     <div id="admin-editor" class="stack" hidden>
+      <p class="lead">「空きあり／満席」をタップで切り替えて「保存する」を押すと、レッスン・月謝ページと申込ページの空き枠が更新されます。</p>
       <div id="admin-days" class="admin-days"></div>
       <div class="field">
         <label class="field__label" for="admin-note">ひとこと（空き枠の下に表示）</label>
@@ -32,6 +37,45 @@
       <div class="stack-s">
         <h2 class="h3">サイトでの見え方</h2>
         <div class="slots" id="admin-preview"></div>
+      </div>
+    </div>
+
+    <div id="admin-news" class="stack" hidden>
+      <form class="form" id="news-form" novalidate>
+        <h2 class="h3">お知らせを投稿する</h2>
+        <div class="field">
+          <label class="field__label" for="news-photos">写真 <span class="opt">4枚まで</span></label>
+          <input class="input" type="file" id="news-photos" accept="image/*" multiple>
+          <div class="news-thumbs" id="news-thumbs"></div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="news-title">題名 <span class="req">必須</span></label>
+          <input class="input" id="news-title" maxlength="60" placeholder="例）賞状ゲット！">
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label class="field__label" for="news-cat">カテゴリ</label>
+            <select class="select" id="news-cat">
+              <option>お知らせ</option><option>とある日のレッスン</option><option>イベント</option><option>NEW生徒さん</option><option>その他</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="news-date">日付</label>
+            <input class="input" type="date" id="news-date">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="news-body">本文</label>
+          <textarea class="textarea" id="news-body" placeholder="例）入門1を修了したMちゃん、おめでとう！"></textarea>
+        </div>
+        <label class="consent" for="news-ig"><input type="checkbox" id="news-ig" checked><span>投稿したあと、Instagramに渡す（写真と文章を用意します）</span></label>
+        <div id="news-status" aria-live="polite"></div>
+        <div class="form__actions"><button class="btn btn--primary" type="submit" id="news-submit">投稿する</button></div>
+      </form>
+      <div class="stack-s">
+        <h2 class="h3">投稿したお知らせ</h2>
+        <p class="field__hint">旧ブログから移した記事はここには出ません。</p>
+        <ul class="admin-posts" id="admin-posts"><li class="field__hint">読み込んでいます…</li></ul>
       </div>
     </div>
   </div>

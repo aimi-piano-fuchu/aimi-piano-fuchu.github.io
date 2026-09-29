@@ -176,7 +176,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_image = f'{SITE["base_url"]}/images/og.jpg'
     return clean_links(f"""<!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-root="{root}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -328,7 +328,20 @@ def build_news(items):
   </div>
 </section>"""
     (out_dir / "index.html").write_text(
-        page("お知らせ・教室日記", "あいみピアノ教室からのお知らせと、レッスン・発表会の様子を綴った教室日記です。", body, root, "news/index.html"),
+        page("お知らせ・教室日記", "あいみピアノ教室からのお知らせと、レッスン・発表会の様子を綴った教室日記です。", body, root, "news/index.html",
+             extra_js='<script src="../js/config.js"></script><script src="../js/news.js" defer></script>'),
+        encoding="utf-8",
+    )
+
+    dyn = f"""<section class="section section--tight">
+  <div class="wrap wrap--narrow">
+    <ol class="crumbs"><li><a href="{root}index.html">ホーム</a></li><li><a href="index.html">お知らせ</a></li><li>記事</li></ol>
+    <article class="article" id="dyn-article"><p class="field__hint">読み込んでいます…</p></article>
+  </div>
+</section>"""
+    (out_dir / "p.html").write_text(
+        page("お知らせ", "あいみピアノ教室からのお知らせ", dyn, root, "news/p.html",
+             extra_head='<meta name="robots" content="noindex">', extra_js='<script src="../js/config.js"></script><script src="../js/news.js" defer></script>'),
         encoding="utf-8",
     )
 

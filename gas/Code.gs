@@ -28,6 +28,7 @@ var SCHOOL = 'あいみピアノ教室';
 // ---- 空き枠：サイトが読む（GET ?action=slots）
 function doGet(e) {
   var p = (e && e.parameter) || {};
+  if (p.action === 'news') return json_({ result: 'success', posts: listNews_() });
   if (p.action === 'slots') {
     var raw = PropertiesService.getScriptProperties().getProperty('SLOTS');
     return json_({ result: 'success', slots: raw ? JSON.parse(raw) : null });
@@ -39,6 +40,8 @@ function doPost(e) {
   var p = (e && e.parameter) || {};
   if (p.action === 'checkPass') return json_(checkPass_(p.id, p.pass) ? { result: 'success' } : { result: 'error', message: 'pass' });
   if (p.action === 'saveSlots') return saveSlots_(p);
+  if (p.action === 'postNews') return postNews_(p);
+  if (p.action === 'deleteNews') return deleteNews_(p);
   return contact_(p);
 }
 
@@ -71,6 +74,84 @@ function saveSlots_(p) {
   } catch (err) {
     return json_({ result: 'error', message: String(err) });
   }
+}
+
+// ---- お知らせ（管理画面から投稿）。記事はスプレッドシート、写真はドライブ
+var NEWS_SHEET = 'お知らせ';
+var NEWS_HEAD = ['id', '日付', 'カテゴリ', '題名', '本文', '写真', '作成日時'];
+
+function newsSheet_() {
+  var ss = sheet_().getParent();
+  var sh = ss.getSheetByName(NEWS_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(NEWS_SHEET);
+    sh.appendRow(NEWS_HEAD);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function photoFolder_() {
+  var props = PropertiesService.getScriptProperties();
+  var id = props.getProperty('PHOTO_FOLDER_ID');
+  if (id) { try { return DriveApp.getFolderById(id); } catch (e) {} }
+  var f = DriveApp.createFolder('あいみピアノ教室 お知らせ写真');
+  props.setProperty('PHOTO_FOLDER_ID', f.getId());
+  return f;
+}
+
+function listNews_() {
+  var rows = newsSheet_().getDataRange().getValues().slice(1);
+  return rows.filter(function (r) { return r[0]; }).map(function (r) {
+    return {
+      id: String(r[0]),
+      date: r[1] instanceof Date ? Utilities.formatDate(r[1], 'Asia/Tokyo', 'yyyy-MM-dd') : String(r[1]),
+      category: String(r[2] || 'お知らせ'),
+      title: String(r[3]),
+      body: String(r[4] || ''),
+      images: r[5] ? String(r[5]).split(',').filter(String).map(function (fid) {
+        return 'https://drive.google.com/thumbnail?id=' + fid + '&sz=w1600';
+      }) : []
+    };
+  }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (a.id < b.id ? 1 : -1); });
+}
+
+function postNews_(p) {
+  if (!checkPass_(p.id, p.pass)) return json_({ result: 'error', message: 'pass' });
+  try {
+    var d = JSON.parse(p.post);
+    if (!d.title) throw new Error('title');
+    var folder = photoFolder_();
+    var ids = (d.images || []).slice(0, 4).map(function (dataUrl, i) {
+      var m = /^data:(image\/[a-z]+);base64,(.+)$/.exec(dataUrl);
+      if (!m) return '';
+      var blob = Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], 'news-' + Date.now() + '-' + i + '.jpg');
+      var file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      return file.getId();
+    }).filter(String);
+    var id = 'p' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMddHHmmss');
+    var date = /^\d{4}-\d{2}-\d{2}$/.test(d.date || '') ? d.date : Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+    newsSheet_().appendRow([id, "'" + date, d.category || 'お知らせ', d.title, d.body || '', ids.join(','), new Date()]);
+    return json_({ result: 'success', id: id, posts: listNews_() });
+  } catch (err) {
+    return json_({ result: 'error', message: String(err) });
+  }
+}
+
+function deleteNews_(p) {
+  if (!checkPass_(p.id, p.pass)) return json_({ result: 'error', message: 'pass' });
+  var sh = newsSheet_();
+  var rows = sh.getDataRange().getValues();
+  for (var i = rows.length - 1; i >= 1; i--) {
+    if (String(rows[i][0]) === String(p.postId)) {
+      String(rows[i][5] || '').split(',').filter(String).forEach(function (fid) {
+        try { DriveApp.getFileById(fid).setTrashed(true); } catch (e) {}
+      });
+      sh.deleteRow(i + 1);
+    }
+  }
+  return json_({ result: 'success', posts: listNews_() });
 }
 
 // ---- お問い合わせフォーム
@@ -141,6 +222,8 @@ function sheet_() {
 // 最初に一度だけ手動で実行して、メール送信とスプレッドシートの権限を許可する
 function setup() {
   sheet_();
+  newsSheet_();
+  photoFolder_();
   MailApp.getRemainingDailyQuota();
 }
 
