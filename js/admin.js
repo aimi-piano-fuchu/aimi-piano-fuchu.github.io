@@ -70,12 +70,19 @@
     document.getElementById('admin-tabs').hidden = false;
     window.AimiAdminCred = { id: adminId, pass: pass };
     document.dispatchEvent(new CustomEvent('admin:login', { detail: window.AimiAdminCred }));
-    S.load().then(function (d) {
-      data = d || JSON.parse(JSON.stringify(S.sample));
+    // 管理画面は時間がかかっても本物のデータを待つ（途中で見切るとサンプルで上書きしてしまうため）
+    saveBtn.disabled = true;
+    daysEl.innerHTML = '<p class="field__hint">空き枠を読み込んでいます…（初回は30秒ほどかかることがあります）</p>';
+    var loader = demo ? S.load() : fetch(cfg.formEndpoint + '?action=slots').then(function (r) { return r.json(); })
+      .then(function (res) { if (!res || res.result !== 'success') throw new Error('load'); return res.slots; });
+    loader.then(function (d) {
+      data = d || { note: 'その他の時間はご相談ください。', days: [{ day: '金曜', slots: [] }, { day: '土曜', slots: [] }] };
       if (!data.days) data.days = [];
       draw();
+      saveBtn.disabled = false;
     }).catch(function () {
-      msg('err', '読み込めませんでした', '通信を確認して、ページを開き直してください。');
+      daysEl.innerHTML = '';
+      msg('err', '読み込めませんでした', '通信を確認して、ページを開き直してください。（保存はできないようにしてあります）');
     });
   }
 
@@ -94,6 +101,7 @@
   });
 
   saveBtn.addEventListener('click', function () {
+    if (!data) return;
     data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); });
     if (demo) {
       var t = new Date();
