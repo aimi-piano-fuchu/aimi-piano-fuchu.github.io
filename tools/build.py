@@ -297,12 +297,12 @@ def build_news(items):
     out_dir = ROOT / "news"
     out_dir.mkdir(exist_ok=True)
     root = "../"
-    cats = []
+    cats = ["お知らせ", "とある日のレッスン", "イベント", "NEW生徒さん"]
     for it in items:
         c = it["categories"][0]
         if c not in cats:
             cats.append(c)
-    order = ["お知らせ", "活動報告", "とある日のレッスン", "NEW生徒さん", "レッスンについて", "アイテム紹介", "演奏動画", "その他"]
+    order = ["お知らせ", "イベント", "活動報告", "とある日のレッスン", "NEW生徒さん", "レッスンについて", "アイテム紹介", "演奏動画", "その他"]
     cats.sort(key=lambda c: order.index(c) if c in order else 99)
     filters = ['<button class="filter-btn" type="button" data-filter="" aria-pressed="true">すべて</button>'] + [
         f'<button class="filter-btn" type="button" data-filter="{e(c)}" aria-pressed="false">{e(c)}</button>' for c in cats

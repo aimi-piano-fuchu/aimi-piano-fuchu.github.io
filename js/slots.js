@@ -77,7 +77,7 @@
           '</span><span class="slot__state">' + (s.open ? '空きあり' : '満席') + '</span></li>';
       }).join('');
       return '<div class="slots__day"><p class="slots__name">' + esc(d.day) + '</p><ul class="slots__list">' +
-        (rows || '<li class="slot slot--full"><span class="slot__time">—</span><span class="slot__state">満席</span></li>') + '</ul></div>';
+        (rows || '<li class="slot slot--full"><span class="slot__state">現在空きはありません</span></li>') + '</ul></div>';
     }).join('');
     var when = fmtDate(data.updated);
     el.innerHTML =
