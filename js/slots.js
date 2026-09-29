@@ -4,6 +4,7 @@
 
   var cfg = window.SITE_CONFIG || {};
   var DEMO_KEY = 'aimi-slots-demo';
+  var CACHE_KEY = 'aimi-slots-cache';
 
   // フォーム送信先が未設定のテスト版で見せるサンプル
   var SAMPLE = {
@@ -22,14 +23,30 @@
     try { localStorage.setItem(DEMO_KEY, JSON.stringify(data)); return true; } catch (e) { return false; }
   }
 
+  function readCache() {
+    try { var t = localStorage.getItem(CACHE_KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; }
+  }
+  function writeCache(data) {
+    try { if (data) localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  // Apps Script は初回応答が遅いことがあるので、8秒で見切って案内文に切り替える
   function load() {
     if (!cfg.formEndpoint) {
       if (!cfg.demo) return Promise.resolve(null);
       return Promise.resolve(readDemo() || JSON.parse(JSON.stringify(SAMPLE)));
     }
-    return fetch(cfg.formEndpoint + '?action=slots')
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+    return fetch(cfg.formEndpoint + '?action=slots', ctrl ? { signal: ctrl.signal } : {})
       .then(function (r) { return r.json(); })
-      .then(function (res) { return res && res.result === 'success' ? res.slots : null; });
+      .then(function (res) {
+        clearTimeout(timer);
+        var data = res && res.result === 'success' ? res.slots : null;
+        writeCache(data);
+        return data;
+      })
+      .catch(function () { clearTimeout(timer); return readCache(); });
   }
 
   function post(params) {
@@ -74,6 +91,9 @@
   window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc };
 
   document.querySelectorAll('[data-slots]').forEach(function (el) {
+    var cached = cfg.formEndpoint ? readCache() : null;
+    if (cached) render(el, cached);
+    else el.innerHTML = '<p class="slots__fallback">空き状況を読み込んでいます…</p>';
     load().then(function (d) { render(el, d); }).catch(function () { render(el, null); });
   });
 })();
