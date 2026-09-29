@@ -546,7 +546,7 @@ ul, ol { margin: 0; padding: 0; }
   .voices--scroll::-webkit-scrollbar { display: none; }
   .voices--scroll .voice { flex: 0 0 82%; scroll-snap-align: center; }
 }
-.voices-hint { display: none; text-align: center; font-size: 12px; color: var(--muted); margin-top: 8px; letter-spacing: .08em; }
+.voices-hint { display: none; text-align: center; font-size: 18px; line-height: 1; color: var(--dusty-deep); margin-top: 10px; letter-spacing: .6em; }
 @media (max-width: 760px) { .voices-hint { display: block; } }
 
 /* ---------- news ---------- */
