@@ -840,12 +840,30 @@ ul, ol { margin: 0; padding: 0; }
 /* スマホ：開閉が分かるように＋／−の印 */
 @media (max-width: 860px) {
   .elements .numbered button { padding-right: 44px; position: relative; }
-  .elements .numbered button::after { content: "+"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; line-height: 1; background: var(--accent-soft); color: var(--accent-deep); transition: transform .3s; }
-  .elements .numbered li.is-open button::after { content: "−"; background: var(--surface); color: var(--accent-deep); }
+  /* ＋／－は文字だと丸の中心からずれるので、線を2本描く */
+  .elements .numbered button::after {
+    content: ""; position: absolute; right: 16px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%;
+    color: var(--accent-deep);
+    background:
+      linear-gradient(currentColor, currentColor) center / 11px 1.6px no-repeat,
+      linear-gradient(currentColor, currentColor) center / 1.6px 11px no-repeat,
+      var(--accent-soft);
+    transition: transform .3s ease;
+  }
+  .elements .numbered li.is-open button::after {
+    transform: rotate(180deg);
+    background:
+      linear-gradient(currentColor, currentColor) center / 11px 1.6px no-repeat,
+      var(--surface);
+  }
   .elements .numbered .elements__panels { margin-top: -4px; }
-  .elements__panel { animation: panel-drop .35s ease; }
+  .elements__panel { animation: panel-drop .28s cubic-bezier(.2, .7, .2, 1); }
+  .elements .numbered li { transition: background-color .25s ease, color .25s ease; }
+  /* スマホでは開いた項目の点滅はしない。開閉だけ静かに */
+  .js .is-in .elements .numbered li.is-focus, .js .elements .numbered.is-in li.is-focus,
+  .js .is-in .elements .numbered li.is-focus::before, .js .elements .numbered.is-in li.is-focus::before { animation: none; }
 }
-@keyframes panel-drop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes panel-drop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @keyframes panel-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (max-width: 860px) {
   .elements { grid-template-columns: 1fr; }

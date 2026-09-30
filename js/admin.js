@@ -52,7 +52,7 @@
         '<select class="select admin-dayname" id="day-' + di + '">' + dayOptions(d.day) + '</select>' +
         '<button type="button" class="admin-del admin-delday">この曜日を削除</button></div>' +
         '<div class="field admin-hours" style="margin-top:12px"><label class="field__label" for="hours-' + di + '">開講時間<small>（開講日の欄に表示）</small></label>' +
-        '<input class="input" id="hours-' + di + '" value="' + S.esc(d.hours || '') + '" maxlength="30" placeholder="例）14:00〜20:00頃"></div>' +
+        '<input class="input" id="hours-' + di + '" value="' + S.esc(d.hours || '') + '" maxlength="30" placeholder="例）14:00〜20:00"></div>' +
         '<ul class="admin-slots"></ul>' +
         '<button type="button" class="btn btn--ghost btn--sm admin-add">＋ 時間を追加</button>';
       box.querySelector('.admin-dayname').addEventListener('change', function (e) { d.day = e.target.value; sortDays(); draw(); });
