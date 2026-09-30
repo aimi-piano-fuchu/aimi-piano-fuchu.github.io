@@ -20,8 +20,8 @@
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=896721d0">
-<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="css/style.css?v=0d073c55">
+<script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 
 </head>
 <body>
@@ -105,7 +105,7 @@
 
       <div class="field" data-field="days">
         <p class="field__label" id="lbl-days">ご希望の<wbr>曜日 <span class="opt">任意・<wbr>複数可</span></p>
-        <div class="choices" role="group" aria-labelledby="lbl-days">
+        <div class="choices" role="group" aria-labelledby="lbl-days" data-days="choices">
           <label class="choice"><input type="checkbox" id="day-fri" name="days" value="金曜"><span>金曜</span></label>
           <label class="choice"><input type="checkbox" id="day-sat" name="days" value="土曜"><span>土曜</span></label>
         </div>
@@ -113,7 +113,7 @@
 
       <div class="field" data-field="times">
         <label class="field__label" for="times">ご希望の<wbr>日時・<wbr>時間帯 <span class="opt">任意</span></label>
-        <p class="field__hint">金は<wbr>14:00⁠〜⁠20:00頃、<wbr>土は<wbr>9:00⁠〜⁠18:00です。<wbr>候補を<wbr>いくつかいただけると<wbr>調整が<wbr>スムーズです。</p>
+        <p class="field__hint"><span data-days="hint">金は<wbr>14:00⁠〜⁠20:00頃、<wbr>土は<wbr>9:00⁠〜⁠18:00です。</span><wbr>候補を<wbr>いくつかいただけると<wbr>調整が<wbr>スムーズです。</p>
         <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降">
       </div>
 
@@ -183,7 +183,7 @@
   </div>
 </footer>
 
-<script src="js/main.js?v=fe7702f0" defer></script>
-<script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=0cb550e4" defer></script><script src="js/contact.js?v=a51c0963" defer></script>
+<script src="js/main.js?v=a5359928" defer></script>
+<script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=2683e935" defer></script><script src="js/contact.js?v=a51c0963" defer></script>
 </body>
 </html>

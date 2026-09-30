@@ -21,6 +21,12 @@
       .then(function (res) {
         clearTimeout(timer);
         var posts = res && res.result === 'success' ? res.posts || [] : [];
+        // 日付・画像が欠けた投稿で表示全体が止まらないように形をそろえる
+        posts = posts.filter(function (p) { return p && p.id; }).map(function (p) {
+          p.date = String(p.date || ''); p.category = p.category || ''; p.title = p.title || '';
+          p.images = p.images || [];
+          return p;
+        });
         writeCache(posts);
         return posts;
       })
@@ -65,7 +71,7 @@
       '<div class="article__meta"><time datetime="' + esc(p.date) + '" class="num">' + esc(p.date.replace(/-/g, '.')) + '</time><span class="news-item__cat">' + esc(p.category) + '</span></div>' +
       '<h1>' + esc(p.title) + '</h1>' +
       (p.body ? '<div class="article__body">' + esc(p.body) + '</div>' : '') +
-      (p.images.length ? '<div class="article__images">' + p.images.map(function (src, i) {
+      (p.images && p.images.length ? '<div class="article__images">' + p.images.map(function (src, i) {
         return '<img src="' + esc(src) + '" alt="「' + esc(p.title) + '」の写真 ' + (i + 1) + '" loading="lazy" referrerpolicy="no-referrer">';
       }).join('') + '</div>' : '') +
       '<p><a class="btn btn--ghost btn--sm" href="./">お知らせ一覧へ戻る</a></p>';

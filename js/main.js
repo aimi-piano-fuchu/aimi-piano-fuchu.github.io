@@ -5,27 +5,40 @@
   var body = document.body;
   var header = document.querySelector('.site-header');
   var toggle = document.querySelector('.menu-toggle');
+  // 前のページで開いたまま戻ってきた時など、残っている「開いた」状態を消す（スクロールが止まったままになるため）
+  body.classList.remove('menu-open');
+  var setLabel = function (open) {
+    if (!toggle) return;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var sr = toggle.querySelector('.sr-only');
+    if (sr) sr.textContent = open ? 'メニューを閉じる' : 'メニューを開く';
+  };
+  var closeMenu = function () {
+    if (!body.classList.contains('menu-open')) return;
+    body.classList.remove('menu-open');
+    setLabel(false);
+  };
   if (toggle) {
     toggle.addEventListener('click', function () {
-      var open = body.classList.toggle('menu-open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.querySelector('.sr-only').textContent = open ? 'メニューを閉じる' : 'メニューを開く';
+      setLabel(body.classList.toggle('menu-open'));
     });
-    document.querySelectorAll('.gnav a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        body.classList.remove('menu-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.querySelector('.sr-only').textContent = 'メニューを開く';
-      });
+    // メニュー内のリンク・ページ内リンク（#〜）を押したら閉じる
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      if (a.closest('.gnav') || (a.getAttribute('href') || '').charAt(0) === '#') closeMenu();
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && body.classList.contains('menu-open')) {
-        body.classList.remove('menu-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.querySelector('.sr-only').textContent = 'メニューを開く';
+        closeMenu();
         toggle.focus();
       }
     });
+    // Android の「戻る」（bfcache から復元）・タブ切り替え・画面の回転・PC幅への拡大では必ず閉じる
+    window.addEventListener('pageshow', closeMenu);
+    window.addEventListener('orientationchange', closeMenu);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) closeMenu(); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 1180) closeMenu(); });
   }
 
   var floatCta = document.querySelector('.float-cta');
@@ -86,6 +99,7 @@
       rows.forEach(function (r) { r.hidden = true; });
       match.slice((state.page - 1) * per, state.page * per).forEach(function (r) { r.hidden = false; });
       if (count) count.textContent = (state.cat ? '「' + state.cat + '」' : 'すべて') + '　' + match.length + '件';
+      if (!pager) return;
       pager.innerHTML = '';
       if (pages > 1) {
         for (var p = 1; p <= pages; p++) {

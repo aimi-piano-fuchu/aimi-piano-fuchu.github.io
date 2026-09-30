@@ -27,7 +27,8 @@
     try { var t = localStorage.getItem(CACHE_KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; }
   }
   function writeCache(data) {
-    try { if (data) localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (e) {}
+    // サーバーが「空き枠なし」を返したら、古いキャッシュも消す（古い曜日が残り続けないように）
+    try { if (data) localStorage.setItem(CACHE_KEY, JSON.stringify(data)); else localStorage.removeItem(CACHE_KEY); } catch (e) {}
   }
 
   // Apps Script は初回応答が遅いことがあるので、8秒で見切って案内文に切り替える
@@ -90,12 +91,60 @@
       (openCount === 0 ? '<p class="slots__note">現在、すべての枠が埋まっています。キャンセル待ちはお問い合わせください。</p>' : '');
   }
 
-  window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc };
+  // 開講日：管理画面の曜日・開講時間に合わせて、各ページの表示を書きかえる
+  // （HTMLに書いてある内容は、読み込み前と通信できない時の表示）
+  var DEFAULT_HOURS = { '金曜': '14:00〜20:00頃', '土曜': '9:00〜18:00' };
+  var EN = { '月曜': 'Mon', '火曜': 'Tue', '水曜': 'Wed', '木曜': 'Thu', '金曜': 'Fri', '土曜': 'Sat', '日曜': 'Sun' };
+  function hoursOf(d) { return d.hours != null ? d.hours : (DEFAULT_HOURS[d.day] || ''); }
 
-  document.querySelectorAll('[data-slots]').forEach(function (el) {
-    var cached = cfg.formEndpoint ? readCache() : null;
+  var original = [];
+  function applyDays(data) {
+    var els = document.querySelectorAll('[data-days]');
+    if (!original.length) els.forEach(function (el) { original.push([el, el.innerHTML]); });
+    if (!data || !data.days || !data.days.length) {
+      // 曜日が登録されていない時は、HTMLに書いてある元の表示に戻す
+      original.forEach(function (o) { o[0].innerHTML = o[1]; });
+      return;
+    }
+    var days = data.days;
+    els.forEach(function (el) {
+      var kind = el.getAttribute('data-days');
+      if (kind === 'cards') {
+        el.innerHTML = days.map(function (d) {
+          return '<div class="day"><p class="day__name">' + esc(d.day) + '日<span>' + (EN[d.day] || '') + '</span></p>' +
+            '<p class="day__time num">' + (esc(hoursOf(d)) || '時間はご相談ください') + '</p></div>';
+        }).join('');
+      } else if (kind === 'short') {
+        el.textContent = days.map(function (d) { return d.day.charAt(0); }).join('・') + '曜日';
+      } else if (kind === 'list') {
+        el.innerHTML = days.map(function (d) { return esc(d.day) + (hoursOf(d) ? ' ' + esc(hoursOf(d)) : ''); }).join('<br>');
+      } else if (kind === 'sentence') {
+        el.textContent = days.map(function (d) { return d.day + hoursOf(d); }).join('、');
+      } else if (kind === 'hint') {
+        el.textContent = days.map(function (d) { return d.day.charAt(0) + (hoursOf(d) ? 'は' + hoursOf(d) : ''); }).join('、') + (days.some(hoursOf) ? 'です。' : '。');
+      } else if (kind === 'choices') {
+        var checked = {};
+        el.querySelectorAll('input:checked').forEach(function (i) { checked[i.value] = true; });
+        el.innerHTML = days.map(function (d, i) {
+          return '<label class="choice"><input type="checkbox" id="day-' + i + '" name="days" value="' + esc(d.day) + '"' +
+            (checked[d.day] ? ' checked' : '') + '><span>' + esc(d.day) + '</span></label>';
+        }).join('');
+      }
+    });
+  }
+
+  window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc, defaultHours: DEFAULT_HOURS };
+
+  var slotEls = document.querySelectorAll('[data-slots]');
+  if (!slotEls.length && !document.querySelector('[data-days]')) return;
+  var cached = cfg.formEndpoint ? readCache() : null;
+  slotEls.forEach(function (el) {
     if (cached) render(el, cached);
     else el.innerHTML = '<p class="slots__fallback">空き状況を読み込んでいます…</p>';
-    load().then(function (d) { render(el, d); }).catch(function () { render(el, null); });
   });
+  if (cached) applyDays(cached);
+  load().then(function (d) {
+    slotEls.forEach(function (el) { render(el, d); });
+    applyDays(d);
+  }).catch(function () { slotEls.forEach(function (el) { render(el, null); }); });
 })();

@@ -51,9 +51,12 @@
       box.innerHTML = '<div class="admin-day__head"><label class="sr-only" for="day-' + di + '">曜日</label>' +
         '<select class="select admin-dayname" id="day-' + di + '">' + dayOptions(d.day) + '</select>' +
         '<button type="button" class="admin-del admin-delday">この曜日を削除</button></div>' +
+        '<div class="field admin-hours" style="margin-top:12px"><label class="field__label" for="hours-' + di + '">開講時間<small>（開講日の欄に表示）</small></label>' +
+        '<input class="input" id="hours-' + di + '" value="' + S.esc(d.hours || '') + '" maxlength="30" placeholder="例）14:00〜20:00頃"></div>' +
         '<ul class="admin-slots"></ul>' +
         '<button type="button" class="btn btn--ghost btn--sm admin-add">＋ 時間を追加</button>';
       box.querySelector('.admin-dayname').addEventListener('change', function (e) { d.day = e.target.value; sortDays(); draw(); });
+      box.querySelector('.admin-hours input').addEventListener('input', function (e) { d.hours = e.target.value; });
       var delDay = box.querySelector('.admin-delday'), armed = false;
       delDay.addEventListener('click', function () {
         if (!armed) { armed = true; delDay.textContent = 'もう一度押すと削除'; setTimeout(function () { armed = false; delDay.textContent = 'この曜日を削除'; }, 4000); return; }
@@ -89,7 +92,7 @@
       add.className = 'btn btn--ghost admin-addday';
       add.textContent = '＋ 曜日を追加';
       add.addEventListener('click', function () {
-        data.days.push({ day: free[0], slots: [{ time: '', open: true }] });
+        data.days.push({ day: free[0], hours: '', slots: [{ time: '', open: true }] });
         sortDays(); draw();
       });
       daysEl.appendChild(add);
@@ -114,6 +117,8 @@
     loader.then(function (d) {
       data = d || { note: 'その他の時間はご相談ください。', days: [{ day: '金曜', slots: [] }, { day: '土曜', slots: [] }] };
       if (!data.days) data.days = [];
+      // 開講時間がまだ保存されていない曜日は、いまサイトに出している時間を入れておく
+      data.days.forEach(function (x) { if (x.hours == null) x.hours = S.defaultHours[x.day] || ''; });
       draw();
       saveBtn.disabled = false;
     }).catch(function () {
@@ -138,7 +143,7 @@
 
   saveBtn.addEventListener('click', function () {
     if (!data) return;
-    data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); });
+    data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); d.hours = (d.hours || '').trim(); });
     sortDays();
     if (demo) {
       var t = new Date();
