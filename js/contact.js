@@ -8,9 +8,14 @@
   var endpoint = (window.SITE_CONFIG && window.SITE_CONFIG.formEndpoint) || '';
   var INSTAGRAM = 'https://www.instagram.com/aimi_piano_/';
 
+  function isTrial() {
+    var t = form.querySelector('input[name="type"]:checked');
+    return !t || t.value.indexOf('体験') >= 0;
+  }
   var rules = {
     name: function (v) { return v.trim() ? '' : 'お名前を入力してください。'; },
-    age: function (v) { return v ? '' : 'レッスンを受ける方の年齢を選んでください。'; },
+    age: function (v) { return v || !isTrial() ? '' : '年齢を選んでください。'; },
+    message: function (v) { return isTrial() || v.trim() ? '' : 'お問い合わせの内容を入力してください。'; },
     email: function (v) {
       if (!v.trim()) return 'メールアドレスを入力してください。';
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'メールアドレスの形式を確認してください（例：example@mail.com）。';
@@ -40,10 +45,12 @@
       if (msg && !first) first = form.elements[k];
     });
     var agree = document.getElementById('agree');
+    agree.closest('.consent').classList.toggle('field--error', !agree.checked);
     if (!agree.checked && !first) first = agree;
     return first;
   }
 
+  document.getElementById('agree').addEventListener('change', function () { if (this.checked) this.closest('.consent').classList.remove('field--error'); });
   Object.keys(rules).forEach(function (k) {
     form.elements[k].addEventListener('blur', function () {
       if (form.querySelector('[data-field="' + k + '"].field--error')) setError(k, rules[k](form.elements[k].value));
@@ -58,6 +65,16 @@
     var hasSlots = slotField && !slotField.hasAttribute('data-empty') && slotField.querySelector('input[name="slot"]');
     var other = !!form.querySelector('input[name="slot"][value="その他の日時"]:checked');
     if (slotField) slotField.hidden = !(trial && hasSlots);
+    // お問い合わせ・その他：年齢・経験は聞かず、ご要望・ご質問を必須に
+    ['age', 'experience'].forEach(function (k) {
+      var f = form.querySelector('[data-field="' + k + '"]');
+      if (f) f.hidden = !trial;
+    });
+    var ageRow = form.querySelector('[data-field="age"]');
+    if (ageRow && ageRow.parentElement.classList.contains('row-2')) ageRow.parentElement.hidden = !trial;
+    var mLabel = form.querySelector('[data-field="message"] .field__label span');
+    if (mLabel) { mLabel.className = trial ? 'opt' : 'req'; mLabel.textContent = trial ? '任意' : '必須'; }
+    if (trial) setError('message', ''); else setError('age', '');
     ['days', 'times'].forEach(function (k) {
       var f = form.querySelector('[data-field="' + k + '"]');
       if (f) f.hidden = !trial || (hasSlots && !other);

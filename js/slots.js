@@ -119,9 +119,9 @@
       } else if (kind === 'list') {
         el.innerHTML = days.map(function (d) { return esc(d.day) + (hoursOf(d) ? ' ' + esc(hoursOf(d)) : ''); }).join('<br>');
       } else if (kind === 'sentence') {
-        el.textContent = days.map(function (d) { return d.day + hoursOf(d); }).join('、');
+        el.innerHTML = days.map(function (d) { return '<span class="nw">' + esc(d.day + hoursOf(d)) + '</span>'; }).join('、');
       } else if (kind === 'hint') {
-        el.textContent = days.map(function (d) { return d.day + (hoursOf(d) ? 'は' + hoursOf(d) : ''); }).join('、') + (days.some(hoursOf) ? 'です。' : '。');
+        el.innerHTML = days.map(function (d) { return '<span class="nw">' + esc(d.day + (hoursOf(d) ? 'は' + hoursOf(d) : '')) + '</span>'; }).join('、') + (days.some(hoursOf) ? 'です。' : '。');
       } else if (kind === 'choices') {
         var checked = {};
         el.querySelectorAll('input:checked').forEach(function (i) { checked[i.value] = true; });

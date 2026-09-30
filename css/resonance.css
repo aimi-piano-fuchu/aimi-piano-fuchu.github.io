@@ -301,3 +301,35 @@ main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden �
   .gnav__list > li:not(.gnav__ig):not(.gnav__cta) > a .gnav__icon { width: 38px; height: 38px; padding: 8px; margin-bottom: 2px; }
   .gnav__list .gnav__ig a, .gnav__list .gnav__cta a { height: 46px; }
 }
+/* 総点検B（9/30） */
+.photo-row figure { align-content: start; }
+.photo-row figure:nth-child(3):last-child img { object-position: center 65%; }
+.news-list li:not([hidden]):not(:has(~ li:not([hidden]))) { border-bottom: 0; }
+.pager button { display: inline-grid; place-items: center; line-height: 1; }
+.pager__step { padding-bottom: 2px; }
+.pager__gap { padding-top: 6px; }
+@media (max-width: 560px) { .pager button { min-width: 38px; } }
+.field__error { text-wrap: pretty; }
+/* セレクトの矢印をサイトの山形に */
+.select {
+  -webkit-appearance: none; appearance: none; padding-right: 40px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%2356677F' stroke-width='1.5'/></svg>");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 12px 8px;
+}
+/* FAQ：開閉の印を1行目にそろえ、答えの左端を質問文にそろえる */
+.faq summary::after { top: 1.55em; }
+.faq summary::before { flex: 0 0 14px; }
+.faq .answer { padding-left: calc(24px + 14px + 14px); }
+@media (max-width: 760px) { .faq summary::after { top: 1.4em; } .faq .answer { padding-left: calc(16px + 14px + 10px); } }
+/* お問い合わせページでは、ヘッダーの「お問い合わせ」ボタンは出さない */
+body.page-contact .header-cta, body.page-contact .gnav__cta { display: none; }
+/* カードの中の小見出し（アクセスの「最寄り駅から」）は線なし */
+.map-card .h3 { border-left: 0; padding-left: 0; }
+.consent.field--error span { color: var(--err); }
+/* 記事の前後リンク */
+.article__nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.article__navlink { display: grid; gap: 4px; padding: 14px 16px !important; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); background: var(--glass-solid); }
+.article__navlink small { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+.article__navlink.is-next { text-align: right; }
+@media (max-width: 560px) { .article__nav { grid-template-columns: 1fr; } .article__navlink.is-next { text-align: left; } }
+.news-tools { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
