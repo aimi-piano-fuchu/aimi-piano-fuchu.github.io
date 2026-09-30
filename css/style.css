@@ -664,6 +664,17 @@ ul, ol { margin: 0; padding: 0; }
 .pager { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 32px; }
 .pager button { min-width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; font-variant-numeric: tabular-nums; }
 .pager button[aria-current="true"] { background: var(--dusty-deep); color: var(--surface); border-color: var(--dusty-deep); }
+.pager button { padding-inline: 12px; }
+.pager__step { font-size: 18px !important; line-height: 1; }
+.pager button:disabled { opacity: .35; cursor: default; }
+.pager__gap { display: inline-grid; place-items: center; min-width: 20px; height: 40px; color: var(--muted); }
+/* スマホでは1行に収まるよう少し小さく */
+@media (max-width: 430px) {
+  .pager { gap: 4px; flex-wrap: nowrap; }
+  .pager button { min-width: 36px; height: 38px; padding-inline: 8px; font-size: 13px; }
+  .pager__gap { min-width: 12px; height: 38px; }
+}
+@media (max-width: 360px) { .pager { gap: 3px; } .pager button { min-width: 32px; padding-inline: 6px; font-size: 12px; } .pager__gap { min-width: 10px; } }
 
 .article { display: grid; gap: 24px; }
 .article__meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; color: var(--muted); font-size: 14px; }
@@ -840,22 +851,13 @@ ul, ol { margin: 0; padding: 0; }
 /* スマホ：開閉が分かるように＋／−の印 */
 @media (max-width: 860px) {
   .elements .numbered button { padding-right: 44px; position: relative; }
-  /* ＋／－は文字だと丸の中心からずれるので、線を2本描く */
+  /* 開閉の印は「よくある質問」と同じ下向きの山形（開くと上向き） */
   .elements .numbered button::after {
-    content: ""; position: absolute; right: 16px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%;
-    color: var(--accent-deep);
-    background:
-      linear-gradient(currentColor, currentColor) center / 11px 1.6px no-repeat,
-      linear-gradient(currentColor, currentColor) center / 1.6px 11px no-repeat,
-      var(--accent-soft);
-    transition: transform .3s ease;
+    content: ""; position: absolute; right: 22px; top: 50%; width: 10px; height: 10px;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+    transform: translateY(-70%) rotate(45deg); transition: transform .3s ease;
   }
-  .elements .numbered li.is-open button::after {
-    transform: rotate(180deg);
-    background:
-      linear-gradient(currentColor, currentColor) center / 11px 1.6px no-repeat,
-      var(--surface);
-  }
+  .elements .numbered li.is-open button::after { transform: translateY(-30%) rotate(-135deg); border-color: currentColor; }
   .elements .numbered .elements__panels { margin-top: -4px; }
   .elements__panel { animation: panel-drop .28s cubic-bezier(.2, .7, .2, 1); }
   .elements .numbered li { transition: background-color .25s ease, color .25s ease; }

@@ -102,20 +102,38 @@
       if (!pager) return;
       pager.innerHTML = '';
       if (pages > 1) {
-        for (var p = 1; p <= pages; p++) {
+        // ページ番号は「最新（1）・今のページの前後1つ・最後」だけ。間は「…」、両端に「前へ／次へ」
+        var go = function (n) {
+          return function () {
+            state.page = n; render();
+            list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          };
+        };
+        var add = function (label, n, opts) {
+          opts = opts || {};
           var b = document.createElement('button');
           b.type = 'button';
-          b.textContent = p;
-          b.setAttribute('aria-label', p + 'ページ目');
-          if (p === state.page) b.setAttribute('aria-current', 'true');
-          b.addEventListener('click', (function (n) {
-            return function () {
-              state.page = n; render();
-              list.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            };
-          })(p));
+          b.textContent = label;
+          b.setAttribute('aria-label', opts.aria || (n + 'ページ目'));
+          if (opts.cls) b.className = opts.cls;
+          if (n === state.page && !opts.cls) b.setAttribute('aria-current', 'true');
+          if (opts.disabled) b.disabled = true; else b.addEventListener('click', go(n));
           pager.appendChild(b);
-        }
+        };
+        var gap = function () {
+          var sp = document.createElement('span');
+          sp.className = 'pager__gap'; sp.textContent = '…'; sp.setAttribute('aria-hidden', 'true');
+          pager.appendChild(sp);
+        };
+        add('‹', state.page - 1, { cls: 'pager__step', aria: '前のページ', disabled: state.page === 1 });
+        var shown = [1, state.page - 1, state.page, state.page + 1, pages]
+          .filter(function (n, i, a) { return n >= 1 && n <= pages && a.indexOf(n) === i; })
+          .sort(function (x, y) { return x - y; });
+        shown.forEach(function (n, i) {
+          if (i && n - shown[i - 1] > 1) gap();
+          add(n === 1 ? '最新' : String(n), n, n === 1 ? { aria: '1ページ目（最新）' } : null);
+        });
+        add('›', state.page + 1, { cls: 'pager__step', aria: '次のページ', disabled: state.page === pages });
       }
     };
     buttons.forEach(function (b) {

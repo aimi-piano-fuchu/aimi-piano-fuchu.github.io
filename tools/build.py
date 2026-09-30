@@ -283,7 +283,8 @@ def resonance(body, current):
         if not in_hero and not centered:
             n += 1
             num = f'<span class="eyebrow__no num" aria-hidden="true">No.{n:02d}</span>'
-        ghost = f'<span class="ghost" data-t="{e(text)}" aria-hidden="true"></span>'
+        # --n（文字数）で、スマホでは長い英字を画面幅に収まる大きさまで縮める
+        ghost = f'<span class="ghost" data-t="{e(text)}" style="--n:{len(text)}" aria-hidden="true"></span>'
         out.append(body[pos:m.start()])
         out.append(f'<span class="eyebrow has-ghost">{m.group(1)}{num}{ghost}</span>')
         pos = m.end()
