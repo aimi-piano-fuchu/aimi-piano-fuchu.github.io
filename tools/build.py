@@ -110,7 +110,7 @@ def header(root, current):
         f'<li class="gnav__ig"><a href="{SITE["instagram"]}" target="_blank" rel="noopener" aria-label="Instagram（新しいタブで開きます）">{ICONS["ig"]}<span class="gnav__ig-label">Instagram</span></a></li>'
     )
     items.append(
-        f'<li class="gnav__cta"><a class="btn btn--primary btn--sm" href="{root}contact.html">体験レッスン</a></li>'
+        f'<li class="gnav__cta"><a class="btn btn--primary btn--sm" href="{root}contact.html">お問い合わせ</a></li>'
     )
     return f"""<a class="skip" href="#main">本文へスキップ</a>
 <header class="site-header" id="top">
@@ -119,7 +119,7 @@ def header(root, current):
       {LOGO}
       <span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span>
     </a>
-    <a class="header-cta" href="{root}contact.html">体験レッスン</a>
+    <a class="header-cta" href="{root}contact.html">お問い合わせ</a>
     <a class="header-home" href="{root}index.html">{NAV_ICONS["home"]}ホーム</a>
     <button class="menu-toggle" type="button" aria-controls="gnav" aria-expanded="false"><span class="menu-toggle__bar" aria-hidden="true"></span><span class="sr-only">メニューを開く</span></button>
     <nav class="gnav" id="gnav" aria-label="メインメニュー">
