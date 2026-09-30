@@ -477,7 +477,15 @@ ul, ol { margin: 0; padding: 0; }
 .split__media { border-radius: var(--radius); overflow: hidden; background: var(--mist-2); }
 .split__media img { width: 100%; height: 100%; object-fit: cover; }
 .split__body { display: grid; gap: 22px; align-content: start; }
-@media (max-width: 860px) { .split { grid-template-columns: 1fr; } .split--reverse > :first-child { order: 0; } .split__media { aspect-ratio: 16 / 10; max-height: 380px; } }
+/* 文章が主役のとき：写真を小さく、まわりをぼかして背景になじませる */
+.split--wide-body { grid-template-columns: 1.7fr 1fr; }
+.split__media--soft { background: none; border-radius: 0; overflow: visible; }
+.split__media--soft img {
+  aspect-ratio: 1 / 1; object-fit: cover;
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 55%, transparent 100%);
+}
+@media (max-width: 860px) { .split, .split--wide-body { grid-template-columns: 1fr; } .split__media--soft { max-width: 280px; margin-inline: auto; aspect-ratio: auto; max-height: none; } .split--reverse > :first-child { order: 0; } .split__media { aspect-ratio: 16 / 10; max-height: 380px; } }
 
 /* ---------- courses / price ---------- */
 .courses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -976,16 +984,13 @@ ul, ol { margin: 0; padding: 0; }
 }
 
 /* ---------- 項目名の書式（全ページ共通） ----------
-   ① カードの見出し：ゴシック太字＋短い色の下線
-   ② 区切りの小見出し（.h3・料金の「その他の費用」など）：ゴシック太字＋左の色線
+   ① カードの見出し：ゴシック太字だけ（下線・区切り線は付けない）
+   ② 区切りの小見出し（.h3 など）：ゴシック太字＋左の色線
    ③ 表・一覧のラベル（dt・費用名・質問）：色付きの太字
    明朝の細い字は章の大見出し（h2）とロゴだけに使う */
 .box h3, .feature h3, .step h3, .growth h3, .course h3 {
   font-family: var(--f-body); font-weight: 700; color: var(--ink); letter-spacing: .04em; line-height: 1.5;
-  font-feature-settings: "palt"; position: relative; padding-bottom: 10px;
-}
-.box h3::after, .feature h3::after, .step h3::after, .growth h3::after, .course h3::after {
-  content: ""; position: absolute; left: 0; bottom: 0; width: 28px; height: 3px; border-radius: 2px; background: var(--accent);
+  font-feature-settings: "palt";
 }
 .box h3, .step h3, .growth h3 { font-size: 18px; }
 .feature h3 { font-size: 18px; }
