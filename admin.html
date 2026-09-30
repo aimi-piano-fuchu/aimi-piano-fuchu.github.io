@@ -21,7 +21,7 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=a9638b8e">
-<link rel="stylesheet" href="css/resonance.css?v=56e31725">
+<link rel="stylesheet" href="css/resonance.css?v=8fee11a8">
 <script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -54,11 +54,12 @@
     </div>
 
     <div class="form" id="admin-login">
-      <form id="admin-login-form" class="stack-s" novalidate>
+      <form id="admin-login-form" class="stack-s" method="post" action="#" novalidate>
         <label class="field__label" for="admin-id">ID<wbr>（メールアドレス）</label>
-        <input class="input" type="email" id="admin-id" autocomplete="username" inputmode="email">
+        <input class="input" type="email" id="admin-id" name="username" autocomplete="username" inputmode="email">
         <label class="field__label mt-m" for="admin-pass">パスコード</label>
-        <input class="input" type="password" id="admin-pass" autocomplete="current-password">
+        <input class="input" type="password" id="admin-pass" name="password" autocomplete="current-password">
+        <p class="field__hint">ログイン後に<wbr>「パスワードを<wbr>保存しますか？」⁠と<wbr>出たら<wbr>「保存」⁠を<wbr>選ぶと、<wbr>次回から<wbr>自動で<wbr>入力されます。</p>
         <p class="field__error" id="admin-login-error" aria-live="polite"></p>
         <button class="btn btn--primary" type="submit">ログイン</button>
       </form>
@@ -166,6 +167,6 @@
 
 <script src="js/main.js?v=7c2f8581" defer></script>
 <script src="js/resonance.js?v=4da43aad" defer></script>
-<script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=1b5e6adc"></script><script src="js/admin.js?v=4442db1d" defer></script><script src="js/admin-news.js?v=ade043c6" defer></script>
+<script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=1b5e6adc"></script><script src="js/admin.js?v=c18fcec8" defer></script><script src="js/admin-news.js?v=ade043c6" defer></script>
 </body>
 </html>

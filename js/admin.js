@@ -127,6 +127,17 @@
     });
   }
 
+  // ログインに成功したら、端末（ブラウザ・パスワード管理）にIDとパスコードの保存を促す。
+  // Chrome/Android は Credential Management API で「保存しますか？」を出す。
+  // Safari などは、フォームを送信して入力欄が消えたことで保存の案内を出す。
+  function rememberLogin(id, v) {
+    try {
+      if (window.PasswordCredential && navigator.credentials && navigator.credentials.store) {
+        navigator.credentials.store(new window.PasswordCredential({ id: id, password: v, name: 'あいみピアノ教室 管理画面' })).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
   document.getElementById('admin-login-form').addEventListener('submit', function (e) {
     e.preventDefault();
     var id = document.getElementById('admin-id').value.trim();
@@ -136,7 +147,11 @@
     if (!id || !v) { err.textContent = 'IDとパスコードを入力してください。'; return; }
     err.textContent = '確認しています…';
     S.post({ action: 'checkPass', id: id, pass: v }).then(function (res) {
-      if (res && res.result === 'success') { adminId = id; pass = v; setSaved(ID_KEY, id); setSaved(PASS_KEY, v); err.textContent = ''; openEditor(); }
+      if (res && res.result === 'success') {
+        adminId = id; pass = v; setSaved(ID_KEY, id); setSaved(PASS_KEY, v); err.textContent = '';
+        rememberLogin(id, v);
+        openEditor();
+      }
       else err.textContent = 'IDかパスコードがちがいます。何度もまちがえると、10分ほど受け付けなくなります。';
     }).catch(function () { err.textContent = '通信できませんでした。電波の良い場所でもう一度お試しください。'; });
   });
