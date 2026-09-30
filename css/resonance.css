@@ -169,7 +169,8 @@
 /* 長い英字（Online & Video など）が画面の外にはみ出して横にずれないよう、セクション単位で切る
    （body には付けない。clip はスクロール箱を作らないので縦スクロールに影響しない） */
 main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden の予備は付けない（古い端末で縦のスクロール箱になり Android で引っかかるため） */
-@media (max-width: 760px) { .ghost { font-size: clamp(56px, 16vw, 96px); } }
+/* スマホ：長い英字（Behind the Scenes など）は画面幅に収まるまで小さくする（1文字 ≒ .4em で計算） */
+@media (max-width: 760px) { .ghost { font-size: min(clamp(56px, 16vw, 96px), calc((100vw - 2 * var(--gutter)) / (var(--n, 8) * .4))); } }
 .section-head--center .ghost { left: 50%; transform: translateX(-50%); }
 .eyebrow__no { font-family: var(--f-body); font-style: normal; font-size: 11px; letter-spacing: .16em; color: var(--muted); margin-left: -2px; }
 /* 下層ページの見出し：大きな欧文はタイトル帯の右下に */
