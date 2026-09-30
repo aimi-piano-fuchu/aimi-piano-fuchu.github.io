@@ -61,7 +61,7 @@
 
       <div class="field" data-field="days">
         <p class="field__label" id="lbl-days">ご希望の曜日 <span class="opt">任意・複数可</span></p>
-        <div class="choices" role="group" aria-labelledby="lbl-days">
+        <div class="choices" role="group" aria-labelledby="lbl-days" data-days="choices">
           <label class="choice"><input type="checkbox" id="day-fri" name="days" value="金曜"><span>金曜</span></label>
           <label class="choice"><input type="checkbox" id="day-sat" name="days" value="土曜"><span>土曜</span></label>
         </div>
@@ -69,7 +69,7 @@
 
       <div class="field" data-field="times">
         <label class="field__label" for="times">ご希望の日時・時間帯 <span class="opt">任意</span></label>
-        <p class="field__hint">金は14:00〜20:00頃、土は9:00〜18:00です。候補をいくつかいただけると調整がスムーズです。</p>
+        <p class="field__hint"><span data-days="hint">金は14:00〜20:00頃、土は9:00〜18:00です。</span>候補をいくつかいただけると調整がスムーズです。</p>
         <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降">
       </div>
 

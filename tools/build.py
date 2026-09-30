@@ -243,7 +243,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <link rel="apple-touch-icon" href="{root}images/apple-touch-icon.png">
 <link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{root}css/style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>document.documentElement.classList.add('js');setTimeout(function(){{[].forEach.call(document.querySelectorAll('.reveal'),function(e){{e.classList.add('is-in')}})}},4000)</script>
 {extra_head}
 </head>
 <body>
