@@ -150,7 +150,7 @@ def footer(root, float_cta=True):
     <div class="site-footer__grid">
       <div class="site-footer__about">
         <a class="brand" href="{root}index.html">{LOGO}<span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span></a>
-        <p>{SITE['area']}のピアノ教室です。リトミックを取り入れた個人レッスンで、3歳から大人の方（女性）まで一人ひとりに合わせて指導しています。</p>
+        <p>{SITE['name']}（愛実ピアノ教室）は、{SITE['area']}のピアノ教室です。リトミックを取り入れた個人レッスンで、3歳から大人の方（女性）まで一人ひとりに合わせて指導しています。</p>
         <a class="ig-link" href="{SITE['instagram']}" target="_blank" rel="noopener">{ICONS['ig']}@aimi_piano_</a>
       </div>
       <div>
@@ -209,7 +209,8 @@ def breadcrumb_ld(body, current):
 
 def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None, og_image=None):
     if not full_title:
-        full_title = f"{title}｜{SITE['name']}" if title else f"府中市四谷のピアノ教室｜{SITE['name']}"
+        # 検索結果で教室名が先に出るように「教室名｜ページ名」
+        full_title = f"{SITE['name']}｜{title}" if title else f"{SITE['name']}｜府中市四谷のピアノ教室"
     canonical = ""
     og_url = ""
     og_image = f"{root}images/og.jpg"
