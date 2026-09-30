@@ -18,8 +18,6 @@
       <li>送信後、ご入力のメールアドレスに自動返信メールが届きます。届かない場合は、アドレスをご確認のうえ再度お送りいただくか、<a href="https://www.instagram.com/aimi_piano_/" target="_blank" rel="noopener">InstagramのDM</a>でご連絡ください。</li>
     </ul>
 
-    <div class="slots" data-slots data-fallback="最新の空き状況はご案内できる範囲でお伝えします。ご希望の曜日・時間帯をフォームにお書きください。"></div>
-
     <form class="form" id="contact-form" novalidate>
       <div class="field" data-field="type">
         <p class="field__label" id="lbl-type">お問い合わせ内容 <span class="req">必須</span></p>
@@ -59,7 +57,14 @@
         </div>
       </div>
 
-      <div class="field" data-field="days">
+      <!-- 体験レッスンのとき：空いている枠から選ぶ（空き枠のデータは slots.js が入れる）。最後に「その他の日時」 -->
+      <div class="field" data-field="slot" data-trial-only hidden>
+        <p class="field__label" id="lbl-slot">ご希望の枠 <span class="opt">任意・複数可</span></p>
+        <p class="field__hint">いま空いている枠です。ほかの日時をご希望の場合は「その他の日時」を選んでください。</p>
+        <div class="choices choices--slots" role="group" aria-labelledby="lbl-slot" data-slot-choices></div>
+      </div>
+
+      <div class="field" data-field="days" data-trial-only>
         <p class="field__label" id="lbl-days">ご希望の曜日 <span class="opt">任意・複数可</span></p>
         <div class="choices" role="group" aria-labelledby="lbl-days" data-days="choices">
           <label class="choice"><input type="checkbox" id="day-fri" name="days" value="金曜"><span>金曜</span></label>
@@ -67,7 +72,7 @@
         </div>
       </div>
 
-      <div class="field" data-field="times">
+      <div class="field" data-field="times" data-trial-only>
         <label class="field__label" for="times">ご希望の日時・時間帯 <span class="opt">任意</span></label>
         <p class="field__hint"><span data-days="hint">金は14:00〜20:00、土は9:00〜18:00です。</span>候補をいくつかいただけると調整がスムーズです。</p>
         <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降">

@@ -50,6 +50,25 @@
     });
   });
 
+  // 「体験レッスン」を選んだときだけ、枠・曜日・日時の欄を出す。
+  // 空き枠があれば「ご希望の枠」から選び、「その他の日時」を選んだときだけ曜日・日時の欄を出す。
+  function syncFields() {
+    var trial = form.querySelector('input[name="type"]:checked').value.indexOf('体験') >= 0;
+    var slotField = form.querySelector('[data-field="slot"]');
+    var hasSlots = slotField && !slotField.hasAttribute('data-empty') && slotField.querySelector('input[name="slot"]');
+    var other = !!form.querySelector('input[name="slot"][value="その他の日時"]:checked');
+    if (slotField) slotField.hidden = !(trial && hasSlots);
+    ['days', 'times'].forEach(function (k) {
+      var f = form.querySelector('[data-field="' + k + '"]');
+      if (f) f.hidden = !trial || (hasSlots && !other);
+    });
+  }
+  form.addEventListener('change', function (e) {
+    if (e.target && (e.target.name === 'type' || e.target.name === 'slot')) syncFields();
+  });
+  document.addEventListener('slots:choices', syncFields);
+  syncFields();
+
   function panel(kind, title, html) {
     status.innerHTML = '<div class="panel panel--' + kind + '"><h3>' + title + '</h3>' + html + '</div>';
     status.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -65,11 +84,15 @@
     }
     if (form.elements.website.value) return; // bot
 
-    var days = [].slice.call(form.querySelectorAll('input[name="days"]:checked')).map(function (x) { return x.value; });
+    var visible = function (sel) { var f = form.querySelector(sel); return f && !f.hidden; };
+    var slots = visible('[data-field="slot"]') ? [].slice.call(form.querySelectorAll('input[name="slot"]:checked')).map(function (x) { return x.value; }) : [];
+    var days = visible('[data-field="days"]') ? [].slice.call(form.querySelectorAll('input[name="days"]:checked')).map(function (x) { return x.value; }) : [];
+    // 選んだ枠は「希望曜日」の欄にまとめて送る（GAS・記録表はそのまま使える）
+    days = slots.filter(function (v) { return v !== 'その他の日時'; }).concat(days);
     var data = new URLSearchParams();
     data.append('type', form.querySelector('input[name="type"]:checked').value);
     ['name', 'kana', 'age', 'experience', 'times', 'email', 'tel', 'message', 'source'].forEach(function (k) {
-      data.append(k, form.elements[k].value.trim());
+      data.append(k, k === 'times' && !visible('[data-field="times"]') ? '' : form.elements[k].value.trim());
     });
     data.append('days', days.join('・'));
 
