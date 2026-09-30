@@ -192,7 +192,13 @@ main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden �
   .steps:has(> .step:nth-child(3):last-child) > .step:nth-child(1) { margin-top: 96px; }
   .steps:has(> .step:nth-child(3):last-child) > .step:nth-child(2) { margin-top: 48px; }
 }
-.teacher__photo, .recital__photo { box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--dusty-deep) 60%, transparent); }
+.teacher__photo { box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--dusty-deep) 60%, transparent); }
+/* 発表会の写真：説明文は写真の外に、少し間をあけて置く（枠の中に詰め込まない） */
+.recital__photo { overflow: visible; border-radius: 0; box-shadow: none; }
+.recital__photo img { display: block; border-radius: var(--radius); box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--dusty-deep) 60%, transparent); }
+.recital__caption { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding-inline: 2px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.recital__caption::before { content: ""; flex: 0 0 20px; height: 1px; background: var(--accent); }
+@media (max-width: 860px) { .recital { gap: clamp(72px, 18vw, 88px); } }
 
 /* ---------- スマホのメニュー（タイル型・画面いっぱい）を波紋のデザインに ----------
    配置（2列タイル＋アクセス横長＋下段にInstagram・お問い合わせ）は style.css のまま。見た目だけ変える。 */
