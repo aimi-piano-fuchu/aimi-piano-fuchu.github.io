@@ -161,7 +161,7 @@ function contact_(p) {
 
     var row = [
       new Date(), p.type || '', p.name || '', p.kana || '', p.age || '', p.experience || '',
-      p.days || '', p.times || '', p.email || '', p.tel || '', p.message || ''
+      p.days || '', p.times || '', p.email || '', p.tel || '', p.message || '', p.source || ''
     ];
     sheet_().appendRow(row);
 
@@ -177,7 +177,9 @@ function contact_(p) {
       '電話：' + (p.tel || '') + '\n\n' +
       'ご要望・ご質問：\n' + (p.message || '') + '\n';
     var notify = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAILS');
-    if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', body, { replyTo: p.email, name: SCHOOL });
+    // 「何で知ったか」は教室側の通知だけに載せる（自動返信には入れない）
+    var notifyBody = body + (p.source ? '\n当教室を知ったきっかけ：' + p.source + '\n' : '');
+    if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', notifyBody, { replyTo: p.email, name: SCHOOL });
 
     var reply =
       p.name + ' 様\n\n' +
