@@ -165,17 +165,19 @@ function contact_(p) {
     ];
     sheet_().appendRow(row);
 
+    // 空の項目は行ごと出さない
+    var line = function (label, v) { return v ? label + '：' + v + '\n' : ''; };
     var body =
       'ホームページからお問い合わせがありました。\n\n' +
-      '内容：' + p.type + '\n' +
-      'お名前：' + p.name + '（' + (p.kana || '') + '）\n' +
-      '年齢：' + p.age + '\n' +
-      'ピアノ経験：' + (p.experience || '') + '\n' +
-      '希望曜日：' + (p.days || '') + '\n' +
-      '希望日時：' + (p.times || '') + '\n' +
-      'メール：' + p.email + '\n' +
-      '電話：' + (p.tel || '') + '\n\n' +
-      'ご要望・ご質問：\n' + (p.message || '') + '\n';
+      line('内容', p.type) +
+      line('お名前', p.name + (p.kana ? '（' + p.kana + '）' : '')) +
+      line('年齢', p.age) +
+      line('ピアノ経験', p.experience) +
+      line('ご希望の枠・曜日', p.days) +
+      line('ご希望の日時', p.times) +
+      line('メール', p.email) +
+      line('電話', p.tel) +
+      (p.message ? '\nご要望・ご質問：\n' + p.message + '\n' : '');
     var notify = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAILS');
     // 「何で知ったか」は教室側の通知だけに載せる（自動返信には入れない）
     var notifyBody = body + (p.source ? '\n当教室を知ったきっかけ：' + p.source + '\n' : '');
@@ -186,7 +188,7 @@ function contact_(p) {
       SCHOOL + 'です。お問い合わせありがとうございます。\n' +
       '以下の内容で受け付けました。\n\n' +
       '――――――――――\n' + body.replace('ホームページからお問い合わせがありました。\n\n', '') + '――――――――――\n\n' +
-      '※まだ予約は確定していません。内容を確認のうえ、あらためてご連絡いたします。\n' +
+      (String(p.type).indexOf('体験') >= 0 ? '※まだ予約は確定していません。内容を確認のうえ、あらためてご連絡いたします。\n' : '※内容を確認のうえ、あらためてご連絡いたします。\n') +
       '※このメールに返信すると、講師に届きます。\n\n' + SCHOOL + '\nhttps://aimipiano-fuchu.com/\nhttps://www.instagram.com/aimi_piano_/\n';
     // お客さんが返信したら講師（通知先の1つ目）に届くようにする
     var replyOpts = { name: SCHOOL };
