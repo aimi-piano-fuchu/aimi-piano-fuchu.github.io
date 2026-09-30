@@ -133,18 +133,39 @@
     });
   }
 
+  // お問い合わせ：体験レッスンの「ご希望の枠」を、空いている枠から作る（最後に「その他の日時」）
+  function applySlotChoices(data) {
+    document.querySelectorAll('[data-slot-choices]').forEach(function (el) {
+      var open = [];
+      ((data && data.days) || []).forEach(function (d) {
+        (d.slots || []).forEach(function (s) { if (s.open && String(s.time).trim()) open.push(d.day + ' ' + s.time); });
+      });
+      var field = el.closest('.field');
+      if (!open.length) { el.innerHTML = ''; field.setAttribute('data-empty', ''); document.dispatchEvent(new CustomEvent('slots:choices')); return; }
+      field.removeAttribute('data-empty');
+      var checked = {};
+      el.querySelectorAll('input:checked').forEach(function (i) { checked[i.value] = true; });
+      el.innerHTML = open.concat(['その他の日時']).map(function (v, i) {
+        return '<label class="choice"><input type="checkbox" id="slot-' + i + '" name="slot" value="' + esc(v) + '"' +
+          (checked[v] ? ' checked' : '') + '><span>' + esc(v) + '</span></label>';
+      }).join('');
+      document.dispatchEvent(new CustomEvent('slots:choices'));
+    });
+  }
+
   window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc, defaultHours: DEFAULT_HOURS };
 
   var slotEls = document.querySelectorAll('[data-slots]');
-  if (!slotEls.length && !document.querySelector('[data-days]')) return;
+  if (!slotEls.length && !document.querySelector('[data-days]') && !document.querySelector('[data-slot-choices]')) return;
   var cached = cfg.formEndpoint ? readCache() : null;
   slotEls.forEach(function (el) {
     if (cached) render(el, cached);
     else el.innerHTML = '<p class="slots__fallback">空き状況を読み込んでいます…</p>';
   });
-  if (cached) applyDays(cached);
+  if (cached) { applyDays(cached); applySlotChoices(cached); }
   load().then(function (d) {
     slotEls.forEach(function (el) { render(el, d); });
     applyDays(d);
+    applySlotChoices(d);
   }).catch(function () { slotEls.forEach(function (el) { render(el, null); }); });
 })();
