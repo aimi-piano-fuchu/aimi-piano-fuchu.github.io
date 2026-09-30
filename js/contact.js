@@ -68,7 +68,7 @@
     var days = [].slice.call(form.querySelectorAll('input[name="days"]:checked')).map(function (x) { return x.value; });
     var data = new URLSearchParams();
     data.append('type', form.querySelector('input[name="type"]:checked').value);
-    ['name', 'kana', 'age', 'experience', 'times', 'email', 'tel', 'message'].forEach(function (k) {
+    ['name', 'kana', 'age', 'experience', 'times', 'email', 'tel', 'message', 'source'].forEach(function (k) {
       data.append(k, form.elements[k].value.trim());
     });
     data.append('days', days.join('・'));
