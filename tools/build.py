@@ -248,7 +248,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <script>document.documentElement.classList.add('js');setTimeout(function(){{[].forEach.call(document.querySelectorAll('.reveal'),function(e){{e.classList.add('is-in')}})}},4000)</script>
 {extra_head}
 </head>
-<body>
+<body class="page-{(current or "index.html").replace(".html", "").replace("/", "-") or "index"}">
 <div class="resonance-bg" aria-hidden="true"><div class="aura"></div>{'' if current == "admin.html" else '<canvas id="resonance"></canvas>'}<div class="grain"></div></div>
 {header(root, current)}
 <main id="main">
@@ -638,8 +638,14 @@ def build_news(items):
             ) + "</p>"
         body_text = e(it["body"]) if it["body"] else ""
         nav = '<nav class="article__nav" aria-label="前後の記事">'
-        nav += f'<a href="{older["id"]}.html">← {e(older["title"][:24])}</a>' if older else "<span></span>"
-        nav += f'<a href="{newer["id"]}.html">{e(newer["title"][:24])} →</a>' if newer else "<span></span>"
+        # 前後の記事：ラベル・日付・題名のカード（どちらが前か次か分かるように）
+        def navcard(x, cls, label):
+            t = re.sub(r"\s+", " ", x["title"]).strip()
+            t = t if len(t) <= 28 else t[:27] + "…"
+            return (f'<a class="article__navlink {cls}" href="{x["id"]}.html"><small>{label}・<span class="num">{fmt_date(x["date"])}</span></small>'
+                    f'<span>{e(t)}</span></a>')
+        nav += navcard(older, "is-prev", "← 前の記事") if older else "<span></span>"
+        nav += navcard(newer, "is-next", "次の記事 →") if newer else "<span></span>"
         nav += "</nav>"
         desc = re.sub(r"\s+", " ", it["body"])[:110] or it["title"]
         art = f"""<section class="section section--tight">
@@ -654,7 +660,6 @@ def build_news(items):
       {embeds}
       {nav}
       <p><a class="btn btn--ghost btn--sm" href="index.html">お知らせ一覧へ戻る</a></p>
-      <p class="field__hint">あいみピアノ教室は府中市四谷のピアノ教室です。<a href="{root}contact.html">体験レッスンのお申し込み</a>／<a href="{root}access.html">アクセス</a>／<a href="{root}lesson.html">レッスン・月謝</a></p>
     </article>
   </div>
 </section>"""
