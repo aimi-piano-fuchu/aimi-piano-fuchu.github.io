@@ -80,6 +80,8 @@
 .merits li { border-top: 3px solid var(--accent-soft); }
 .form, .slots, .admin-day { background: var(--glass-solid); }
 .cycle__node--a { background: color-mix(in srgb, var(--accent-soft) 78%, transparent); }
+/* コースのカードは全部に枠を付ける（おすすめの60分だけローズの枠） */
+.course { border: 1px solid var(--mist-2); }
 .course--featured { border-color: var(--accent); }
 .news-list { border-radius: var(--radius); padding: 4px clamp(14px, 3vw, 22px); border: 1px solid var(--glass-edge); }
 .news-list li:last-child { border-bottom: 0; }
