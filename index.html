@@ -21,10 +21,12 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=90cd65d4">
+<link rel="stylesheet" href="css/resonance.css?v=d48aeaa8">
 <script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":["MusicSchool","LocalBusiness"],"name":"あいみピアノ教室","alternateName":["Aimi Piano School","愛実ピアノ教室"],"url":"https://aimipiano-fuchu.com/","image":["https://aimipiano-fuchu.com/images/teacher-portrait.jpg","https://aimipiano-fuchu.com/images/og.jpg"],"description":"東京都府中市四谷のピアノ教室。リトミックを取り入れた個人レッスン。3歳から大人（女性）まで。","address":{"@type":"PostalAddress","addressRegion":"東京都","addressLocality":"府中市","streetAddress":"四谷","addressCountry":"JP","postalCode":"183-0035"},"areaServed":[{"@type":"City","name":"府中市"},{"@type":"City","name":"国立市"},{"@type":"City","name":"日野市"},{"@type":"Place","name":"万願寺駅"},{"@type":"Place","name":"中河原駅"},{"@type":"Place","name":"矢川駅"},{"@type":"Place","name":"国立市谷保"}],"founder":{"@type":"Person","name":"野口愛実","url":"https://aimipiano-fuchu.com/teacher"},"priceRange":"¥7,000〜¥18,000／月","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":"Friday","opens":"14:00","closes":"20:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"18:00"}],"sameAs":["https://www.instagram.com/aimi_piano_/"],"logo":"https://aimipiano-fuchu.com/images/apple-touch-icon.png","makesOffer":[{"@type":"Offer","name":"体験レッスン 30分","price":"1000","priceCurrency":"JPY"},{"@type":"Offer","name":"30分コース（月3回）","price":"9000","priceCurrency":"JPY"},{"@type":"Offer","name":"60分コース（月3回）","price":"18000","priceCurrency":"JPY"},{"@type":"Offer","name":"大人のゆったりコース（月2回30分・女性限定）","price":"7000","priceCurrency":"JPY"}]}</script>
 </head>
 <body>
+<div class="resonance-bg" aria-hidden="true"><div class="aura"></div><canvas id="resonance"></canvas><div class="grain"></div></div>
 <a class="skip" href="#main">本文へ<wbr>スキップ</a>
 <header class="site-header" id="top">
   <div class="wrap site-header__inner">
@@ -44,6 +46,7 @@
 </header>
 <main id="main">
 <section class="hero" aria-labelledby="hero-title">
+  <span class="hero__ghost" aria-hidden="true">Piano</span>
   <div class="wrap hero__inner">
     <div class="hero__copy">
       <p class="hero__place">東京都府中市四谷の<wbr>ピアノ教室</p>
@@ -71,12 +74,14 @@
   </ul>
 </section>
 
+<div class="marquee" aria-hidden="true"><div class="marquee__track"><div class="marquee__group"><span>I did it</span><i></i><span class="ja">できた！</span><i></i><span class="o"><wbr>Once more</span><i></i><span class="ja">もっと<wbr>やってみたい！</span><i></i><span><wbr>Joy</span><i></i><span class="ja">楽しい</span><i></i><span class="o"><wbr>Rhythmique</span><i></i><span>Listen</span><i></i><span class="o">Ensemble</span><i></i></div><div class="marquee__group"><span>I did it</span><i></i><span class="ja">できた！</span><i></i><span class="o"><wbr>Once more</span><i></i><span class="ja">もっと<wbr>やってみたい！</span><i></i><span><wbr>Joy</span><i></i><span class="ja">楽しい</span><i></i><span class="o"><wbr>Rhythmique</span><i></i><span>Listen</span><i></i><span class="o">Ensemble</span><i></i></div></div></div>
+
 <section class="section" aria-labelledby="concept-title">
   <div class="wrap concept">
     <div class="concept__body reveal">
-      <span class="eyebrow">Concept</span>
+      <span class="eyebrow has-ghost">Concept<span class="eyebrow__no num" aria-hidden="true">No.01</span><span class="ghost" data-t="Concept" aria-hidden="true"></span></span>
       <h2 class="h2" id="concept-title">音楽そのものを、<br>楽しんで<wbr>ほしいから。</h2>
-      <p class="concept__quote">「できた！」⁠を<wbr>積み重ねる<wbr>ことが、<br>次の<wbr>「やってみたい！」⁠に<br>つながります。</p>
+      <p class="concept__quote">「できた！」⁠を<span class="nw"><wbr>積み重ねる<wbr>ことが、</span><br>次の<wbr>「やってみたい！」⁠に<br>つながります。</p>
       <div class="prose">
         <p>楽譜が<wbr>読めなくても、<wbr>じっと<wbr>椅子に<wbr>座っているのが<wbr>難しくても<wbr>大丈夫。<wbr>お子さまの<wbr>年齢や<wbr>性格、<wbr>その<wbr>日の<wbr>様子に<wbr>合わせて、<wbr>教本や<wbr>進み方を<wbr>その都度変えていきます。</p>
         <p><strong>結果だけでなく、<wbr>そこまでの<wbr>過程も<wbr>大切に<wbr>する</strong>のが<wbr>当教室の<wbr>レッスンです。</p>
@@ -99,10 +104,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--mist" aria-labelledby="feature-title">
   <div class="wrap">
     <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Features</span>
+      <span class="eyebrow has-ghost">Features<span class="ghost" data-t="Features" aria-hidden="true"></span></span>
       <h2 class="h2" id="feature-title"><span class="nw">あいみピアノ<wbr>教室の</span><span class="nw"><wbr>3つの<wbr>特長</span></h2>
     </div>
     <div class="features features--scroll">
@@ -138,7 +144,7 @@
 <section class="section" aria-labelledby="course-title">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Lesson &amp; Fee</span>
+      <span class="eyebrow has-ghost">Lesson &amp; Fee<span class="eyebrow__no num" aria-hidden="true">No.02</span><span class="ghost" data-t="Lesson &amp; Fee" aria-hidden="true"></span></span>
       <h2 class="h2" id="course-title">コースと<wbr>月謝</h2>
       <p class="lead"><strong class="nw">レベルが<wbr>上がっても</strong><strong class="nw"><wbr>月謝は<wbr>変わりません。</strong><span class="nw"><wbr>安心して</span><span class="nw"><wbr>レベルアップしていきましょう。</span></p>
     </div>
@@ -173,11 +179,12 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--surface" aria-labelledby="teacher-title">
   <div class="wrap teacher">
     <div class="teacher__photo teacher__photo--sm reveal"><img src="images/teacher.jpg" alt="講師の野口愛実" width="694" height="566" loading="lazy"></div>
     <div class="stack-s reveal">
-      <span class="eyebrow">Teacher</span>
+      <span class="eyebrow has-ghost">Teacher<span class="eyebrow__no num" aria-hidden="true">No.03</span><span class="ghost" data-t="Teacher" aria-hidden="true"></span></span>
       <p class="teacher__role">主宰・講師</p>
       <h2 class="teacher__name" id="teacher-title"><span class="ja">野口 愛実</span><span class="en">Aimi Noguchi</span></h2>
       <p>国立音楽大学附属中学校・<wbr>高等学校を<wbr>経て、<wbr>国立音楽大学 演奏・<wbr>創作学科 鍵盤楽器専修<wbr>（ピアノ）⁠を<wbr>卒業。<wbr>ダルクローズ・リトミック<wbr>専門<wbr>コースで<wbr>学び、<wbr>リトミックを<wbr>取り入れた<wbr>ピアノ指導法を<wbr>研究しています。</p>
@@ -194,7 +201,7 @@
 <section class="section" aria-labelledby="recital-title">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Recital</span>
+      <span class="eyebrow has-ghost">Recital<span class="eyebrow__no num" aria-hidden="true">No.04</span><span class="ghost" data-t="Recital" aria-hidden="true"></span></span>
       <h2 class="h2" id="recital-title">毎年の<wbr>発表会</h2>
       <p class="lead">年に<wbr>一度、<wbr>ホールでの<wbr>発表会を<wbr>開いています。<wbr>第1部は<wbr>ソロ、<wbr>第2部は<wbr>歌や<wbr>連弾の<wbr>アンサンブル。<wbr>舞台に<wbr>立つ経験が、<wbr>大きな<wbr>自信に<wbr>つながります。</p>
     </div>
@@ -217,10 +224,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--warm" aria-labelledby="voice-title">
   <div class="wrap">
     <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Voice</span>
+      <span class="eyebrow has-ghost">Voice<span class="ghost" data-t="Voice" aria-hidden="true"></span></span>
       <h2 class="h2" id="voice-title">保護者の<wbr>方の<wbr>声</h2>
       <p class="lead">「あいみ先生は<wbr>どんな<wbr>人？」⁠と、<wbr>保護者の<wbr>方に<wbr>うかがいました。</p>
     </div>
@@ -269,7 +277,7 @@
 <section class="section" aria-labelledby="flow-title">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Flow</span>
+      <span class="eyebrow has-ghost">Flow<span class="eyebrow__no num" aria-hidden="true">No.05</span><span class="ghost" data-t="Flow" aria-hidden="true"></span></span>
       <h2 class="h2" id="flow-title">ご入会までの<wbr>流れ</h2>
     </div>
     <ol class="steps">
@@ -292,10 +300,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--surface section--tight" aria-labelledby="news-title">
   <div class="wrap wrap--narrow">
     <div class="section-head reveal">
-      <span class="eyebrow">News</span>
+      <span class="eyebrow has-ghost">News<span class="eyebrow__no num" aria-hidden="true">No.06</span><span class="ghost" data-t="News" aria-hidden="true"></span></span>
       <h2 class="h2" id="news-title">お知らせ・<wbr>教室日記</h2>
     </div>
     <ul class="news-list reveal" id="latest-news">
@@ -311,7 +320,7 @@
 <section class="section section--tight" aria-labelledby="ig-title">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Instagram</span>
+      <span class="eyebrow has-ghost">Instagram<span class="eyebrow__no num" aria-hidden="true">No.07</span><span class="ghost" data-t="Instagram" aria-hidden="true"></span></span>
       <h2 class="h2" id="ig-title">教室の<wbr>毎日を<wbr>Instagramで</h2>
       <p class="lead">レッスンの<wbr>様子、<wbr>賞状や<wbr>シールの<wbr>ごほうび、<wbr>発表会の<wbr>準備などを<wbr>発信しています。</p>
     </div>
@@ -327,10 +336,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--mist" aria-labelledby="access-title">
   <div class="wrap access">
     <div class="stack-s reveal">
-      <span class="eyebrow">Access</span>
+      <span class="eyebrow has-ghost">Access<span class="eyebrow__no num" aria-hidden="true">No.08</span><span class="ghost" data-t="Access" aria-hidden="true"></span></span>
       <h2 class="h2" id="access-title">府中市四谷の<wbr>教室への<wbr>アクセス</h2>
       <p class="lead">府中市四谷に<wbr>ある、<wbr>個人宅の<wbr>ピアノ教室です。</p>
       <div class="areas">
@@ -358,7 +368,7 @@
   </div>
 </section>
 
-<section class="cta" aria-labelledby="cta-title">
+<div class="keys" aria-hidden="true"></div><section class="cta" aria-labelledby="cta-title">
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/><circle cx="200" cy="200" r="224" stroke-width="1" opacity="0.12"/><circle cx="200" cy="200" r="246" stroke-width="1" opacity="0.12"/></svg>
   <div class="wrap cta__inner">
     <span class="eyebrow">Trial Lesson</span>
@@ -405,6 +415,7 @@
 </footer>
 <div class="float-cta"><a class="btn btn--primary" href="contact">体験レッスンを<wbr>申し込む<svg class="btn__arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div>
 <script src="js/main.js?v=a5359928" defer></script>
+<script src="js/resonance.js?v=4da43aad" defer></script>
 <script src="js/config.js?v=3cf03fd3"></script><script src="js/news.js?v=8a288776" defer></script><script src="js/slots.js?v=2683e935" defer></script>
 </body>
 </html>

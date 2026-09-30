@@ -21,10 +21,12 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=90cd65d4">
+<link rel="stylesheet" href="css/resonance.css?v=d48aeaa8">
 <script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 
 </head>
 <body>
+<div class="resonance-bg" aria-hidden="true"><div class="aura"></div><canvas id="resonance"></canvas><div class="grain"></div></div>
 <a class="skip" href="#main">本文へ<wbr>スキップ</a>
 <header class="site-header" id="top">
   <div class="wrap site-header__inner">
@@ -47,7 +49,7 @@
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle class="r-fill" cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/></svg>
   <div class="wrap page-hero__inner">
     <ol class="crumbs"><li><a href="./">ホーム</a></li><li>体験レッスン・<wbr>お問い合わせ</li></ol>
-    <span class="eyebrow">Contact</span>
+    <span class="eyebrow has-ghost">Contact<span class="ghost" data-t="Contact" aria-hidden="true"></span></span>
     <h1>体験レッスン・<wbr>お問い合わせ</h1>
     <p>体験レッスンは<wbr>30分1,000円です。<wbr>ご希望の<wbr>曜日・<wbr>時間帯を<wbr>お知らせください。<wbr>内容を<wbr>確認して、<wbr>日程と<wbr>教室の<wbr>詳しい<wbr>場所を<wbr>ご連絡します。</p>
   </div>
@@ -197,6 +199,7 @@
 </footer>
 
 <script src="js/main.js?v=a5359928" defer></script>
+<script src="js/resonance.js?v=4da43aad" defer></script>
 <script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=2683e935" defer></script><script src="js/contact.js?v=7f617a30" defer></script>
 </body>
 </html>
