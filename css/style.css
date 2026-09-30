@@ -473,8 +473,10 @@ ul, ol { margin: 0; padding: 0; }
 /* ---------- courses / price ---------- */
 .courses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .course { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 26px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; }
-.course--featured { border-color: var(--accent); box-shadow: var(--shadow); position: relative; }
+.course { position: relative; }
+.course--featured { border-color: var(--accent); box-shadow: var(--shadow); }
 .course__tag { position: absolute; top: -12px; left: 24px; background: var(--accent-deep); color: var(--surface); font-size: 12px; letter-spacing: .1em; padding: 3px 12px; border-radius: 999px; }
+.course__tag--soft { background: var(--dusty-deep); }
 .course__for { font-size: 13px; letter-spacing: .1em; color: var(--dusty-deep); }
 .course h3 { font-size: 20px; }
 .course__desc { font-size: 14px; color: var(--muted); }
@@ -491,6 +493,36 @@ ul, ol { margin: 0; padding: 0; }
 .table thead th { background: var(--mist); font-size: 13px; letter-spacing: .1em; font-weight: 500; color: var(--muted); }
 .table tbody th { font-weight: 500; white-space: nowrap; }
 .table td.price { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 500; }
+.tax-note { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: right; }
+.fees-title { margin-top: clamp(32px, 5vw, 48px); margin-bottom: 14px; font-size: 18px; }
+.fees { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fee {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 12px; row-gap: 4px;
+  padding: 18px 22px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line);
+}
+.fee__name { font-size: 15px; font-weight: 600; }
+.fee__price { font-family: var(--f-display); font-size: 26px; line-height: 1.2; text-align: right; font-variant-numeric: tabular-nums; }
+.fee__price small, .trial-fee__price small, .one-lesson__price small { font-family: var(--f-body); font-size: 13px; color: var(--muted); margin-left: 4px; }
+.fee__note { grid-column: 1 / -1; font-size: 13px; color: var(--muted); }
+.trial-fee {
+  margin-top: clamp(28px, 4vw, 40px); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px;
+  padding: 22px 26px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--accent);
+}
+.trial-fee__body { display: grid; grid-template-columns: auto auto; align-items: baseline; justify-content: start; column-gap: 16px; }
+.trial-fee__label { font-weight: 700; color: var(--accent-deep); letter-spacing: .08em; }
+.trial-fee__price { font-family: var(--f-display); font-size: 30px; line-height: 1.2; }
+.trial-fee__note { grid-column: 1 / -1; font-size: 13px; color: var(--muted); margin-top: 4px; }
+.one-lesson { margin-top: 20px; padding: 16px 22px; border-radius: var(--radius); border: 1px dashed var(--mist-2); background: var(--paper); }
+.one-lesson__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.one-lesson__badge { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--mist); color: var(--dusty-deep); letter-spacing: .06em; align-self: center; }
+.one-lesson__price { font-family: var(--f-display); font-size: 22px; margin-left: auto; }
+.one-lesson__text { margin-top: 4px; font-size: 14px; color: var(--muted); }
+@media (max-width: 760px) {
+  .fees { grid-template-columns: 1fr; gap: 10px; }
+  .fee { padding: 14px 18px; }
+  .trial-fee { padding: 18px; }
+  .trial-fee .btn { width: 100%; }
+}
 @media (max-width: 600px) {
   .table { min-width: 0; }
   .table thead { display: none; }
