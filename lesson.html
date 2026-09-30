@@ -21,10 +21,12 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=90cd65d4">
+<link rel="stylesheet" href="css/resonance.css?v=d48aeaa8">
 <script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 
 </head>
 <body>
+<div class="resonance-bg" aria-hidden="true"><div class="aura"></div><canvas id="resonance"></canvas><div class="grain"></div></div>
 <a class="skip" href="#main">本文へ<wbr>スキップ</a>
 <header class="site-header" id="top">
   <div class="wrap site-header__inner">
@@ -47,7 +49,7 @@
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle class="r-fill" cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/></svg>
   <div class="wrap page-hero__inner">
     <ol class="crumbs"><li><a href="./">ホーム</a></li><li>レッスン・月謝</li></ol>
-    <span class="eyebrow">Lesson &amp; Fee</span>
+    <span class="eyebrow has-ghost">Lesson &amp; Fee<span class="ghost" data-t="Lesson &amp; Fee" aria-hidden="true"></span></span>
     <h1>レッスン・月謝</h1>
     <p>府中市四谷の<wbr>教室で、<wbr>3歳の<wbr>お子さまから<wbr>大人の<wbr>方<wbr>（女性限定）⁠まで、<wbr>すべて<wbr>マンツーマンの<wbr>個人レッスンです。<wbr>子どもの<wbr>習い事と<wbr>して<wbr>はじめる<wbr>方も、<wbr>大人に<wbr>なってから<wbr>再開する<wbr>方も<wbr>歓迎します。</p>
   </div>
@@ -56,7 +58,7 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Course</span>
+      <span class="eyebrow has-ghost">Course<span class="eyebrow__no num" aria-hidden="true">No.01</span><span class="ghost" data-t="Course" aria-hidden="true"></span></span>
       <h2 class="h2" id="course-title">コース・月謝</h2>
       <p class="lead"><strong class="nw">レベルが<wbr>上がっても</strong><strong class="nw"><wbr>月謝は<wbr>変わりません</strong><span class="nw"><wbr>（音楽学校の<wbr>受験対策を<wbr>除く）。</span><span class="nw"><wbr>安心して</span><span class="nw"><wbr>レベルアップしていきましょう。</span></p>
     </div>
@@ -91,10 +93,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--mist">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Fee</span>
+      <span class="eyebrow has-ghost">Fee<span class="eyebrow__no num" aria-hidden="true">No.02</span><span class="ghost" data-t="Fee" aria-hidden="true"></span></span>
       <h2 class="h2" id="fee-title">その他の<wbr>費用</h2>
       <p class="lead">月謝の<wbr>ほかに<wbr>かかる<wbr>費用です。</p>
     </div>
@@ -128,7 +131,7 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Schedule</span>
+      <span class="eyebrow has-ghost">Schedule<span class="eyebrow__no num" aria-hidden="true">No.03</span><span class="ghost" data-t="Schedule" aria-hidden="true"></span></span>
       <h2 class="h2">開講日</h2>
       <p class="lead">人気の<wbr>夕方の<wbr>時間帯は<wbr>埋まりやすくなって<wbr>います。<wbr>下記以外の<wbr>時間も<wbr>ご相談に<wbr>応じます。</p>
     </div>
@@ -144,10 +147,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--surface">
   <div class="wrap split split--wide-body">
     <div class="split__body reveal">
-      <span class="eyebrow">Online &amp; Video</span>
+      <span class="eyebrow has-ghost">Online &amp; Video<span class="eyebrow__no num" aria-hidden="true">No.04</span><span class="ghost" data-t="Online &amp; Video" aria-hidden="true"></span></span>
       <h2 class="h2">送迎できない<wbr>日も、<br>レッスンを。</h2>
       <p class="lead">「今日は<wbr>レッスンの<wbr>送迎が<wbr>できない…」⁠と<wbr>いう<wbr>日も<wbr>安心です。<wbr>通常なら<wbr>お休みに<wbr>なってしまう<wbr>日を、<wbr>次の<wbr>どちらかに<wbr>変更できます。</p>
       <div class="grid-2">
@@ -168,7 +172,7 @@
 <section class="section">
   <div class="wrap wrap--narrow">
     <div class="section-head reveal">
-      <span class="eyebrow">Rules</span>
+      <span class="eyebrow has-ghost">Rules<span class="eyebrow__no num" aria-hidden="true">No.05</span><span class="ghost" data-t="Rules" aria-hidden="true"></span></span>
       <h2 class="h2">お休み・振替に<wbr>ついて</h2>
     </div>
     <div class="stack-s reveal">
@@ -192,7 +196,7 @@
   </div>
 </section>
 
-<section class="cta" aria-labelledby="cta-title">
+<div class="keys" aria-hidden="true"></div><section class="cta" aria-labelledby="cta-title">
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/><circle cx="200" cy="200" r="224" stroke-width="1" opacity="0.12"/><circle cx="200" cy="200" r="246" stroke-width="1" opacity="0.12"/></svg>
   <div class="wrap cta__inner">
     <span class="eyebrow">Trial Lesson</span>
@@ -239,6 +243,7 @@
 </footer>
 <div class="float-cta"><a class="btn btn--primary" href="contact">体験レッスンを<wbr>申し込む<svg class="btn__arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div>
 <script src="js/main.js?v=a5359928" defer></script>
+<script src="js/resonance.js?v=4da43aad" defer></script>
 <script src="js/config.js?v=3cf03fd3"></script><script src="js/slots.js?v=2683e935" defer></script>
 </body>
 </html>

@@ -244,21 +244,53 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <link rel="apple-touch-icon" href="{root}images/apple-touch-icon.png">
 <link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{root}css/style.css">
+<link rel="stylesheet" href="{root}css/resonance.css">
 <script>document.documentElement.classList.add('js');setTimeout(function(){{[].forEach.call(document.querySelectorAll('.reveal'),function(e){{e.classList.add('is-in')}})}},4000)</script>
 {extra_head}
 </head>
 <body>
+<div class="resonance-bg" aria-hidden="true"><div class="aura"></div>{'' if current == "admin.html" else '<canvas id="resonance"></canvas>'}<div class="grain"></div></div>
 {header(root, current)}
 <main id="main">
-{body}
-{cta_band(root) if cta else ''}
+{resonance(body, current)}
+{'<div class="keys" aria-hidden="true"></div>' + cta_band(root) if cta else ''}
 </main>
 {footer(root, float_cta=current not in ("contact.html", "admin.html"))}
 <script src="{root}js/main.js" defer></script>
+<script src="{root}js/resonance.js" defer></script>
 {extra_js}
 </body>
 </html>
 """)))
+
+
+def resonance(body, current):
+    """Resonance（音の波紋）デザインの飾りを本文に書き出す。
+    ・見出しの英字ラベル（eyebrow）の後ろに大きな英字（.ghost）と番号（No.01〜）
+    ・色つきセクションの前に鍵盤の区切り線（.keys）"""
+    if current in ("admin.html", "404.html"):
+        return body
+    n = 0
+    out, pos = [], 0
+    for m in re.finditer(r'<span class="eyebrow">(.*?)</span>', body):
+        text = html.unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip()
+        before = body[:m.start()]
+        in_hero = before.rfind('class="page-hero') > before.rfind("</section>")
+        # 直前の開きタグが中央そろえの見出し枠なら番号を付けない
+        opener = re.search(r'<div class="([^"]*)"[^>]*>\s*$', before)
+        centered = bool(opener and "section-head--center" in opener.group(1))
+        num = ""
+        if not in_hero and not centered:
+            n += 1
+            num = f'<span class="eyebrow__no num" aria-hidden="true">No.{n:02d}</span>'
+        ghost = f'<span class="ghost" data-t="{e(text)}" aria-hidden="true"></span>'
+        out.append(body[pos:m.start()])
+        out.append(f'<span class="eyebrow has-ghost">{m.group(1)}{num}{ghost}</span>')
+        pos = m.end()
+    out.append(body[pos:])
+    body = "".join(out)
+    body = re.sub(r'(<section class="section section--(?:mist|surface|warm)\b)', r'<div class="keys" aria-hidden="true"></div>\n\1', body)
+    return body
 
 
 def clean_links(html_text):
@@ -279,7 +311,7 @@ def clean_links(html_text):
 _BUDOUX = None
 # 長いカタカナ語は、狭い画面ではこの切れ目で折ってよい
 SPLIT_WORDS = ["発表会|無事", "プライバシー|ポリシー", "ヤングアーチスト|ピアノ|コンクール", "ピアノ|コンクール", "オンライン|レッスン", "ダルクローズ|リトミック"]
-KEEP_WORDS = ["その他", "習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
+KEEP_WORDS = ["休んだ場合", "ピアノ発表会", "その他", "習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
               "ソルフェージュ", "コインパーキング", "ステップアップ", "グレード", "コンクール", "アイムホール", "バルトホール",
               "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅"]
 
@@ -657,7 +689,7 @@ def subset_font():
     display_tags = {"h1", "h2", "h3", "h4"}
     display_classes = {"brand__ja", "concept__quote", "cycle__node", "facts__value", "merits", "day__name", "teacher__name",
                        "timeline__what", "poster", "hero__badge", "course__price", "cta__price", "step__no", "numbered",
-                       "slots__title", "admin-day__head", "admin-tabs", "cycle__center"}
+                       "slots__title", "admin-day__head", "admin-tabs", "cycle__center", "marquee"}
 
     class P(HTMLParser):
         def __init__(self):

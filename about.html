@@ -21,10 +21,12 @@
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preload" href="fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css?v=90cd65d4">
+<link rel="stylesheet" href="css/resonance.css?v=d48aeaa8">
 <script>document.documentElement.classList.add('js');setTimeout(function(){[].forEach.call(document.querySelectorAll('.reveal'),function(e){e.classList.add('is-in')})},4000)</script>
 
 </head>
 <body>
+<div class="resonance-bg" aria-hidden="true"><div class="aura"></div><canvas id="resonance"></canvas><div class="grain"></div></div>
 <a class="skip" href="#main">本文へ<wbr>スキップ</a>
 <header class="site-header" id="top">
   <div class="wrap site-header__inner">
@@ -47,7 +49,7 @@
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle class="r-fill" cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/></svg>
   <div class="wrap page-hero__inner">
     <ol class="crumbs"><li><a href="./">ホーム</a></li><li>教室に<wbr>ついて</li></ol>
-    <span class="eyebrow">About</span>
+    <span class="eyebrow has-ghost">About<span class="ghost" data-t="About" aria-hidden="true"></span></span>
     <h1>教室に<wbr>ついて</h1>
     <p>「音楽そのものを<wbr>楽しんで<wbr>ほしい！」⁠と<wbr>いう<wbr>想いで、<wbr>年齢に<wbr>合わせた<wbr>レッスンを<wbr>行っています。</p>
   </div>
@@ -56,7 +58,7 @@
 <section class="section">
   <div class="wrap split">
     <div class="split__body reveal">
-      <span class="eyebrow">Our Lesson</span>
+      <span class="eyebrow has-ghost">Our Lesson<span class="eyebrow__no num" aria-hidden="true">No.01</span><span class="ghost" data-t="Our Lesson" aria-hidden="true"></span></span>
       <h2 class="h2">「できる！」⁠が<wbr>増える、<br>自信に<wbr>つながる。</h2>
       <div class="prose">
         <p>すべての<wbr>レッスンは、<wbr>生徒さん<wbr>それぞれの<wbr>レベルや<wbr>目的に<wbr>合わせて<wbr>行います。<strong><wbr>楽譜が<wbr>読めない、<wbr>ピアノが<wbr>弾けない<wbr>方も<wbr>大丈夫。</strong><wbr>1から<wbr>丁寧に<wbr>お教えします。</p>
@@ -68,10 +70,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--mist">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Four Elements</span>
+      <span class="eyebrow has-ghost">Four Elements<span class="eyebrow__no num" aria-hidden="true">No.02</span><span class="ghost" data-t="Four Elements" aria-hidden="true"></span></span>
       <h2 class="h2"><span class="nw">ピアノを<wbr>演奏する<wbr>ために</span><span class="nw"><wbr>必要な<wbr>4つの<wbr>こと</span></h2>
       <p class="lead">当教室では、<wbr>この<wbr>4つが<wbr>そろう<wbr>ことで<wbr>演奏が<wbr>楽しくなると<wbr>考えています。</p>
     </div>
@@ -115,7 +118,7 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Benefits</span>
+      <span class="eyebrow has-ghost">Benefits<span class="eyebrow__no num" aria-hidden="true">No.03</span><span class="ghost" data-t="Benefits" aria-hidden="true"></span></span>
       <h2 class="h2">ピアノが<wbr>弾けるように<wbr>なると</h2>
       <p class="lead">小さな<wbr>「できた！」⁠の<wbr>積み重ねが、<wbr>一生ものの<wbr>力に<wbr>つながっていきます。</p>
     </div>
@@ -139,10 +142,11 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--surface">
   <div class="wrap split split--reverse">
     <div class="split__body reveal">
-      <span class="eyebrow">Made to Order</span>
+      <span class="eyebrow has-ghost">Made to Order<span class="eyebrow__no num" aria-hidden="true">No.04</span><span class="ghost" data-t="Made to Order" aria-hidden="true"></span></span>
       <h2 class="h2">性格に<wbr>合わせて、<br>進み方を<wbr>変える。</h2>
       <p class="lead">生徒さんには<wbr>それぞれの<wbr>性格が<wbr>あります。<wbr>その<wbr>時々の<wbr>様子に<wbr>合わせて、<wbr>教本や<wbr>進度を<wbr>都度変更しています。</p>
       <ul class="bubbles" aria-label="生徒さんのタイプ">
@@ -160,7 +164,7 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">Visible Effort</span>
+      <span class="eyebrow has-ghost">Visible Effort<span class="eyebrow__no num" aria-hidden="true">No.05</span><span class="ghost" data-t="Visible Effort" aria-hidden="true"></span></span>
       <h2 class="h2">日々の<wbr>努力を<wbr>「見える化」</h2>
       <p class="lead">結果だけでなく、<wbr>その<wbr>過程も<wbr>大事にします。<wbr>がんばりが<wbr>目に<wbr>見えると、<wbr>続ける<wbr>力に<wbr>なります。</p>
     </div>
@@ -186,11 +190,12 @@
   </div>
 </section>
 
+<div class="keys" aria-hidden="true"></div>
 <section class="section section--warm">
   <div class="wrap wrap--narrow">
     <div class="message reveal">
       <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/></svg>
-      <span class="eyebrow">Keep Going</span>
+      <span class="eyebrow has-ghost">Keep Going<span class="eyebrow__no num" aria-hidden="true">No.06</span><span class="ghost" data-t="Keep Going" aria-hidden="true"></span></span>
       <h2 class="h2">なに<wbr>よりも、<wbr>続ける<wbr>こと。</h2>
       <div class="prose">
         <p>「さあ、<wbr>ダイエットを<wbr>始めるぞ！<wbr>これから<wbr>毎日<wbr>ランニングする！」⁠と<wbr>思っても、<wbr>三日坊主に<wbr>なってしまう<wbr>ことは<wbr>ありますよね。<wbr>ピアノの<wbr>練習も<wbr>同じです。<wbr>でも、<wbr>それで<wbr>諦めてしまうのは<wbr>もったいない。</p>
@@ -201,7 +206,7 @@
   </div>
 </section>
 
-<section class="cta" aria-labelledby="cta-title">
+<div class="keys" aria-hidden="true"></div><section class="cta" aria-labelledby="cta-title">
   <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><circle cx="200" cy="200" r="70" stroke-width="1" opacity="0.70"/><circle cx="200" cy="200" r="92" stroke-width="1" opacity="0.61"/><circle cx="200" cy="200" r="114" stroke-width="1" opacity="0.52"/><circle cx="200" cy="200" r="136" stroke-width="1" opacity="0.43"/><circle cx="200" cy="200" r="158" stroke-width="1" opacity="0.34"/><circle cx="200" cy="200" r="180" stroke-width="1" opacity="0.25"/><circle cx="200" cy="200" r="202" stroke-width="1" opacity="0.16"/><circle cx="200" cy="200" r="224" stroke-width="1" opacity="0.12"/><circle cx="200" cy="200" r="246" stroke-width="1" opacity="0.12"/></svg>
   <div class="wrap cta__inner">
     <span class="eyebrow">Trial Lesson</span>
@@ -248,6 +253,7 @@
 </footer>
 <div class="float-cta"><a class="btn btn--primary" href="contact">体験レッスンを<wbr>申し込む<svg class="btn__arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a></div>
 <script src="js/main.js?v=a5359928" defer></script>
+<script src="js/resonance.js?v=4da43aad" defer></script>
 <script src="js/elements.js?v=e851aedc" defer></script>
 </body>
 </html>
