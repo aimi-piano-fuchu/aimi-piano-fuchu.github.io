@@ -150,7 +150,7 @@ def footer(root, float_cta=True):
     <div class="site-footer__grid">
       <div class="site-footer__about">
         <a class="brand" href="{root}index.html">{LOGO}<span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span></a>
-        <p><span class="nw">{SITE['area']}のピアノ教室</span><span class="nw">（愛実ピアノ教室）。</span><span class="nw">リトミックを取り入れた個人レッスンです。</span></p>
+        <p><span class="nw">{SITE['area']}のピアノ教室。</span><span class="nw">リトミックを取り入れた個人レッスンです。</span></p>
         <a class="ig-link" href="{SITE['instagram']}" target="_blank" rel="noopener">{ICONS['ig']}@aimi_piano_</a>
       </div>
       <div>
@@ -180,6 +180,13 @@ def footer(root, float_cta=True):
   </div>
 </footer>
 """ + (f'<div class="float-cta"><a class="btn btn--primary" href="{root}contact.html">体験レッスンを申し込む{ICONS["arrow"]}</a></div>' if float_cta else "")
+
+
+# 教室の別名（表示はせず、検索エンジン向けの構造化データでだけ伝える。「愛美」は打ち間違いでも見つかるように）
+ALT_NAMES = ["愛実ピアノ教室", "愛美ピアノ教室", "Aimi Piano School", "あいみピアノ"]
+ALT_LD = ('<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "MusicSchool",
+          "@id": SITE["base_url"] + "/#school", "name": SITE["name"], "alternateName": ALT_NAMES, "url": SITE["base_url"] + "/"},
+          ensure_ascii=False) + '</script>')
 
 
 def breadcrumb_ld(body, current):
@@ -238,6 +245,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <meta property="og:image" content="{og_image}">
 {og_url}
 {breadcrumb_ld(body, current)}
+{'' if current in ("index.html", "") else ALT_LD}
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{root}images/favicon.svg" type="image/svg+xml">
