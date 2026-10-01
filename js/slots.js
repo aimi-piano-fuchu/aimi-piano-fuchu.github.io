@@ -121,7 +121,10 @@
       } else if (kind === 'sentence') {
         el.innerHTML = days.map(function (d) { return '<span class="nw">' + esc(d.day + hoursOf(d)) + '</span>'; }).join('、');
       } else if (kind === 'hint') {
-        el.innerHTML = days.map(function (d) { return '<span class="nw">' + esc(d.day + (hoursOf(d) ? 'は' + hoursOf(d) : '')) + '</span>'; }).join('、') + (days.some(hoursOf) ? 'です。' : '。');
+        var tail = days.some(hoursOf) ? 'です。' : '。';
+        el.innerHTML = days.map(function (d, i) {
+          return '<span class="nw">' + esc(d.day + (hoursOf(d) ? 'は' + hoursOf(d) : '')) + (i < days.length - 1 ? '、' : tail) + '</span>';
+        }).join('');
       } else if (kind === 'choices') {
         var checked = {};
         el.querySelectorAll('input:checked').forEach(function (i) { checked[i.value] = true; });
