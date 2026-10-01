@@ -375,3 +375,9 @@ body.page-contact .header-cta, body.page-contact .gnav__cta { display: none; }
 /* 循環図の丸は不透明に（後ろの円の線が透けて見えないように） */
 .cycle__node, .rz-static .cycle__node { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
 .cycle__node--a, .rz-static .cycle__node--a { background: var(--accent-soft); }
+/* トップの写真のバッジ：音符ではなく教室のロゴ（A＋音符）を入れる */
+.hero__badge-dot svg.badge-logo { width: 20px; height: 20px; }
+@media (min-width: 861px) { .hero__badge-dot svg.badge-logo { width: 24px; height: 24px; } }
+.hero__badge strong { white-space: nowrap; }
+.hero__badge { width: max-content; max-width: calc(100vw - 32px); }
+@media (max-width: 860px) { .hero__badge strong { letter-spacing: .02em; } }

@@ -473,6 +473,7 @@ def bust_cache(html_text):
 
 def fill(text, root):
     text = text.replace("{{root}}", root)
+    text = text.replace("{{logo}}", LOGO.replace('class="brand__mark"', 'class="badge-logo"'))
     text = re.sub(r"\{\{icon:(\w+)\}\}", lambda m: ICONS[m.group(1)], text)
     text = text.replace("{{ripple}}", ripple())
     text = text.replace("{{ripple-soft}}", ripple(rings=6, fill=False))
