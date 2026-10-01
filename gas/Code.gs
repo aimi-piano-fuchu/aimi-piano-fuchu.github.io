@@ -48,7 +48,9 @@ function doPost(e) {
 // ID（メールアドレス）とパスコードの確認。10分間に10回まちがえたら、しばらく受け付けない
 function checkPass_(id, pass) {
   var cache = CacheService.getScriptCache();
-  var fails = Number(cache.get('pass_fails') || 0);
+  // 間違いの回数は ID ごとに数える（他人がわざと間違えても、先生のログインは止まらない）
+  var key = 'pass_fails_' + String(id || '').trim().toLowerCase().slice(0, 80);
+  var fails = Number(cache.get(key) || 0);
   if (fails >= 10) return false;
   // 「メール パスコード」の組を順に読む（改行でもスペース区切りの1行でも可）
   var words = String(PropertiesService.getScriptProperties().getProperty('ADMIN_ACCOUNTS') || '').trim().split(/\s+/);
@@ -57,7 +59,7 @@ function checkPass_(id, pass) {
   for (var i = 0; i + 1 < words.length; i += 2) {
     if (who && pass && words[i].toLowerCase() === who && words[i + 1] === pass) ok = true;
   }
-  if (!ok) cache.put('pass_fails', String(fails + 1), 600);
+  if (!ok) cache.put(key, String(fails + 1), 600);
   return ok;
 }
 
@@ -158,6 +160,13 @@ function deleteNews_(p) {
 function contact_(p) {
   try {
     if (!p.name || !p.email) return json_({ result: 'error', message: 'missing fields' });
+    if (p.website) return json_({ result: 'success' }); // ロボットよけ（人には見えない欄に入力があれば送らない）
+    // 同じメールアドレスへの送信は10分に3回まで（確認メールを迷惑メールに悪用されないように）
+    var cache = CacheService.getScriptCache();
+    var mkey = 'mail_' + String(p.email).trim().toLowerCase().slice(0, 100);
+    var sent = Number(cache.get(mkey) || 0);
+    if (sent >= 3) return json_({ result: 'error', message: 'too many' });
+    cache.put(mkey, String(sent + 1), 600);
 
     var row = [
       new Date(), p.type || '', p.name || '', p.kana || '', p.age || '', p.experience || '',
