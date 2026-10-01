@@ -150,7 +150,7 @@ def footer(root, float_cta=True):
     <div class="site-footer__grid">
       <div class="site-footer__about">
         <a class="brand" href="{root}index.html">{LOGO}<span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span></a>
-        <p><span class="nw">{SITE['name']}（愛実ピアノ教室）は、</span><span class="nw">{SITE['area']}のピアノ教室です。</span><span class="nw">リトミックを取り入れた個人レッスンで、</span><span class="nw">3歳から大人の方（女性）まで、</span><span class="nw">一人ひとりに合わせて指導しています。</span></p>
+        <p><span class="nw">{SITE['area']}のピアノ教室</span><span class="nw">（愛実ピアノ教室）。</span><span class="nw">リトミックを取り入れた個人レッスンです。</span></p>
         <a class="ig-link" href="{SITE['instagram']}" target="_blank" rel="noopener">{ICONS['ig']}@aimi_piano_</a>
       </div>
       <div>
