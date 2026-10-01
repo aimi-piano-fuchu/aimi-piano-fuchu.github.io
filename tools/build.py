@@ -137,7 +137,7 @@ def cta_band(root):
   <div class="wrap cta__inner">
     <span class="eyebrow">Trial Lesson</span>
     <h2 id="cta-title">まずは体験レッスンへ</h2>
-    <p><span class="nw">楽譜が読めなくても、</span><span class="nw">ピアノに触ったことがなくても</span><span class="nw">大丈夫です。</span><span class="nw">教室の雰囲気や先生との相性を、</span><span class="nw">30分の体験レッスンで</span><span class="nw">確かめてください。</span></p>
+    <p><span class="nw">楽譜が読めなくても大丈夫。</span><span class="nw">ピアノがはじめての方も歓迎です。</span><span class="nw">教室の雰囲気や先生との相性を、</span><span class="nw">30分の体験で確かめてください。</span></p>
     <p class="cta__price">体験レッスン 30分 <b class="num">1,000</b>円</p>
     <a class="btn btn--primary" href="{root}contact.html">体験レッスンを申し込む{ICONS['arrow']}</a>
   </div>
@@ -150,7 +150,7 @@ def footer(root, float_cta=True):
     <div class="site-footer__grid">
       <div class="site-footer__about">
         <a class="brand" href="{root}index.html">{LOGO}<span class="brand__text"><span class="brand__ja">{SITE['name']}</span><span class="brand__en">{SITE['name_en']}</span></span></a>
-        <p>{SITE['name']}（愛実ピアノ教室）は、{SITE['area']}のピアノ教室です。リトミックを取り入れた個人レッスンで、3歳から大人の方（女性）まで一人ひとりに合わせて指導しています。</p>
+        <p><span class="nw">{SITE['name']}（愛実ピアノ教室）は、</span><span class="nw">{SITE['area']}のピアノ教室です。</span><span class="nw">リトミックを取り入れた個人レッスンで、</span><span class="nw">3歳から大人の方（女性）まで、</span><span class="nw">一人ひとりに合わせて指導しています。</span></p>
         <a class="ig-link" href="{SITE['instagram']}" target="_blank" rel="noopener">{ICONS['ig']}@aimi_piano_</a>
       </div>
       <div>
@@ -312,9 +312,9 @@ def clean_links(html_text):
 _BUDOUX = None
 # 長いカタカナ語は、狭い画面ではこの切れ目で折ってよい
 SPLIT_WORDS = ["発表会|無事", "プライバシー|ポリシー", "ヤングアーチスト|ピアノ|コンクール", "ピアノ|コンクール", "オンライン|レッスン", "ダルクローズ|リトミック"]
-KEEP_WORDS = ["という", "はじめる方も", "再開する方も", "休んだ場合", "ピアノ発表会", "その他", "習い事", "飾り付け", "やむを得ず", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
+KEEP_WORDS = ["という", "はじめる方も", "再開する方も", "休んだ場合", "ピアノ発表会", "その他", "習い事", "飾り付け", "やむを得ず", "やむを得ない", "いくつか", "一人ひとり", "ごほうび", "か月", "取り入れ", "身につけ", "読み書き", "例え", "うかがい", "よくある質問", "お一人", "その都度", "その時々", "音楽そのもの", "お子さま", "問い合わせ", "体験レッスン", "ワンレッスン", "レッスン", "ピアノ教室", "リトミック",
               "ソルフェージュ", "コインパーキング", "ステップアップ", "グレード", "コンクール", "アイムホール", "バルトホール",
-              "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅"]
+              "女性総合センター", "市民活動センター", "運営設備費", "入会金", "月謝", "発表会", "万願寺駅", "中河原駅", "矢川駅", "じっと座"]
 
 
 def phrase_breaks(html_text):
