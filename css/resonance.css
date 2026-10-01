@@ -195,18 +195,7 @@ main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden �
 .h2 { font-size: clamp(26px, 3.6vw, 40px); line-height: 1.45; }
 
 /* ---------- 音階のように段をずらす（PC・3枚並びのときだけ） ---------- */
-@media (min-width: 1025px) {
-  .features:has(> .feature:nth-child(3):last-child) { padding-bottom: 48px; }
-  .features:has(> .feature:nth-child(3):last-child) > .feature:nth-child(2),
-  .js .features:has(> .feature:nth-child(3):last-child) > .reveal.is-in:nth-child(2) { transform: translateY(24px); }
-  .features:has(> .feature:nth-child(3):last-child) > .feature:nth-child(3),
-  .js .features:has(> .feature:nth-child(3):last-child) > .reveal.is-in:nth-child(3) { transform: translateY(48px); }
-}
-@media (min-width: 861px) {
-  .steps:has(> .step:nth-child(3):last-child) { align-items: start; }
-  .steps:has(> .step:nth-child(3):last-child) > .step:nth-child(1) { margin-top: 96px; }
-  .steps:has(> .step:nth-child(3):last-child) > .step:nth-child(2) { margin-top: 48px; }
-}
+
 .teacher__photo { box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--dusty-deep) 60%, transparent); }
 /* 発表会の写真：説明文は写真の外に、少し間をあけて置く（枠の中に詰め込まない） */
 .recital__photo { overflow: visible; border-radius: 0; box-shadow: none; }
