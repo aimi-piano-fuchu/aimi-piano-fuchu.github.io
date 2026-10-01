@@ -299,7 +299,11 @@ main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden �
 @media (max-width: 560px) { .ghost { margin-bottom: .08em; } }
 /* 総点検（9/30）の調整 */
 .box .eyebrow.has-ghost, .message .eyebrow.has-ghost { margin-top: 0; }
-.voices--scroll, .features--scroll { align-items: flex-start; }
+/* 保護者の声・習って良かったことのカードも高さをそろえる */
+.voices, .voices--scroll { align-items: stretch; }
+/* 3つの特徴のカードは高さをそろえる */
+.features, .features--scroll { align-items: stretch; }
+.features > .feature { height: auto; }
 .cta__inner { padding-inline: max(24px, var(--gutter)); }
 .cta .ripple { opacity: .5; }
 .site-footer a { white-space: nowrap; }
@@ -419,3 +423,13 @@ body.page-contact .header-cta, body.page-contact .gnav__cta { display: none; }
   .hero__clouds .c5 { top: 92vw; }
 }
 .rz-static .hero__clouds img { animation: none; }
+/* スマホ・タブレットでは雲の写真も揺らさない（動作を軽く） */
+@media (pointer: coarse), (max-width: 760px) { .hero__clouds img { animation: none; } }
+/* トップの講師欄（スマホ）：写真のすぐ下の見出しの英字が写真にかからないよう間をあける */
+@media (max-width: 860px) { .teacher__photo + .stack-s { padding-top: 24px; } }
+/* トップの先生の写真・バッジは講師紹介へのリンク */
+a.hero__photo { display: block; }
+a.hero__badge { text-decoration: none; }
+a.hero__photo, a.hero__badge { transition: transform .3s ease, box-shadow .3s ease; -webkit-tap-highlight-color: transparent; }
+@media (hover: hover) { a.hero__photo:hover { transform: translateY(-3px); } }
+a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 4px; }
