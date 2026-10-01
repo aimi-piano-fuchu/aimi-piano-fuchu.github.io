@@ -118,12 +118,12 @@
 /* スマホ：写真の左右の余白に、縦書きの大きな英字（左 Piano・右 Lesson）。他のセクションの英字と同じ線の書体 */
 @media (max-width: 860px) {
   .hero__ghost {
-    top: clamp(40px, 9vw, 64px); bottom: auto; left: max(0px, calc(50% - min(39vw, 180px) - 1.02em));
-    font-size: clamp(60px, 17vw, 96px); writing-mode: vertical-rl; transform: rotate(180deg);
+    top: clamp(40px, 9vw, 64px); bottom: auto; left: max(0px, calc(50% - min(43vw, 200px) - .92em));
+    font-size: clamp(48px, 13vw, 84px); writing-mode: vertical-rl; transform: rotate(180deg);
     -webkit-text-stroke: 1px color-mix(in srgb, var(--dusty) 70%, transparent); letter-spacing: .02em; opacity: 1;
   }
   .hero__ghost--sub {
-    display: block; transform: none; left: auto; right: max(0px, calc(50% - min(39vw, 180px) - 1.02em));
+    display: block; transform: none; left: auto; right: max(0px, calc(50% - min(43vw, 200px) - .92em));
     top: clamp(140px, 40vw, 220px);
     -webkit-text-stroke: 1px color-mix(in srgb, var(--accent) 70%, transparent);
   }
@@ -305,7 +305,7 @@ main > section, main > .section, main > .hero { overflow-x: clip; } /* hidden �
 .site-footer a { white-space: nowrap; }
 /* 背の低いスマホ（iPhone SE 等）では、最初の画面にキャッチコピーとボタンが入るよう写真を小さく */
 @media (max-width: 560px) and (max-height: 700px) {
-  .hero__visual { width: min(100%, 180px); margin-inline: auto; }
+  .hero__visual { width: min(100%, 210px); margin-inline: auto; }
   .hero__inner { gap: 16px; }
 }
 @media (max-width: 560px) { .page-hero + .section .teacher__photo { max-width: 78%; margin-inline: auto; } }
@@ -381,3 +381,6 @@ body.page-contact .header-cta, body.page-contact .gnav__cta { display: none; }
 .hero__badge strong { white-space: nowrap; }
 .hero__badge { width: max-content; max-width: calc(100vw - 32px); }
 @media (max-width: 860px) { .hero__badge strong { letter-spacing: .02em; } }
+/* スマホのトップ写真を少し大きく（左右の縦書き英字との間を詰める） */
+@media (max-width: 860px) { .hero__visual { width: min(86%, 400px); } }
+@media (max-width: 560px) and (max-height: 700px) { .hero__visual { width: min(100%, 210px); } }
