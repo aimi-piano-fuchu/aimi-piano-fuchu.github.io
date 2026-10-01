@@ -71,14 +71,17 @@
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     showAll();
   } else {
+    var revealSeen = false;
     var io = new IntersectionObserver(function (entries) {
+      revealSeen = true;
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
     items.forEach(function (el) { io.observe(el); });
-    // 画面外で IO が動かない環境（プレビューなど）でも本文が消えたままにならないように
-    setTimeout(showAll, 2500);
+    document.documentElement.classList.add('reveal-ready');
+    // 監視が一度も動かない環境（古い端末・プレビューなど）だけ、本文が消えたままにならないよう全部出す
+    setTimeout(function () { if (!revealSeen) showAll(); }, 2500);
   }
 
   // ---- news list: category filter + pagination

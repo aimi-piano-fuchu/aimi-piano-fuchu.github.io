@@ -245,7 +245,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{root}css/style.css">
 <link rel="stylesheet" href="{root}css/resonance.css">
-<script>document.documentElement.classList.add('js');setTimeout(function(){{[].forEach.call(document.querySelectorAll('.reveal'),function(e){{e.classList.add('is-in')}})}},4000)</script>
+<script>document.documentElement.classList.add('js');setTimeout(function(){{if(document.documentElement.classList.contains('reveal-ready'))return;[].forEach.call(document.querySelectorAll('.reveal'),function(e){{e.classList.add('is-in')}})}},4000)</script>
 {extra_head}
 </head>
 <body class="page-{(current or "index.html").replace(".html", "").replace("/", "-") or "index"}">
