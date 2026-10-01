@@ -114,7 +114,21 @@
   .hero__title { font-size: clamp(40px, 4.4vw, 56px); letter-spacing: .06em; line-height: 1.32; }
   .hero__visual { width: min(100%, 400px); }
 }
-@media (max-width: 860px) { .hero__ghost { display: none; } }
+.hero__ghost--sub { display: none; }
+/* スマホ：写真の左右の余白に、縦書きの大きな英字（左 Piano・右 Lesson）。他のセクションの英字と同じ線の書体 */
+@media (max-width: 860px) {
+  .hero__ghost {
+    top: clamp(40px, 9vw, 64px); bottom: auto; left: max(0px, calc(50% - min(39vw, 180px) - 1.02em));
+    font-size: clamp(60px, 17vw, 96px); writing-mode: vertical-rl; transform: rotate(180deg);
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--dusty) 70%, transparent); letter-spacing: .02em; opacity: 1;
+  }
+  .hero__ghost--sub {
+    display: block; transform: none; left: auto; right: max(0px, calc(50% - min(39vw, 180px) - 1.02em));
+    top: clamp(140px, 40vw, 220px);
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+}
+
 .hero__photo { border: 1px solid var(--glass-edge); box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--dusty-deep) 55%, transparent); }
 /* 基本情報：ヒーローに重なって浮くガラスの帯 */
 .facts { border: 0; position: relative; z-index: 3; margin-top: clamp(-72px, -5vw, -32px); }
@@ -346,7 +360,7 @@ body.page-contact .header-cta, body.page-contact .gnav__cta { display: none; }
 @media (min-width: 761px) and (max-width: 1024px) { .features:has(> .feature:nth-child(3):last-child) { grid-template-columns: 1fr; max-width: 640px; margin-inline: auto; } }
 @media (min-width: 861px) { .elements { align-items: stretch; } .elements__panels, .elements__panel { height: 100%; } }
 .section--mist .grid-2 { align-items: start; }
-@media (max-width: 1280px) { .hero__ghost { opacity: .5; } }
+@media (min-width: 861px) and (max-width: 1280px) { .hero__ghost { opacity: .5; } }
 @media (min-width: 1600px) { .hero__visual { width: min(100%, 460px); } .hero__title { font-size: 56px; } }
 .gnav__list a[aria-current="page"] { font-weight: 600; }
 .btn--ghost:hover { background: color-mix(in srgb, var(--dusty-deep) 10%, transparent); color: var(--dusty-deep); }
