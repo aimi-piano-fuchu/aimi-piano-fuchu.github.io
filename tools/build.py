@@ -214,20 +214,20 @@ def breadcrumb_ld(body, current):
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False) + "</script>"
 
 
-def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None, og_image=None):
+def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None, og_image=None, og_type="website"):
     if not full_title:
         # 検索結果で教室名が先に出るように「教室名｜ページ名」
         full_title = f"{SITE['name']}｜{title}" if title else f"{SITE['name']}｜府中市四谷のピアノ教室"
     canonical = ""
     og_url = ""
-    og_image = f"{root}images/og.jpg"
-    if SITE["base_url"] and current != "404.html":
+    # SNSのカード用の画像は絶対URLでないと表示されない
+    og_image = og_image or f'{SITE["base_url"]}/images/og.jpg'
+    if SITE["base_url"] and current not in ("404.html", "news/p.html", "admin.html"):
         path = current if current else "index.html"
         clean = path.replace("index.html", "")
         clean = clean[:-5] if clean.endswith(".html") else clean
         canonical = f'<link rel="canonical" href="{SITE["base_url"]}/{clean}">'
         og_url = f'<meta property="og:url" content="{SITE["base_url"]}/{clean}">'
-        og_image = og_image or f'{SITE["base_url"]}/images/og.jpg'
     return phrase_breaks(bust_cache(clean_links(f"""<!DOCTYPE html>
 <html lang="ja" data-root="{root}">
 <head>
@@ -238,7 +238,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <meta name="theme-color" content="#8A9AB0">
 <meta name="msvalidate.01" content="BE1878E3A6D76EAEF1C8F0F5BFEA0041">
 {canonical}
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="{SITE['name']}">
 <meta property="og:title" content="{e(full_title)}">
 <meta property="og:description" content="{e(description)}">
@@ -248,6 +248,7 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 {'' if current in ("index.html", "") else ALT_LD}
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{og_image}">
 <link rel="icon" href="{root}images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{root}images/apple-touch-icon.png">
 <link rel="preload" href="{root}fonts/shippori-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -599,7 +600,7 @@ def build_news(items):
   </div>
 </section>"""
     (out_dir / "index.html").write_text(
-        page("お知らせ・教室日記", "あいみピアノ教室からのお知らせと、レッスン・発表会の様子を綴った教室日記です。", body, root, "news/index.html",
+        page("お知らせ・教室日記", "府中市四谷のあいみピアノ教室のお知らせと教室日記。発表会、レッスンの様子、空き枠や体験レッスンのご案内を載せています。", body, root, "news/index.html",
              extra_js='<script src="../js/config.js"></script><script src="../js/news.js" defer></script>'),
         encoding="utf-8",
     )
@@ -637,7 +638,7 @@ def build_news(items):
         newer = items[i - 1] if i > 0 else None
         older = items[i + 1] if i + 1 < len(items) else None
         imgs = "".join(
-            f'<img src="{src if src.startswith("http") else root + src}" alt="「{e(it["title"])}」の写真 {n + 1}" loading="lazy" referrerpolicy="no-referrer">' for n, src in enumerate(it["images"])
+            f'<img src="{src if src.startswith("http") else root + src}" alt="「{e(it["title"])}」の写真 {n + 1}"{img_size(src)} loading="lazy" referrerpolicy="no-referrer">' for n, src in enumerate(it["images"])
         )
         embeds = ""
         ig = [x for x in it["embeds"] if x.get("type") == "instagram"]
@@ -673,18 +674,36 @@ def build_news(items):
   </div>
 </section>"""
         ld = {"@context": "https://schema.org", "@type": "BlogPosting", "headline": it["title"][:110],
-              "datePublished": it["date"], "author": {"@type": "Person", "name": "野口愛実"},
-              "publisher": {"@type": "Organization", "name": SITE["name"]},
+              "datePublished": it["date"] + "T00:00:00+09:00", "dateModified": it["date"] + "T00:00:00+09:00",
+              "author": {"@type": "Person", "name": "野口愛実", "url": f'{SITE["base_url"]}/teacher'},
+              "publisher": {"@type": "Organization", "@id": f'{SITE["base_url"]}/#school', "name": SITE["name"]},
               "mainEntityOfPage": f'{SITE["base_url"]}/news/{it["id"]}'}
         abs_imgs = [src if src.startswith("http") else f'{SITE["base_url"]}/{src}' for src in it["images"][:3]]
         if abs_imgs:
             ld["image"] = abs_imgs
         (out_dir / f'{it["id"]}.html').write_text(
-            page(it["page_title"], desc, art, root, "news/" + it["id"] + ".html", og_image=(abs_imgs[0] if abs_imgs else None),
+            page(it["page_title"], desc, art, root, "news/" + it["id"] + ".html", og_image=(abs_imgs[0] if abs_imgs else None), og_type="article",
                  extra_head=('<meta name="robots" content="noindex">' if it["noindex"] else "") + '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False) + "</script>"),
             encoding="utf-8",
         )
     return items
+
+
+_SIZE_CACHE = {}
+
+
+def img_size(src):
+    """画像の width/height 属性（読み込み中のレイアウトずれを防ぐ）。外部URLや読めない画像は付けない"""
+    if src.startswith("http"):
+        return ""
+    if src not in _SIZE_CACHE:
+        try:
+            from PIL import Image
+            with Image.open(ROOT / src) as im:
+                _SIZE_CACHE[src] = f' width="{im.width}" height="{im.height}"'
+        except Exception:
+            _SIZE_CACHE[src] = ""
+    return _SIZE_CACHE[src]
 
 
 def subset_font():
@@ -796,8 +815,21 @@ def write_sitemap(items):
     base = SITE["base_url"]
     pages = ["", "about", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
     import datetime
+    import subprocess
     today = datetime.date.today().isoformat()
-    entries = [(f"{base}/{p}", today) for p in pages] + [(f"{base}/news/{it['id']}", it["date"]) for it in items if not it.get("noindex")]
+    newest = max((it["date"] for it in items if not it.get("noindex")), default=today)
+
+    def lastmod(p):
+        # ページの元原稿を最後に変えた日（毎回のビルド日だと Google に無視される）
+        if p == "news/":
+            return newest
+        src = ROOT / "src" / "pages" / ((p or "index") + ".html")
+        try:
+            d = subprocess.run(["git", "log", "-1", "--format=%cs", "--", str(src)], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        except Exception:
+            d = ""
+        return d or today
+    entries = [(f"{base}/{p}", lastmod(p)) for p in pages] + [(f"{base}/news/{it['id']}", it["date"]) for it in items if not it.get("noindex")]
     urls = [u for u, _ in entries]
     body = "".join(f"  <url><loc>{e(u)}</loc><lastmod>{d}</lastmod></url>\n" for u, d in entries)
     (ROOT / "sitemap.xml").write_text(

@@ -140,6 +140,18 @@
   }
 
   var keysEls = [].slice.call(document.querySelectorAll('.keys'));
+  // 鍵盤の区切りは、画面に見えているものだけ位置を測る（毎フレーム全部測ると重い）
+  var keysVisible = [];
+  if ('IntersectionObserver' in window) {
+    var kio = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) {
+        var i = keysVisible.indexOf(en.target);
+        if (en.isIntersecting && i < 0) keysVisible.push(en.target);
+        if (!en.isIntersecting && i >= 0) keysVisible.splice(i, 1);
+      });
+    }, { rootMargin: '50px 0px' });
+    keysEls.forEach(function (el) { kio.observe(el); });
+  } else keysVisible = keysEls;
   var track = document.querySelector('.marquee__track');
   var marqueeAnim = null;
 
@@ -205,12 +217,12 @@
     }
 
     // 鍵盤の区切り線：画面を通るにつれて光が左から右へ
-    var ps = keysEls.map(function (el) {
+    var ps = keysVisible.map(function (el) {
       var rc = el.getBoundingClientRect();
       if (rc.bottom < -50 || rc.top > H + 50) return null;
       return still ? .5 : Math.max(-.2, Math.min(1.2, 1.1 - (rc.top + rc.height / 2) / H * 1.2));
     });
-    ps.forEach(function (p, k) { if (p !== null) keysEls[k].style.setProperty('--p', p.toFixed(3)); });
+    ps.forEach(function (p, k) { if (p !== null) keysVisible[k].style.setProperty('--p', p.toFixed(3)); });
 
     // マーキー：スクロールに合わせて速く／上に戻ると逆向き
     // スマホでは速度を変えない（毎フレーム書きかえると Android で指を離したあとの慣性スクロールが消える）
@@ -270,5 +282,8 @@
   window.addEventListener('load', function () { buildSources(); requestDraw(); });
   // 画像やフォントの読み込みで位置が変わるので、少し後にも測り直す
   setTimeout(buildSources, 1200);
-  start();
+  // 最初は止まった輪を描き、ページの読み込みが終わってから動かし始める（最初の表示を速く）
+  requestDraw();
+  function kick() { setTimeout(start, 1200); }
+  if (document.readyState === 'complete') kick(); else window.addEventListener('load', kick);
 })();
