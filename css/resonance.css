@@ -431,3 +431,9 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .js .reveal.is-in:nth-child(3) { transition-delay: .24s; }
   .js .reveal.is-in:nth-child(4) { transition-delay: .36s; }
 }
+/* トップの見出し(h1)に地名の行を含める（見た目は小さな案内行のまま。検索では「府中市四谷のピアノ教室」が見出しとして伝わる） */
+.hero__title .hero__place {
+  font-family: var(--f-body); font-weight: 400; font-size: 14px; line-height: 1.6; letter-spacing: .14em;
+  color: var(--dusty-deep); margin-bottom: clamp(14px, 2vw, 22px);
+}
+.hero__title .hero__catch { display: block; }
