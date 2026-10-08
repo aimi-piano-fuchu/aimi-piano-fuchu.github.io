@@ -170,6 +170,7 @@ function cell_(v) {
 
 var CONTACT_TYPES = ['体験レッスンの申し込み', 'お問い合わせ・その他'];
 var CONTACT_PER_HOUR = 20; // サイト全体で1時間に受け付ける件数の上限（いたずらの大量送信よけ）
+var CONTACT_PER_DAY = 25;  // 1日の上限（1件で通知＋自動返信のメールを使うため、Googleの1日の送信枠を守る）
 
 function contact_(raw) {
   try {
@@ -180,7 +181,7 @@ function contact_(raw) {
       kana: clean_(raw.kana, 50, true),
       age: clean_(raw.age, 30, true),
       experience: clean_(raw.experience, 50, true),
-      days: clean_(raw.days, 100, true),
+      days: clean_(raw.days, 500, true),
       times: clean_(raw.times, 200, true),
       email: clean_(raw.email, 100, true),
       tel: clean_(raw.tel, 30, true),
@@ -191,21 +192,29 @@ function contact_(raw) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return json_({ result: 'error', message: 'bad email' });
 
     var cache = CacheService.getScriptCache();
-    // サイト全体で1時間あたりの上限
-    var hourKey = 'contact_hour_' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMddHH');
-    var hourCount = Number(cache.get(hourKey) || 0);
-    if (hourCount >= CONTACT_PER_HOUR) return json_({ result: 'error', message: 'busy' });
-    cache.put(hourKey, String(hourCount + 1), 3600);
-    // 同じメールアドレスへの送信は10分に3回まで
+    // 同じメールアドレスへの送信は10分に3回まで（先に判定し、弾いた分は全体の件数に数えない）
     var mkey = 'mail_' + p.email.toLowerCase();
     var sent = Number(cache.get(mkey) || 0);
     if (sent >= 3) return json_({ result: 'error', message: 'too many' });
+    // サイト全体で1時間・1日あたりの上限
+    var now = new Date();
+    var hourKey = 'contact_hour_' + Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMddHH');
+    var dayKey = 'contact_day_' + Utilities.formatDate(now, 'Asia/Tokyo', 'yyyyMMdd');
+    var hourCount = Number(cache.get(hourKey) || 0);
+    var dayCount = Number(cache.get(dayKey) || 0);
+    if (hourCount >= CONTACT_PER_HOUR || dayCount >= CONTACT_PER_DAY) return json_({ result: 'error', message: 'busy' });
     cache.put(mkey, String(sent + 1), 600);
+    cache.put(hourKey, String(hourCount + 1), 3600);
+    cache.put(dayKey, String(dayCount + 1), 21600); // キャッシュは最長6時間なので、1日の数は目安
 
     var row = [
       new Date(), p.type, p.name, p.kana, p.age, p.experience,
       p.days, p.times, p.email, p.tel, p.message, p.source
-    ].map(function (v, i) { return i === 0 ? v : cell_(String(v)); });
+    ].map(function (v, i) {
+      if (i === 0) return v;
+      if (i === 9 && v) return "'" + v; // 電話番号は先頭の0が消えないよう、常に文字として入れる
+      return cell_(String(v));
+    });
     sheet_().appendRow(row);
 
     // 教室への通知には、入力内容をすべて載せる（空の項目は行ごと出さない）
@@ -223,7 +232,12 @@ function contact_(raw) {
       (p.message ? '\nご要望・ご質問：\n' + p.message + '\n' : '') +
       (p.source ? '\n当教室を知ったきっかけ：' + p.source + '\n' : '');
     var notify = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAILS');
-    if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', body, { replyTo: p.email, name: SCHOOL });
+    // 通知が送れなくても、記録はシートに残っているので受付は成功扱いにする
+    try {
+      if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', body, { replyTo: p.email, name: SCHOOL });
+    } catch (notifyErr) {
+      console.error(notifyErr);
+    }
 
     // 申込んだ人への自動返信は、決まった文章だけにする
     // （入力された文章を載せると、宛先を他人にして教室名義の迷惑メールを送れてしまうため）
@@ -235,7 +249,14 @@ function contact_(raw) {
       '※このメールに返信すると、講師に届きます。\n\n' + SCHOOL + '\nhttps://aimipiano-fuchu.com/\nhttps://www.instagram.com/aimi_piano_/\n';
     var replyOpts = { name: SCHOOL };
     if (notify) replyOpts.replyTo = notify.split(',')[0].trim();
-    MailApp.sendEmail(p.email, '【' + SCHOOL + '】お問い合わせを受け付けました', reply, replyOpts);
+    // 自動返信は送れなくても受付は成功扱いにする（教室への通知とシートの記録が優先）
+    try {
+      if (MailApp.getRemainingDailyQuota() > 5) {
+        MailApp.sendEmail(p.email, '【' + SCHOOL + '】お問い合わせを受け付けました', reply, replyOpts);
+      }
+    } catch (mailErr) {
+      console.error(mailErr);
+    }
 
     return json_({ result: 'success' });
   } catch (err) {
