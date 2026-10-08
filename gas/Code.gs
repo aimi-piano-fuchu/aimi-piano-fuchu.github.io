@@ -157,24 +157,58 @@ function deleteNews_(p) {
 }
 
 // ---- お問い合わせフォーム
-function contact_(p) {
+// 入力の後片付け：前後の空白を取り、長さに上限をつける。件名などに使うものは改行も取る
+function clean_(v, max, oneLine) {
+  var t = String(v == null ? '' : v).trim();
+  if (oneLine) t = t.replace(/[\r\n]+/g, ' ');
+  return t.slice(0, max);
+}
+// スプレッドシートで数式として動かないように、先頭が = + - @ の値には ' を付ける
+function cell_(v) {
+  return /^[=+\-@]/.test(v) ? "'" + v : v;
+}
+
+var CONTACT_TYPES = ['体験レッスンの申し込み', 'お問い合わせ・その他'];
+var CONTACT_PER_HOUR = 20; // サイト全体で1時間に受け付ける件数の上限（いたずらの大量送信よけ）
+
+function contact_(raw) {
   try {
+    if (raw.website) return json_({ result: 'success' }); // ロボットよけ（人には見えない欄に入力があれば送らない）
+    var p = {
+      type: CONTACT_TYPES.indexOf(String(raw.type || '')) >= 0 ? String(raw.type) : 'お問い合わせ・その他',
+      name: clean_(raw.name, 50, true),
+      kana: clean_(raw.kana, 50, true),
+      age: clean_(raw.age, 30, true),
+      experience: clean_(raw.experience, 50, true),
+      days: clean_(raw.days, 100, true),
+      times: clean_(raw.times, 200, true),
+      email: clean_(raw.email, 100, true),
+      tel: clean_(raw.tel, 30, true),
+      message: clean_(raw.message, 2000, false),
+      source: clean_(raw.source, 50, true)
+    };
     if (!p.name || !p.email) return json_({ result: 'error', message: 'missing fields' });
-    if (p.website) return json_({ result: 'success' }); // ロボットよけ（人には見えない欄に入力があれば送らない）
-    // 同じメールアドレスへの送信は10分に3回まで（確認メールを迷惑メールに悪用されないように）
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) return json_({ result: 'error', message: 'bad email' });
+
     var cache = CacheService.getScriptCache();
-    var mkey = 'mail_' + String(p.email).trim().toLowerCase().slice(0, 100);
+    // サイト全体で1時間あたりの上限
+    var hourKey = 'contact_hour_' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMddHH');
+    var hourCount = Number(cache.get(hourKey) || 0);
+    if (hourCount >= CONTACT_PER_HOUR) return json_({ result: 'error', message: 'busy' });
+    cache.put(hourKey, String(hourCount + 1), 3600);
+    // 同じメールアドレスへの送信は10分に3回まで
+    var mkey = 'mail_' + p.email.toLowerCase();
     var sent = Number(cache.get(mkey) || 0);
     if (sent >= 3) return json_({ result: 'error', message: 'too many' });
     cache.put(mkey, String(sent + 1), 600);
 
     var row = [
-      new Date(), p.type || '', p.name || '', p.kana || '', p.age || '', p.experience || '',
-      p.days || '', p.times || '', p.email || '', p.tel || '', p.message || '', p.source || ''
-    ];
+      new Date(), p.type, p.name, p.kana, p.age, p.experience,
+      p.days, p.times, p.email, p.tel, p.message, p.source
+    ].map(function (v, i) { return i === 0 ? v : cell_(String(v)); });
     sheet_().appendRow(row);
 
-    // 空の項目は行ごと出さない
+    // 教室への通知には、入力内容をすべて載せる（空の項目は行ごと出さない）
     var line = function (label, v) { return v ? label + '：' + v + '\n' : ''; };
     var body =
       'ホームページからお問い合わせがありました。\n\n' +
@@ -186,20 +220,19 @@ function contact_(p) {
       line('ご希望の日時', p.times) +
       line('メール', p.email) +
       line('電話', p.tel) +
-      (p.message ? '\nご要望・ご質問：\n' + p.message + '\n' : '');
+      (p.message ? '\nご要望・ご質問：\n' + p.message + '\n' : '') +
+      (p.source ? '\n当教室を知ったきっかけ：' + p.source + '\n' : '');
     var notify = PropertiesService.getScriptProperties().getProperty('NOTIFY_EMAILS');
-    // 「何で知ったか」は教室側の通知だけに載せる（自動返信には入れない）
-    var notifyBody = body + (p.source ? '\n当教室を知ったきっかけ：' + p.source + '\n' : '');
-    if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', notifyBody, { replyTo: p.email, name: SCHOOL });
+    if (notify) MailApp.sendEmail(notify, '【HP】' + p.type + '（' + p.name + '様）', body, { replyTo: p.email, name: SCHOOL });
 
+    // 申込んだ人への自動返信は、決まった文章だけにする
+    // （入力された文章を載せると、宛先を他人にして教室名義の迷惑メールを送れてしまうため）
     var reply =
-      p.name + ' 様\n\n' +
-      SCHOOL + 'です。お問い合わせありがとうございます。\n' +
-      '以下の内容で受け付けました。\n\n' +
-      '――――――――――\n' + body.replace('ホームページからお問い合わせがありました。\n\n', '') + '――――――――――\n\n' +
-      (String(p.type).indexOf('体験') >= 0 ? '※まだ予約は確定していません。内容を確認のうえ、あらためてご連絡いたします。\n' : '※内容を確認のうえ、あらためてご連絡いたします。\n') +
+      SCHOOL + 'です。\n' +
+      'ホームページからのお問い合わせを受け付けました。ありがとうございます。\n\n' +
+      (p.type.indexOf('体験') >= 0 ? '※まだ予約は確定していません。内容を確認のうえ、あらためてご連絡いたします。\n' : '※内容を確認のうえ、あらためてご連絡いたします。\n') +
+      '※お心当たりのない場合は、このメールは破棄してください。\n' +
       '※このメールに返信すると、講師に届きます。\n\n' + SCHOOL + '\nhttps://aimipiano-fuchu.com/\nhttps://www.instagram.com/aimi_piano_/\n';
-    // お客さんが返信したら講師（通知先の1つ目）に届くようにする
     var replyOpts = { name: SCHOOL };
     if (notify) replyOpts.replyTo = notify.split(',')[0].trim();
     MailApp.sendEmail(p.email, '【' + SCHOOL + '】お問い合わせを受け付けました', reply, replyOpts);

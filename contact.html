@@ -78,12 +78,12 @@
       <div class="field" data-field="name">
         <label class="field__label" for="name">お名前 <span class="req">必須</span></label>
         <p class="field__hint">お子さまの<wbr>場合は、<wbr>保護者の<wbr>方の<wbr>お名前を<wbr>ご記入ください。</p>
-        <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="例）府中 花子" required>
+        <input class="input" type="text" id="name" name="name" autocomplete="name" placeholder="例）府中 花子" required maxlength="50">
       </div>
 
       <div class="field" data-field="kana">
         <label class="field__label" for="kana">フリガナ <span class="opt">任意</span></label>
-        <input class="input" type="text" id="kana" name="kana" placeholder="例）フチュウ ハナコ">
+        <input class="input" type="text" id="kana" name="kana" placeholder="例）フチュウ ハナコ" maxlength="50">
       </div>
 
       <div class="row-2">
@@ -123,17 +123,17 @@
       <div class="field" data-field="times" data-trial-only>
         <label class="field__label" for="times">ご希望の<wbr>日時・<wbr>時間帯 <span class="opt">任意</span></label>
         <p class="field__hint"><span data-days="hint"><span class="nw">金曜は<wbr>14:00⁠〜⁠20:00</span>、<span class="nw"><wbr>土曜は<wbr>9:00⁠〜⁠18:00です。</span></span><span class="nw"><wbr>候補を<wbr>いくつかいただけると</span><span class="nw"><wbr>調整が<wbr>スムーズです。</span></p>
-        <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降">
+        <input class="input" type="text" id="times" name="times" placeholder="例）金曜16時以降" maxlength="200">
       </div>
 
       <div class="row-2">
         <div class="field" data-field="email">
           <label class="field__label" for="email">メールアドレス <span class="req">必須</span></label>
-          <input class="input" type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="例）example@mail.com" required>
+          <input class="input" type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="例）example@mail.com" required maxlength="100">
         </div>
         <div class="field" data-field="tel">
           <label class="field__label" for="tel">電話番号 <span class="opt">任意</span></label>
-          <input class="input" type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="例）090-1234-5678">
+          <input class="input" type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="例）090-1234-5678" maxlength="30">
         </div>
       </div>
 
@@ -152,7 +152,7 @@
 
       <div class="field" data-field="message">
         <label class="field__label" for="message">ご要望・<wbr>ご質問 <span class="opt">任意</span></label>
-        <textarea class="textarea" id="message" name="message" placeholder="例）弾いてみたい曲がある、発表会について知りたい など"></textarea>
+        <textarea class="textarea" id="message" name="message" placeholder="例）弾いてみたい曲がある、発表会について知りたい など" maxlength="2000"></textarea>
       </div>
 
       <label class="consent" for="agree"><input type="checkbox" id="agree" name="agree" required><span><a href="privacy">プライバシー<wbr>ポリシー</a>に<wbr>同意する</span></label>
