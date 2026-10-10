@@ -167,7 +167,7 @@ def footer(root, float_cta=True):
         <ul>
           <li><a href="{root}news/index.html">お知らせ・教室日記</a></li>
           <li><a href="{root}faq.html">よくある質問</a></li>
-          <li><a href="{root}access.html">アクセス</a></li>
+          <li><a href="{root}access.html">アクセス（府中市四谷）</a></li>
           <li><a href="{root}contact.html">お問い合わせ</a></li>
           <li><a href="{root}privacy.html">プライバシー<wbr>ポリシー</a></li>
         </ul>
