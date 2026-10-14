@@ -16,6 +16,24 @@
     ]
   };
 
+  // 時間は「15:50〜16:20」の形にそろえる。終わりの時間がなければ30分後を入れる（開講時間は入れない）
+  function toMin(h, m) { return (+h) * 60 + (+m); }
+  function fromMin(n) { n = ((n % 1440) + 1440) % 1440; return Math.floor(n / 60) + ':' + ('0' + (n % 60)).slice(-2); }
+  function parseRange(t) {
+    var z = String(t || '').replace(/[０-９：]/g, function (c) { return c === '：' ? ':' : String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+    var m = z.match(/(\d{1,2})\s*[:時]\s*(\d{2})?/g);
+    if (!m) return null;
+    var mins = m.map(function (x) { var p = x.match(/(\d{1,2})\s*[:時]\s*(\d{2})?/); return toMin(p[1], p[2] || 0); });
+    return { start: mins[0], end: mins.length > 1 ? mins[1] : null };
+  }
+  function fmtRange(t, addMin) {
+    var r = parseRange(t);
+    if (!r) return String(t || '').trim();
+    var end = r.end != null ? r.end : (addMin ? r.start + addMin : null);
+    return fromMin(r.start) + '〜' + (end != null ? fromMin(end) : '');
+  }
+  function slotTime(t) { return fmtRange(t, 30); }
+
   function readDemo() {
     try { var t = localStorage.getItem(DEMO_KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; }
   }
@@ -77,9 +95,9 @@
       var rows = (d.slots || []).map(function (s) {
         if (s.open) openCount++;
         // 空き枠はタップで体験レッスンの申し込みへ（その枠を選んだ状態で開く）
-        if (s.open) return '<li class="slot slot--open"><a class="slot__link" href="contact.html?slot=' + encodeURIComponent(d.day + ' ' + s.time) + '">' +
-          '<span class="slot__time num">' + esc(s.time) + '</span><span class="slot__state">空きあり<span class="slot__go" aria-hidden="true">›</span></span></a></li>';
-        return '<li class="slot slot--full"><span class="slot__time num">' + esc(s.time) +
+        if (s.open) return '<li class="slot slot--open"><a class="slot__link" href="contact.html?slot=' + encodeURIComponent(d.day + ' ' + slotTime(s.time)) + '">' +
+          '<span class="slot__time num">' + esc(slotTime(s.time)) + '</span><span class="slot__state">空きあり<span class="slot__go" aria-hidden="true">›</span></span></a></li>';
+        return '<li class="slot slot--full"><span class="slot__time num">' + esc(slotTime(s.time)) +
           '</span><span class="slot__state">満席</span></li>';
       }).join('');
       return '<div class="slots__day"><p class="slots__name">' + esc(d.day) + '</p><ul class="slots__list">' +
@@ -99,7 +117,7 @@
   // （HTMLに書いてある内容は、読み込み前と通信できない時の表示）
   var DEFAULT_HOURS = { '金曜': '14:00〜20:00', '土曜': '9:00〜18:00' };
   var EN = { '月曜': 'Mon', '火曜': 'Tue', '水曜': 'Wed', '木曜': 'Thu', '金曜': 'Fri', '土曜': 'Sat', '日曜': 'Sun' };
-  function hoursOf(d) { return d.hours != null ? d.hours : (DEFAULT_HOURS[d.day] || ''); }
+  function hoursOf(d) { return d.hours != null ? fmtRange(d.hours) : (DEFAULT_HOURS[d.day] || ''); }
 
   var original = [];
   function applyDays(data) {
@@ -145,7 +163,7 @@
     document.querySelectorAll('[data-slot-choices]').forEach(function (el) {
       var open = [];
       ((data && data.days) || []).forEach(function (d) {
-        (d.slots || []).forEach(function (s) { if (s.open && String(s.time).trim()) open.push(d.day + ' ' + s.time); });
+        (d.slots || []).forEach(function (s) { if (s.open && String(s.time).trim()) open.push(d.day + ' ' + slotTime(s.time)); });
       });
       var field = el.closest('.field');
       if (!open.length) { el.innerHTML = ''; field.setAttribute('data-empty', ''); document.dispatchEvent(new CustomEvent('slots:choices')); return; }
@@ -171,7 +189,7 @@
     });
   }
 
-  window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc, defaultHours: DEFAULT_HOURS };
+  window.AimiSlots = { load: load, post: post, render: render, sample: SAMPLE, readDemo: readDemo, writeDemo: writeDemo, esc: esc, defaultHours: DEFAULT_HOURS, parseRange: parseRange, fmtRange: fmtRange, slotTime: slotTime, fromMin: fromMin };
 
   var slotEls = document.querySelectorAll('[data-slots]');
   if (!slotEls.length && !document.querySelector('[data-days]') && !document.querySelector('[data-slot-choices]')) return;

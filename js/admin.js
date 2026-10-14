@@ -28,6 +28,28 @@
 
   function refreshPreview() { S.render(previewEl, data); }
 
+  // 時間は時刻の入力欄2つ（はじまり〜おわり）で入れて、「15:50〜16:20」の形で保存する
+  function hhmm(n) { return n == null ? '' : ('0' + S.fromMin(n)).slice(-5); }
+  function fromInput(v) { var p = /^(\d{1,2}):(\d{2})/.exec(v || ''); return p ? (+p[1]) * 60 + (+p[2]) : null; }
+  function joinRange(a, b) { return a == null ? '' : S.fromMin(a) + '〜' + (b != null ? S.fromMin(b) : ''); }
+  function rangeInputs(id, label, r) {
+    return '<span class="admin-range">' +
+      '<label class="sr-only" for="' + id + '-a">' + label + '（はじまり）</label><input class="input admin-t" type="time" step="300" id="' + id + '-a" value="' + hhmm(r && r.start) + '">' +
+      '<span aria-hidden="true">〜</span>' +
+      '<label class="sr-only" for="' + id + '-b">' + label + '（おわり）</label><input class="input admin-t" type="time" step="300" id="' + id + '-b" value="' + hhmm(r && r.end) + '">' +
+      '</span>';
+  }
+  // はじまりを変えたら、おわりが空か「30分後」のままなら一緒に30分後へ動かす
+  function bindRange(wrap, r, onChange, follow) {
+    var a = wrap.querySelectorAll('input')[0], b = wrap.querySelectorAll('input')[1];
+    a.addEventListener('change', function () {
+      var old = r.start; r.start = fromInput(a.value);
+      if (follow && r.start != null && (r.end == null || (old != null && r.end === old + 30))) { r.end = r.start + 30; b.value = hhmm(r.end); }
+      onChange();
+    });
+    b.addEventListener('change', function () { r.end = fromInput(b.value); onChange(); });
+  }
+
   var WEEK = ['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜'];
   function sortDays() {
     data.days.sort(function (a, b) {
@@ -51,12 +73,14 @@
       box.innerHTML = '<div class="admin-day__head"><label class="sr-only" for="day-' + di + '">曜日</label>' +
         '<select class="select admin-dayname" id="day-' + di + '">' + dayOptions(d.day) + '</select>' +
         '<button type="button" class="admin-del admin-delday">この曜日を削除</button></div>' +
-        '<div class="field admin-hours" style="margin-top:12px"><label class="field__label" for="hours-' + di + '">開講時間<small>（開講日の欄に表示）</small></label>' +
-        '<input class="input" id="hours-' + di + '" value="' + S.esc(d.hours || '') + '" maxlength="30" placeholder="例）14:00〜20:00"></div>' +
+        '<div class="field admin-hours" style="margin-top:12px"><label class="field__label" for="hours-' + di + '-a">開講時間<small>（開講日の欄に表示）</small></label>' +
+        rangeInputs('hours-' + di, d.day + 'の開講時間', S.parseRange(d.hours)) + '</div>' +
+        '<p class="field__label admin-slots__label">レッスンの枠<small>（＋で30分ずつ追加）</small></p>' +
         '<ul class="admin-slots"></ul>' +
         '<button type="button" class="btn btn--ghost btn--sm admin-add">＋ 時間を追加</button>';
       box.querySelector('.admin-dayname').addEventListener('change', function (e) { d.day = e.target.value; sortDays(); draw(); });
-      box.querySelector('.admin-hours input').addEventListener('input', function (e) { d.hours = e.target.value; });
+      var hr = S.parseRange(d.hours) || { start: null, end: null };
+      bindRange(box.querySelector('.admin-hours .admin-range'), hr, function () { d.hours = joinRange(hr.start, hr.end); }, false);
       var delDay = box.querySelector('.admin-delday'), armed = false;
       delDay.addEventListener('click', function () {
         if (!armed) { armed = true; delDay.textContent = 'もう一度押すと削除'; setTimeout(function () { armed = false; delDay.textContent = 'この曜日を削除'; }, 4000); return; }
@@ -68,20 +92,23 @@
         li.className = 'admin-slot';
         var id = 'slot-' + di + '-' + si;
         li.innerHTML =
-          '<label class="sr-only" for="' + id + '">' + S.esc(d.day) + 'の時間</label>' +
-          '<input class="input admin-time" id="' + id + '" value="' + S.esc(s.time) + '" placeholder="例）16:00〜">' +
+          rangeInputs(id, S.esc(d.day) + 'の時間', S.parseRange(S.slotTime(s.time))) +
           '<button type="button" class="admin-toggle' + (s.open ? ' is-open' : '') + '" aria-pressed="' + (s.open ? 'true' : 'false') + '">' + (s.open ? '空きあり' : '満席') + '</button>' +
           '<button type="button" class="admin-del" aria-label="この時間を削除">削除</button>';
-        li.querySelector('.admin-time').addEventListener('input', function (e) { s.time = e.target.value; refreshPreview(); });
+        var sr = S.parseRange(S.slotTime(s.time)) || { start: null, end: null };
+        bindRange(li.querySelector('.admin-range'), sr, function () { s.time = joinRange(sr.start, sr.end); refreshPreview(); }, true);
         li.querySelector('.admin-toggle').addEventListener('click', function () { s.open = !s.open; draw(); });
         li.querySelector('.admin-del').addEventListener('click', function () { d.slots.splice(si, 1); draw(); });
         ul.appendChild(li);
       });
       box.querySelector('.admin-add').addEventListener('click', function () {
-        d.slots.push({ time: '', open: true });
+        // 新しい枠は、前の枠のおわり（なければ開講時間のはじまり）から30分
+        var last = d.slots.length ? S.parseRange(S.slotTime(d.slots[d.slots.length - 1].time)) : null;
+        var st = last ? (last.end != null ? last.end : last.start + 30) : (S.parseRange(d.hours) || {}).start;
+        d.slots.push({ time: st != null ? joinRange(st, st + 30) : '', open: true });
         draw();
-        var inputs = daysEl.querySelectorAll('.admin-day')[di].querySelectorAll('.admin-time');
-        inputs[inputs.length - 1].focus();
+        var inputs = daysEl.querySelectorAll('.admin-day')[di].querySelectorAll('.admin-slot .admin-t');
+        if (inputs.length) inputs[inputs.length - 2].focus();
       });
       daysEl.appendChild(box);
     });
@@ -158,7 +185,7 @@
 
   saveBtn.addEventListener('click', function () {
     if (!data) return;
-    data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); d.hours = (d.hours || '').trim(); });
+    data.days.forEach(function (d) { d.slots = d.slots.filter(function (s) { return s.time.trim(); }); d.slots.forEach(function (s) { s.time = S.slotTime(s.time); }); d.hours = S.fmtRange(d.hours || ''); });
     sortDays();
     if (demo) {
       var t = new Date();

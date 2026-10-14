@@ -936,7 +936,13 @@ ul, ol { margin: 0; padding: 0; }
 .admin-days { display: grid; gap: 16px; }
 .admin-day { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 12px; }
 .admin-slots { list-style: none; display: grid; gap: 8px; }
-.admin-slot { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+.admin-slot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.admin-slots__label { margin-top: 20px; }
+.admin-slots { gap: 0; }
+.admin-slot { padding: 10px 0; border-top: 1px solid var(--line); }
+.admin-slot:last-child { border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.admin-range { display: flex; align-items: center; gap: 6px; flex: 1 1 230px; min-width: 0; }
+.admin-range .input { flex: 1 1 0; min-width: 0; font-variant-numeric: tabular-nums; }
 .admin-slot .input { padding: 10px 12px; }
 .admin-toggle { font: inherit; font-size: 14px; font-weight: 500; min-width: 88px; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--muted); cursor: pointer; }
 .admin-toggle.is-open { background: var(--accent-deep); border-color: var(--accent-deep); color: var(--surface); }
