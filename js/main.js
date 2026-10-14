@@ -155,6 +155,8 @@
     var target = null;
     try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
     if (target) {
+      // よくある質問の項目に飛んだときは、その答えを開いておく
+      if (target.tagName === 'DETAILS') target.open = true;
       var align = function () { target.scrollIntoView({ block: 'start', behavior: 'instant' }); };
       window.addEventListener('load', function () { align(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(align); });
     }
