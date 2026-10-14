@@ -104,7 +104,7 @@
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html {
-  -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 12px);
+  -webkit-text-size-adjust: 100%; scroll-behavior: smooth;
   /* 横はみ出し対策は html だけに付ける。body に overflow / overscroll を付けると
      body が別のスクロール箱になり、Android Chrome 等で縦スクロールが止まる（姉妹サイトで発生） */
   overflow-x: hidden; /* clip 非対応ブラウザ用 */
@@ -150,6 +150,9 @@ ul, ol { margin: 0; padding: 0; }
 .wrap--narrow { max-width: 800px; }
 
 /* ---------- header ---------- */
+/* ページ内リンクの飛び先はヘッダーの下に来るように（Safari は html の scroll-padding を効かせないことがあるので、飛び先側に付ける） */
+[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
+
 .site-header {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
   background: var(--paper); /* color-mix 非対応ブラウザ用 */

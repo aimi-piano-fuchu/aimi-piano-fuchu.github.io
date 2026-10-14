@@ -149,4 +149,14 @@
     });
     render();
   }
+
+  // 別のページから #見出し 付きで来たとき：写真や文字の読み込みで位置がずれるので、読み込み後にもう一度合わせる
+  if (location.hash.length > 1 && !/[?&]slot=/.test(location.search)) {
+    var target = null;
+    try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
+    if (target) {
+      var align = function () { target.scrollIntoView({ block: 'start', behavior: 'instant' }); };
+      window.addEventListener('load', function () { align(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(align); });
+    }
+  }
 })();

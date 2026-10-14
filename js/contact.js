@@ -76,23 +76,20 @@
   document.addEventListener('slots:choices', syncFields);
   syncFields();
 
-  // レッスン・月謝の空き枠からタップして来たとき：体験レッスン＋その枠を選んだ状態にする
+  // レッスン・月謝の空き枠からタップして来たとき：体験レッスン＋その枠を選んだ状態にして、フォームの先頭から入力してもらう
   var wantSlot = new URLSearchParams(location.search).get('slot');
   if (wantSlot) {
     document.getElementById('type-trial').checked = true;
     var pick = function () {
       var box = [].slice.call(form.querySelectorAll('input[name="slot"]')).filter(function (x) { return x.value === wantSlot; })[0];
-      if (box && !box.checked) {
-        box.checked = true;
-        syncFields();
-        // 選んだ枠が見えるところまで送る
-        setTimeout(function () { box.closest('.field').scrollIntoView({ block: 'center' }); }, 50);
-      } else syncFields();
+      if (box) box.checked = true;
+      syncFields();
     };
     pick();
-    // 枠がまだ出ていなければ、ひとまずフォームの先頭へ
-    if (!form.querySelector('input[name="slot"]:checked')) form.scrollIntoView({ block: 'start' });
     document.addEventListener('slots:choices', pick);
+    var toForm = function () { form.scrollIntoView({ block: 'start', behavior: 'instant' }); };
+    toForm();
+    window.addEventListener('load', toForm);
   }
 
   function panel(kind, title, html) {
