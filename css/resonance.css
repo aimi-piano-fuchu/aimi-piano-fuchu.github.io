@@ -462,3 +462,8 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
     box-shadow: 0 18px 36px -18px color-mix(in srgb, var(--dusty-deep) 60%, transparent); transform: rotate(-4deg); }
   .hero__teacher img { -webkit-mask-image: none; mask-image: none; object-position: 50% 8%; }
 }
+
+/* トップの集合写真：上が丸いアーチ＋外側に細い線（10/14 A案）。スマホは線を細く・淡く */
+.hero__stage-photo { border-radius: 46% 46% 22px 22px / 34% 34% 22px 22px; border: 0; }
+.hero__stage::before { content: ""; position: absolute; inset: -10px; z-index: -1; pointer-events: none; border: 1px solid color-mix(in srgb, var(--dusty) 55%, transparent); border-radius: 48% 48% 28px 28px / 36% 36% 28px 28px; }
+@media (max-width: 860px) { .hero__stage::before { inset: -8px; border-width: .5px; border-color: color-mix(in srgb, var(--dusty) 40%, transparent); } }
