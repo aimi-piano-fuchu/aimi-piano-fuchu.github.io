@@ -76,6 +76,25 @@
   document.addEventListener('slots:choices', syncFields);
   syncFields();
 
+  // レッスン・月謝の空き枠からタップして来たとき：体験レッスン＋その枠を選んだ状態にする
+  var wantSlot = new URLSearchParams(location.search).get('slot');
+  if (wantSlot) {
+    document.getElementById('type-trial').checked = true;
+    var pick = function () {
+      var box = [].slice.call(form.querySelectorAll('input[name="slot"]')).filter(function (x) { return x.value === wantSlot; })[0];
+      if (box && !box.checked) {
+        box.checked = true;
+        syncFields();
+        // 選んだ枠が見えるところまで送る
+        setTimeout(function () { box.closest('.field').scrollIntoView({ block: 'center' }); }, 50);
+      } else syncFields();
+    };
+    pick();
+    // 枠がまだ出ていなければ、ひとまずフォームの先頭へ
+    if (!form.querySelector('input[name="slot"]:checked')) form.scrollIntoView({ block: 'start' });
+    document.addEventListener('slots:choices', pick);
+  }
+
   function panel(kind, title, html) {
     status.innerHTML = '<div class="panel panel--' + kind + '"><h3>' + title + '</h3>' + html + '</div>';
     status.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -76,8 +76,11 @@
     var cols = data.days.map(function (d) {
       var rows = (d.slots || []).map(function (s) {
         if (s.open) openCount++;
-        return '<li class="slot' + (s.open ? ' slot--open' : ' slot--full') + '"><span class="slot__time num">' + esc(s.time) +
-          '</span><span class="slot__state">' + (s.open ? '空きあり' : '満席') + '</span></li>';
+        // 空き枠はタップで体験レッスンの申し込みへ（その枠を選んだ状態で開く）
+        if (s.open) return '<li class="slot slot--open"><a class="slot__link" href="contact.html?slot=' + encodeURIComponent(d.day + ' ' + s.time) + '">' +
+          '<span class="slot__time num">' + esc(s.time) + '</span><span class="slot__state">空きあり<span class="slot__go" aria-hidden="true">›</span></span></a></li>';
+        return '<li class="slot slot--full"><span class="slot__time num">' + esc(s.time) +
+          '</span><span class="slot__state">満席</span></li>';
       }).join('');
       return '<div class="slots__day"><p class="slots__name">' + esc(d.day) + '</p><ul class="slots__list">' +
         (rows || '<li class="slot slot--full"><span class="slot__state">現在空きはありません</span></li>') + '</ul></div>';
@@ -86,6 +89,7 @@
     el.innerHTML =
       '<div class="slots__head"><p class="slots__title">現在の空き枠</p>' +
       (when ? '<p class="slots__updated">' + when + '更新</p>' : '<p class="slots__updated">サンプル表示</p>') + '</div>' +
+      (openCount ? '<p class="slots__tap"><span class="nw">空いている時間をタップすると、</span><span class="nw">体験レッスンのお申し込みに進めます。</span></p>' : '') +
       '<div class="slots__grid">' + cols + '</div>' +
       (data.note ? '<p class="slots__note">' + esc(data.note) + '</p>' : '') +
       (openCount === 0 ? '<p class="slots__note">現在、すべての枠が埋まっています。キャンセル待ちはお問い合わせください。</p>' : '');
@@ -148,9 +152,20 @@
       field.removeAttribute('data-empty');
       var checked = {};
       el.querySelectorAll('input:checked').forEach(function (i) { checked[i.value] = true; });
-      el.innerHTML = open.concat(['その他の日時']).map(function (v, i) {
-        return '<label class="choice"><input type="checkbox" id="slot-' + i + '" name="slot" value="' + esc(v) + '"' +
-          (checked[v] ? ' checked' : '') + '><span>' + esc(v) + '</span></label>';
+      // 曜日ごとに1行（「その他の日時」も別の行）
+      var groups = [], last = '';
+      open.concat(['その他の日時']).forEach(function (v) {
+        var day = v.split(' ')[0];
+        if (day !== last) { groups.push([]); last = day; }
+        groups[groups.length - 1].push(v);
+      });
+      var n = 0;
+      el.innerHTML = groups.map(function (g) {
+        return '<div class="choices__row">' + g.map(function (v) {
+          var i = n++;
+          return '<label class="choice"><input type="checkbox" id="slot-' + i + '" name="slot" value="' + esc(v) + '"' +
+            (checked[v] ? ' checked' : '') + '><span>' + esc(v) + '</span></label>';
+        }).join('') + '</div>';
       }).join('');
       document.dispatchEvent(new CustomEvent('slots:choices'));
     });

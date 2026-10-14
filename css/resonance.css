@@ -132,7 +132,7 @@
 .hero__photo { border: 1px solid var(--glass-edge); box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--dusty-deep) 55%, transparent); }
 /* 基本情報：ヒーローに重なって浮くガラスの帯 */
 .facts { border: 0; position: relative; z-index: 3; margin-top: clamp(-72px, -5vw, -32px); }
-.facts__list { border-radius: 20px; width: calc(100% - 2 * var(--gutter)); max-width: calc(var(--wrap) - 2 * var(--gutter)); padding-inline: 0; }
+.facts__list { overflow: clip; border-radius: 20px; width: calc(100% - 2 * var(--gutter)); max-width: calc(var(--wrap) - 2 * var(--gutter)); padding-inline: 0; }
 .facts__item { border-left-color: color-mix(in srgb, var(--line) 80%, transparent); }
 @media (max-width: 860px) { .facts__item:nth-child(n+3) { border-top-color: color-mix(in srgb, var(--line) 80%, transparent); } }
 
