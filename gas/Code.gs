@@ -98,7 +98,7 @@ function hashAdminAccounts() {
     }
     lines.push(words[i] + ' ' + v);
   }
-  props.setProperty('ADMIN_ACCOUNTS', lines.join('\n'));
+  props.setProperty('ADMIN_ACCOUNTS', lines.join(' ')); // 設定画面の入力欄は改行を消すので、空白でつなぐ
   Logger.log('置き換えた人数: ' + changed + ' / 全員: ' + lines.length);
 }
 
