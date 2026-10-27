@@ -17,6 +17,9 @@
  *      ADMIN_ACCOUNTS = 管理画面に入れる人。「メールアドレス パスコード」を1人ずつ（改行かスペース区切り）
  *                       例）hanako@example.com abcd1234 taro@example.com efgh5678
  *    （パスコードはここにだけ置く。サイトやGitHubには書かない）
+ *    ※ 平文のまま置かないため、書いたあとエディタで関数 hashAdminAccounts を1回実行する。
+ *      パスコードが「sha256:ソルト:ハッシュ」に置き換わる（ログインはそのまま使える）。
+ *      人を足すときも、平文で追記してからもう一度 hashAdminAccounts を実行すればよい。
  *    を追加する。空き枠データもスクリプト プロパティ（SLOTS）に保存される。
  *
  * MailApp を使う（GmailApp はパスワード変更で認証が切れやすいので使わない）。
@@ -57,10 +60,46 @@ function checkPass_(id, pass) {
   var who = String(id || '').trim().toLowerCase();
   var ok = false;
   for (var i = 0; i + 1 < words.length; i += 2) {
-    if (who && pass && words[i].toLowerCase() === who && words[i + 1] === pass) ok = true;
+    if (who && pass && words[i].toLowerCase() === who && passMatches_(words[i + 1], String(pass))) ok = true;
   }
   if (!ok) cache.put(key, String(fails + 1), 600);
   return ok;
+}
+
+// 保存してある値（「sha256:ソルト:ハッシュ」か、移行前の平文）と、入力されたパスコードを比べる
+function passMatches_(stored, pass) {
+  var m = /^sha256:([0-9a-f]+):([0-9a-f]{64})$/.exec(stored);
+  if (!m) return stored === pass; // まだ hashAdminAccounts を実行していない分
+  return sameText_(sha256Hex_(m[1] + ':' + pass), m[2]);
+}
+function sha256Hex_(text) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, text, Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+// 文字を最後まで比べる（途中で抜けないので、時間の差から推測されにくい）
+function sameText_(a, b) {
+  if (a.length !== b.length) return false;
+  var d = 0;
+  for (var i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+// エディタから1回だけ実行：ADMIN_ACCOUNTS の平文パスコードを、ソルト付き SHA-256 に置き換える
+// （すでに置き換えた分はそのまま。メールアドレスは変えない。パスコードはログに出さない）
+function hashAdminAccounts() {
+  var props = PropertiesService.getScriptProperties();
+  var words = String(props.getProperty('ADMIN_ACCOUNTS') || '').trim().split(/\s+/);
+  var lines = [], changed = 0;
+  for (var i = 0; i + 1 < words.length; i += 2) {
+    var v = words[i + 1];
+    if (!/^sha256:/.test(v)) {
+      var salt = sha256Hex_(Utilities.getUuid() + Utilities.getUuid()).slice(0, 32);
+      v = 'sha256:' + salt + ':' + sha256Hex_(salt + ':' + v);
+      changed++;
+    }
+    lines.push(words[i] + ' ' + v);
+  }
+  props.setProperty('ADMIN_ACCOUNTS', lines.join('\n'));
+  Logger.log('置き換えた人数: ' + changed + ' / 全員: ' + lines.length);
 }
 
 function saveSlots_(p) {

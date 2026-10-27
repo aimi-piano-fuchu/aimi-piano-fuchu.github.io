@@ -60,6 +60,8 @@ ICONS = {
     "user": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>',
     "star": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
     "video": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="M15.5 10.5l6-3.5v10l-6-3.5z"/></svg>',
+    "award": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg>',
+    "trophy": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 6H4.5a2.5 2.5 0 002.8 3.4M17 6h2.5a2.5 2.5 0 01-2.8 3.4M12 14v3M8.5 20h7l-1-3h-5z"/></svg>',
     "pin": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
 }
 
@@ -461,6 +463,8 @@ def phrase_breaks(html_text):
         x = re.sub(r"(?<=\S)〜(?=[0-9０-９])", "\u2060〜\u2060", x)
         # 閉じかっこの直後の助詞、文の直後の絵文字の前では折らない
         x = re.sub(r"(?<=[』」）)])(?=[\u3041-\u309f])", "\u2060", x)
+        # 「…！」の ！ と 」 の間では折らない（閉じかっこが行頭に来ないように）
+        x = re.sub(r"(?<=[！？!?。…])(?=[』」）)])", "\u2060", x)
         x = re.sub(r"(?<=[\u3040-\u9fff！？!?。、♪])(?=[\U0001F300-\U0001FAFF\u2600-\u27BF])", "\u2060", x)
         return re.sub(r"(?<=\S)／", "\u2060／", x)
     t = "".join(wj(x) for x in re.split(r"(<script\b.*?</script>|<style\b.*?</style>|<[^>]+>)", t, flags=re.S))

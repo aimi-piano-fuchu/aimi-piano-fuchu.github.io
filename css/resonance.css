@@ -540,3 +540,44 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   /* 200%拡大：ロゴの絵を外して教室名を残す */
   .brand__mark { display: none; }
 }
+
+/* 体験レッスンの案内（cta）：波紋が中心のボタンへ、ゆっくり引き込まれていく（10/27）
+   輪はどれも半径260→40へ同じ速さで縮む。開始をずらして、いつも等間隔に並ぶようにする */
+.cta .ripple circle {
+  transform-box: view-box; transform-origin: 200px 200px;
+  animation: cta-pull 14s linear infinite;
+}
+.cta .ripple circle:nth-child(1) { --s0: 3.714; --s1: 0.571; animation-delay: 0.00s; }
+.cta .ripple circle:nth-child(2) { --s0: 2.826; --s1: 0.435; animation-delay: -1.56s; }
+.cta .ripple circle:nth-child(3) { --s0: 2.281; --s1: 0.351; animation-delay: -3.11s; }
+.cta .ripple circle:nth-child(4) { --s0: 1.912; --s1: 0.294; animation-delay: -4.67s; }
+.cta .ripple circle:nth-child(5) { --s0: 1.646; --s1: 0.253; animation-delay: -6.22s; }
+.cta .ripple circle:nth-child(6) { --s0: 1.444; --s1: 0.222; animation-delay: -7.78s; }
+.cta .ripple circle:nth-child(7) { --s0: 1.287; --s1: 0.198; animation-delay: -9.33s; }
+.cta .ripple circle:nth-child(8) { --s0: 1.161; --s1: 0.179; animation-delay: -10.89s; }
+.cta .ripple circle:nth-child(9) { --s0: 1.057; --s1: 0.163; animation-delay: -12.44s; }
+@keyframes cta-pull {
+  0% { transform: scale(var(--s0)); stroke-opacity: 0; }
+  15% { stroke-opacity: 1; }
+  75% { stroke-opacity: 1; }
+  100% { transform: scale(var(--s1)); stroke-opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .cta .ripple circle { animation: none; } }
+.rz-static .cta .ripple circle { animation: none; }
+
+/* 小さなカードの項目名：ホームの特長カードと同じ、丸いアイコンを添える（10/27） */
+.box__title { display: flex; align-items: center; gap: 12px; }
+.box__icon { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--mist); color: var(--dusty-deep); }
+.box:nth-child(2n) .box__icon { background: var(--accent-soft); color: var(--accent-deep); }
+.box__icon svg { width: 21px; height: 21px; }
+
+/* 師事：「ピアノ：」の後ろの名前が2行目に続くとき、名前の頭にそろえる（10/27） */
+.career--pairs li { display: flex; }
+.career__k { flex: none; }
+
+/* タイトル帯（PC）：右下の大きな英字の下が空きすぎていたので詰める（10/27）
+   すぐ下の段にも大きな英字があるページ（英字どうしが近づく）は、元の余白のまま */
+@media (min-width: 561px) {
+  .page-hero:has(+ .section:not(:has(.ghost))) { padding-bottom: clamp(12px, 1.6vw, 24px); }
+  .page-hero + .section:not(:has(.ghost)) { padding-top: clamp(36px, 4.2vw, 60px); }
+}
