@@ -217,6 +217,11 @@ def breadcrumb_ld(body, current):
 
 
 def page(title, description, body, root="", current="", cta=True, extra_head="", extra_js="", full_title=None, og_image=None, og_type="website"):
+    # <!--CTA--> を本文に置くと、体験レッスンの帯をその位置に出す（ページ末尾には出さない）
+    body_html = resonance(body, current)
+    inline_cta = "<!--CTA-->" in body_html
+    if inline_cta:
+        body_html = body_html.replace("<!--CTA-->", '<div class="keys" aria-hidden="true"></div>' + cta_band(root), 1)
     if not full_title:
         # 検索結果で教室名が先に出るように「教室名｜ページ名」
         full_title = f"{SITE['name']}｜{title}" if title else f"{SITE['name']}｜府中市四谷のピアノ教室"
@@ -263,8 +268,8 @@ def page(title, description, body, root="", current="", cta=True, extra_head="",
 <div class="resonance-bg" aria-hidden="true"><div class="aura"></div>{'' if current == "admin.html" else '<canvas id="resonance"></canvas>'}<div class="grain"></div></div>
 {header(root, current)}
 <main id="main">
-{resonance(body, current)}
-{'<div class="keys" aria-hidden="true"></div>' + cta_band(root) if cta else ''}
+{body_html}
+{'' if inline_cta else '<div class="keys" aria-hidden="true"></div>' + cta_band(root) if cta else ''}
 </main>
 {footer(root, float_cta=current not in ("contact.html", "admin.html"))}
 <script src="{root}js/main.js" defer></script>
