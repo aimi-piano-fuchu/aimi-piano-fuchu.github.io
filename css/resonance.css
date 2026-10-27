@@ -470,3 +470,73 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 
 /* レッスン・月謝の最初の見出し（Course）は上の余白が狭いので、PCでは透かし文字の分だけ下で止める */
 @media (min-width: 761px) { #course { scroll-margin-top: calc(var(--header-h) + 44px); } }
+
+/* ---------- 文字を大きくしたスマホ（拡大125〜200%で画面の幅が300px未満）向け（10/26 点検） ----------
+   ふだんの大きさ（幅320px以上）の見た目は変えない。狭いときだけ、横にはみ出さず・変な所で割れない並びにする */
+.gnav__list .gnav__ig a { white-space: nowrap; }
+.req, .opt { white-space: nowrap; flex-shrink: 0; }
+@media (max-width: 299px) {
+  /* ヘッダー：ロゴとメニューだけにする（お問い合わせは下の申込ボタンとメニューにある）。ホームは家の形だけ */
+  .header-cta, .menu-open .header-home { display: none !important; }
+  .site-header__inner { gap: 4px; }
+  .brand { min-width: 0; flex-shrink: 1; }
+  .brand__ja { font-size: 13px; letter-spacing: 0; }
+  .menu-toggle { flex-shrink: 0; margin-left: auto; }
+  /* 下に浮く申込ボタン */
+  .float-cta { left: 8px; right: 8px; }
+  .float-cta .btn { padding: 11px 14px; letter-spacing: .04em; gap: 6px; }
+  /* ボタン全般は余白と字間を詰めて、1〜2行に収める */
+  .btn { padding: 12px 18px; letter-spacing: .04em; gap: 6px; max-width: 100%; }
+  .gnav__list a { padding: 10px 8px; }
+  .gnav__list .gnav__ig a, .gnav__list .gnav__cta a { font-size: 14px; letter-spacing: .02em; padding: 0 8px; gap: 6px; }
+  /* 見出し：字間を詰めて、句読点だけが次の行に落ちないように */
+  h1, h2, .h2 { letter-spacing: .04em; }
+  .h2 { font-size: 22px; }
+  /* 見出しの上の小さいラベル（Concept No.01 など）：単語の途中で割らない */
+  .eyebrow { flex-wrap: wrap; white-space: nowrap; row-gap: 2px; gap: 8px; font-size: 17px; letter-spacing: .03em; }
+  .eyebrow::before { width: 16px; }
+  .section-head--center .eyebrow::after { width: 16px; }
+  /* ホームの基本情報：1列に */
+  .facts__list { grid-template-columns: 1fr; }
+  .facts__item, .facts__item:nth-child(3) { border-left: 0; }
+  .facts__item:nth-child(n+2) { border-top: 1px solid color-mix(in srgb, var(--line) 80%, transparent); }
+  /* ホームの循環図：丸を横に並べ、真ん中の説明は下に（重なり防止） */
+  .cycle { aspect-ratio: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+  .cycle svg { display: none; }
+  .cycle__node { position: static; transform: none; width: auto; min-width: 46%; aspect-ratio: auto; border-radius: 999px; padding: 10px 14px; white-space: normal; font-size: 15px; }
+  .cycle__center { position: static; transform: none; width: 100%; order: 9; font-size: 13px; letter-spacing: .04em; }
+  /* コースの札：カードの上に浮かせず、文の上に置く */
+  .course__tag { position: static; display: inline-block; width: auto; max-width: 100%; white-space: normal; justify-self: start; margin-bottom: 4px; }
+  /* その他の費用：名前と金額を上下に */
+  .fee { grid-template-columns: 1fr; }
+  .fee__price { text-align: left; }
+  /* お問い合わせ：項目名と「必須」が割れないよう、札は次の行へ */
+  .field__label { flex-wrap: wrap; row-gap: 4px; }
+  .input, .select { padding-inline: 12px; }
+  .choice span { padding: 8px 14px; font-size: 14px; }
+  /* お知らせのページ送り：はみ出すなら2段に */
+  .pager { flex-wrap: wrap; }
+  .pager button { min-width: 32px; padding-inline: 6px; }
+  /* 体験レッスンの料金：「体験レッスン」を割らずに、金額は下へ */
+  .trial-fee__body { grid-template-columns: 1fr; }
+  /* パンくず：1行にして、長い最後の項目は「…」で切る */
+  .crumbs { flex-wrap: nowrap; }
+  .crumbs li { flex-shrink: 0; }
+  .crumbs li:last-child { flex: 1 1 auto; flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* 空き枠：曜日を縦に並べる */
+  .slots__grid { grid-template-columns: 1fr; }
+  /* フッター：1列に、リンクは折り返してよい */
+  .site-footer__grid { grid-template-columns: 1fr; }
+  .site-footer a { white-space: normal; }
+  /* 改行位置のまとまり（.nw）は、狭いときは解いて自然に折り返す */
+  .nw { display: inline; }
+}
+@media (max-width: 249px) {
+  /* メニュー：さらに狭いときは1列に */
+  .gnav__list { grid-template-columns: 1fr; }
+  .gnav__list li:nth-child(8) { grid-column: auto; }
+}
+@media (max-width: 209px) {
+  /* 200%拡大：ロゴの絵を外して教室名を残す */
+  .brand__mark { display: none; }
+}
