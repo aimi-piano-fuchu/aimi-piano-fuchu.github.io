@@ -42,8 +42,8 @@
   }
 
   var floatCta = document.querySelector('.float-cta');
-  // 申し込み帯やフォームが見えている間は、固定ボタンを出さない（同じボタンが2つ並ぶため）。フッターでは出したまま
-  var blockers = [].slice.call(document.querySelectorAll('.cta, .form'));
+  // 申し込み帯・フォーム・TOPの最初の申し込みボタンが見えている間は、固定ボタンを出さない（同じボタンが2つ並ぶため）。フッターでは出したまま
+  var blockers = [].slice.call(document.querySelectorAll('.cta, .form, .hero__actions'));
   var blocked = 0;
   if (floatCta && 'IntersectionObserver' in window) {
     var seen = new Set();
