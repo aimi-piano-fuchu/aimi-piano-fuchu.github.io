@@ -581,3 +581,19 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .page-hero:has(+ .section:not(:has(.ghost))) { padding-bottom: clamp(12px, 1.6vw, 24px); }
   .page-hero + .section:not(:has(.ghost)) { padding-top: clamp(36px, 4.2vw, 60px); }
 }
+
+/* 10/28 スマホはヘッダーの「お問い合わせ」を出さない（メニューの中と下の固定ボタンで足りる） */
+@media (max-width: 760px) {
+  .header-cta { display: none !important; }
+  .menu-toggle { margin-left: auto; }
+  .menu-open .menu-toggle { margin-left: 10px; }
+}
+/* 10/28 PCも、スクロール中は右下に「体験レッスンを申し込む」を出す */
+@media (min-width: 761px) {
+  .float-cta {
+    display: flex; position: fixed; right: clamp(16px, 2.4vw, 32px); bottom: calc(clamp(16px, 2.4vw, 32px) + env(safe-area-inset-bottom, 0px)); z-index: 40;
+    opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+  }
+  .float-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+  .float-cta .btn { box-shadow: var(--shadow); padding: 13px 22px; font-size: 14px; }
+}
