@@ -54,14 +54,17 @@
     });
     blockers.forEach(function (el) { bo.observe(el); });
   }
+  var wide = window.matchMedia('(min-width: 761px)');
   var onScroll = function () {
     var y = window.scrollY || window.pageYOffset;
     if (header) header.classList.toggle('is-scrolled', y > 8);
     if (floatCta) {
-      floatCta.classList.toggle('is-visible', y > 520 && !blocked);
+      // PCの右端タブは本文にかぶらないので、ページの一番上から出す
+      floatCta.classList.toggle('is-visible', (y > 520 || wide.matches) && !blocked);
     }
   };
   window.addEventListener('scroll', onScroll, { passive: true });
+  if (wide.addEventListener) wide.addEventListener('change', onScroll);
   onScroll();
 
   // ---- reveal on scroll (content is visible without JS; fail-safe timer)
