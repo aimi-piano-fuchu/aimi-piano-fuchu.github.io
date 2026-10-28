@@ -611,3 +611,10 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 /* 固定ボタンの文言：スマホは1行、PCは「体験レッスン／申し込み」の2行 */
 .float-cta .fc-two { display: none; }
 @media (min-width: 761px) { .float-cta .fc-two { display: block; } }
+
+/* 10/28 スマホの下ボタン：隠れている時に、iPhoneの下の余白（ホームバー）分だけ画面の下からはみ出して見えていた。
+   隠す時は余白ぶん余計に下げ、さらに visibility でも消す */
+@media (max-width: 760px) {
+  .float-cta { transform: translateY(calc(100% + 40px + env(safe-area-inset-bottom, 0px))); visibility: hidden; transition: transform .35s ease, visibility 0s linear .35s; }
+  .float-cta.is-visible { transform: none; visibility: visible; transition: transform .35s ease, visibility 0s; }
+}
