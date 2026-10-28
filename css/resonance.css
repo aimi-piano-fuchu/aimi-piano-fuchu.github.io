@@ -588,18 +588,22 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .menu-toggle { margin-left: auto; }
   .menu-open .menu-toggle { margin-left: 10px; }
 }
-/* 10/28 PCも、スクロール中は右下に「体験レッスンを申し込む」を出す */
+/* 10/28 PCは、スクロール中に画面の右端へ縦書きの「体験レッスン申し込み」タブを出す（本文にかぶらない） */
 @media (min-width: 761px) {
   .float-cta {
-    display: flex; position: fixed; right: clamp(16px, 2.4vw, 32px); bottom: calc(clamp(16px, 2.4vw, 32px) + env(safe-area-inset-bottom, 0px)); z-index: 40;
-    opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+    display: flex; position: fixed; right: 0; top: 50%; z-index: 40;
+    opacity: 0; transform: translate(100%, -50%); pointer-events: none; transition: opacity .3s ease, transform .35s ease;
   }
-  .float-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
-  .float-cta .btn { box-shadow: var(--shadow); padding: 12px 20px 12px 24px; font-size: 14px; line-height: 1.55; border-radius: 22px; gap: 14px; text-align: left; }
+  .float-cta.is-visible { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
+  .float-cta .btn {
+    writing-mode: vertical-rl; border-radius: 14px 0 0 14px; padding: 22px 12px 18px; gap: 10px;
+    font-size: 14px; letter-spacing: .2em; box-shadow: var(--shadow);
+  }
+  .float-cta .btn:hover { padding-right: 16px; }
+  .float-cta .btn br { display: none; }
+  .float-cta .btn svg { transform: rotate(90deg); }
+  .float-cta .btn:hover .btn__arrow { transform: rotate(90deg) translateX(3px); }
   .float-cta .fc-one { display: none; }
-  /* フッターでも出したままなので、最後の行がボタンに隠れないように */
-  .site-footer { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
-  body:not(:has(.float-cta)) .site-footer { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* 固定ボタンの文言：スマホは1行、PCは「体験レッスン／申し込み」の2行 */
