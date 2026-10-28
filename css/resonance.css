@@ -588,13 +588,13 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .menu-toggle { margin-left: auto; }
   .menu-open .menu-toggle { margin-left: 10px; }
 }
-/* 10/28 PCは、スクロール中に画面の右端へ縦書きの「体験レッスン申し込み」タブを出す（本文にかぶらない） */
+/* 10/28 PCは、スクロール中に画面の右下の端へ縦書きの「体験レッスン申し込み」タブを出す（本文にかぶらない） */
 @media (min-width: 761px) {
   .float-cta {
-    display: flex; position: fixed; right: 0; top: 50%; z-index: 40;
-    opacity: 0; transform: translate(100%, -50%); pointer-events: none; transition: opacity .3s ease, transform .35s ease;
+    display: flex; position: fixed; right: 0; bottom: calc(clamp(20px, 3vw, 40px) + env(safe-area-inset-bottom, 0px)); z-index: 40;
+    opacity: 0; transform: translateX(100%); pointer-events: none; transition: opacity .3s ease, transform .35s ease;
   }
-  .float-cta.is-visible { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
+  .float-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
   .float-cta .btn {
     writing-mode: vertical-rl; border-radius: 14px 0 0 14px; padding: 22px 12px 18px; gap: 10px;
     font-size: 14px; letter-spacing: .2em; box-shadow: var(--shadow);
@@ -605,6 +605,8 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .float-cta .btn:hover .btn__arrow { transform: rotate(90deg) translateX(3px); }
   .float-cta .fc-one { display: none; }
 }
+/* 画面の端に余白が少ない幅では、フッター最下段の「ページの先頭へ」がタブに隠れないように */
+@media (min-width: 761px) and (max-width: 1180px) { .site-footer__bottom { padding-right: 52px; } }
 
 /* 固定ボタンの文言：スマホは1行、PCは「体験レッスン／申し込み」の2行 */
 .float-cta .fc-two { display: none; }
