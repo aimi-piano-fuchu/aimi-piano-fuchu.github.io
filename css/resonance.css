@@ -591,12 +591,17 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 /* 10/28 PCも、スクロール中は右下に「体験レッスンを申し込む」を出す */
 @media (min-width: 761px) {
   .float-cta {
-    display: flex; position: fixed; left: clamp(16px, 2.4vw, 32px); bottom: calc(clamp(16px, 2.4vw, 32px) + env(safe-area-inset-bottom, 0px)); z-index: 40;
+    display: flex; position: fixed; right: clamp(16px, 2.4vw, 32px); bottom: calc(clamp(16px, 2.4vw, 32px) + env(safe-area-inset-bottom, 0px)); z-index: 40;
     opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .3s ease, transform .3s ease;
   }
   .float-cta.is-visible { opacity: 1; transform: none; pointer-events: auto; }
-  .float-cta .btn { box-shadow: var(--shadow); padding: 13px 22px; font-size: 14px; }
+  .float-cta .btn { box-shadow: var(--shadow); padding: 12px 20px 12px 24px; font-size: 14px; line-height: 1.55; border-radius: 22px; gap: 14px; text-align: left; }
+  .float-cta .fc-one { display: none; }
   /* フッターでも出したままなので、最後の行がボタンに隠れないように */
   .site-footer { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   body:not(:has(.float-cta)) .site-footer { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* 固定ボタンの文言：スマホは1行、PCは「体験レッスン／申し込み」の2行 */
+.float-cta .fc-two { display: none; }
+@media (min-width: 761px) { .float-cta .fc-two { display: block; } }

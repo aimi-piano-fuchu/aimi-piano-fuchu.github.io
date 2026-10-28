@@ -181,7 +181,7 @@ def footer(root, float_cta=True):
     </div>
   </div>
 </footer>
-""" + (f'<div class="float-cta"><a class="btn btn--primary" href="{root}contact.html">体験レッスンを申し込む{ICONS["arrow"]}</a></div>' if float_cta else "")
+""" + (f'<div class="float-cta"><a class="btn btn--primary" href="{root}contact.html"><span class="fc-one">体験レッスンを申し込む</span><span class="fc-two">体験レッスン<br>申し込み</span>{ICONS["arrow"]}</a></div>' if float_cta else "")
 
 
 # 教室の別名（表示はせず、検索エンジン向けの構造化データでだけ伝える。「愛美」は打ち間違いでも見つかるように）
