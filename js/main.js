@@ -42,8 +42,8 @@
   }
 
   var floatCta = document.querySelector('.float-cta');
-  // 下部の申し込み帯やフッターが見えている間は、固定ボタンを出さない（同じボタンが2つ並ぶため）
-  var blockers = [].slice.call(document.querySelectorAll('.cta, .site-footer, .form'));
+  // 申し込み帯やフォームが見えている間は、固定ボタンを出さない（同じボタンが2つ並ぶため）。フッターでは出したまま
+  var blockers = [].slice.call(document.querySelectorAll('.cta, .form'));
   var blocked = 0;
   if (floatCta && 'IntersectionObserver' in window) {
     var seen = new Set();
@@ -58,8 +58,7 @@
     var y = window.scrollY || window.pageYOffset;
     if (header) header.classList.toggle('is-scrolled', y > 8);
     if (floatCta) {
-      var nearBottom = window.innerHeight + y > document.documentElement.scrollHeight - 420;
-      floatCta.classList.toggle('is-visible', y > 520 && !nearBottom && !blocked);
+      floatCta.classList.toggle('is-visible', y > 520 && !blocked);
     }
   };
   window.addEventListener('scroll', onScroll, { passive: true });
