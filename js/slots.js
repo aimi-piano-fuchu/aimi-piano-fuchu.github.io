@@ -12,7 +12,7 @@
     note: 'その他の時間はご相談ください。',
     days: [
       { day: '金曜', slots: [{ time: '17:00〜', open: true }, { time: '18:00〜', open: true }] },
-      { day: '土曜', slots: [{ time: '9:00〜', open: true }, { time: '11:10〜', open: true }] }
+      { day: '土曜', slots: [{ time: '8:00〜', open: true }, { time: '11:10〜', open: true }] }
     ]
   };
 
@@ -115,7 +115,7 @@
 
   // 開講日：管理画面の曜日・開講時間に合わせて、各ページの表示を書きかえる
   // （HTMLに書いてある内容は、読み込み前と通信できない時の表示）
-  var DEFAULT_HOURS = { '金曜': '14:00〜20:00', '土曜': '9:00〜18:00' };
+  var DEFAULT_HOURS = { '金曜': '14:00〜20:00', '土曜': '8:00〜18:00' };
   var EN = { '月曜': 'Mon', '火曜': 'Tue', '水曜': 'Wed', '木曜': 'Thu', '金曜': 'Fri', '土曜': 'Sat', '日曜': 'Sun' };
   function hoursOf(d) { return d.hours != null ? fmtRange(d.hours) : (DEFAULT_HOURS[d.day] || ''); }
 
