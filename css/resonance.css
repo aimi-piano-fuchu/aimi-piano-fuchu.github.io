@@ -649,3 +649,4 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 .link-list a { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 700; }
 .link-list a::after { content: "›"; color: var(--dusty-deep); font-size: 20px; line-height: 1; }
 .link-list a:hover { border-color: var(--dusty-deep); }
+.box__sub { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--muted); }
