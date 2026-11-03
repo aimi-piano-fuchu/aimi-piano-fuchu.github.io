@@ -620,7 +620,7 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 }
 
 /* 11/3 アクセス：駅と教室の位置関係の図（OpenStreetMap の川・線路・道をもとにした地図風のイメージ） */
-.station-map { margin: 0 auto; max-width: 760px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(8px, 2vw, 18px); }
+.station-map { margin: 0 auto; max-width: 720px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(8px, 2vw, 18px); }
 .station-map svg { display: block; width: 100%; height: auto; overflow: hidden; border-radius: 14px; }
 .station-map__land { fill: color-mix(in srgb, var(--mist) 70%, var(--surface)); }
 .station-map__river { fill: none; stroke: color-mix(in srgb, #8DB4D6 60%, var(--surface)); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
