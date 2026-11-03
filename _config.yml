@@ -1,0 +1,7 @@
+# GitHub Pages(Jekyll)で公開しないもの。サイトの生成元・データ・GASのコードはリポジトリにだけ置く
+exclude:
+  - news-data
+  - src
+  - tools
+  - gas
+  - README.md
