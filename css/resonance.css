@@ -619,29 +619,30 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
   .float-cta.is-visible { transform: none; visibility: visible; transition: transform .35s ease, visibility 0s; }
 }
 
-/* 11/3 アクセス：駅と教室の位置関係の図（地図風のイメージ） */
-.station-map { margin: 0 auto; max-width: 760px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(10px, 2.4vw, 20px); }
+/* 11/3 アクセス：駅と教室の位置関係の図（OpenStreetMap の川・線路・道をもとにした地図風のイメージ） */
+.station-map { margin: 0 auto; max-width: 760px; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: clamp(8px, 2vw, 18px); }
 .station-map svg { display: block; width: 100%; height: auto; overflow: hidden; border-radius: 14px; }
 .station-map__land { fill: color-mix(in srgb, var(--mist) 70%, var(--surface)); }
-.station-map__river { fill: none; stroke: color-mix(in srgb, #8DB4D6 55%, var(--surface)); stroke-width: 22; stroke-linecap: round; }
-.station-map__river-name { font-size: 12px; fill: #5E86AA; letter-spacing: .3em; }
-.station-map__roads path { fill: none; stroke: var(--surface); stroke-width: 7; stroke-linecap: round; }
-.station-map__rail path { fill: none; stroke: var(--muted); stroke-width: 3; }
-.station-map__rail-name text { font-size: 11px; fill: var(--muted); }
-.station-map__time rect { fill: var(--accent-soft); }
-.station-map__time text { font-size: 12px; fill: var(--accent-deep); font-weight: 700; text-anchor: middle; }
+.station-map__river { fill: none; stroke: color-mix(in srgb, #8DB4D6 60%, var(--surface)); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+.station-map__bg-roads { fill: none; stroke: var(--surface); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+.station-map__roads { fill: none; stroke: var(--surface); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.station-map__rail path { fill: none; stroke: var(--muted); stroke-width: 2.5; stroke-linejoin: round; }
+.station-map__bridge circle { fill: var(--surface); stroke: #5E86AA; stroke-width: 2; }
+.station-map__bridge text, .station-map__labels text { font-size: 10px; fill: var(--muted); paint-order: stroke; stroke: color-mix(in srgb, var(--mist) 70%, var(--surface)); stroke-width: 3; stroke-linejoin: round; }
+.station-map__bridge text { fill: #4C7396; font-weight: 700; }
+.station-map__labels .river { fill: #4C7396; font-size: 12px; letter-spacing: .3em; }
 .station-map__st circle { fill: var(--surface); stroke: var(--ink); stroke-width: 3; }
-.station-map__st text { font-size: 15px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: color-mix(in srgb, var(--mist) 70%, var(--surface)); stroke-width: 4; stroke-linejoin: round; }
+.station-map__st text, .station-map__home text { font-size: 14px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: color-mix(in srgb, var(--mist) 70%, var(--surface)); stroke-width: 4; stroke-linejoin: round; }
+.station-map__st .t { font-size: 11px; fill: var(--accent-deep); }
 .station-map__home .halo { fill: color-mix(in srgb, var(--accent) 22%, transparent); }
 .station-map__home circle:not(.halo) { fill: var(--accent); stroke: var(--surface); stroke-width: 4; }
-.station-map__home text { font-size: 15px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: color-mix(in srgb, var(--mist) 70%, var(--surface)); stroke-width: 4; stroke-linejoin: round; }
-.station-map__home text.sub { font-size: 12px; font-weight: 400; fill: var(--muted); }
+.station-map__home text.sub { font-size: 11px; font-weight: 400; fill: var(--muted); }
 .station-map figcaption { margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
 @media (max-width: 560px) {
   .station-map { padding: 6px; }
-  .station-map__st text, .station-map__home text { font-size: 20px; }
-  .station-map__home text.sub { font-size: 15px; }
-  .station-map__rail-name text, .station-map__river-name { font-size: 14px; }
+  .station-map__st text, .station-map__home text { font-size: 17px; }
+  .station-map__st .t { font-size: 13px; }
+  .station-map__bridge text, .station-map__labels text { font-size: 12px; }
 }
 
 /* 11/3 リトミックのページ：教室日記へのリンク一覧 */
@@ -650,3 +651,6 @@ a.hero__photo:focus-visible, a.hero__badge:focus-visible { outline: 2px solid va
 .link-list a::after { content: "›"; color: var(--dusty-deep); font-size: 20px; line-height: 1; }
 .link-list a:hover { border-color: var(--dusty-deep); }
 .box__sub { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--muted); }
+.feature__more { margin-top: 2px; }
+.feature__more a, .lead-link a { font-weight: 700; color: var(--dusty-deep); }
+.lead-link { margin-top: 10px; font-size: 14px; color: var(--muted); }

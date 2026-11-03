@@ -822,7 +822,7 @@ def main():
 def write_sitemap(items):
     """sitemap.xml と robots.txt。URLは .html なし。管理画面と404は載せない。"""
     base = SITE["base_url"]
-    pages = ["", "about", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
+    pages = ["", "about", "rhythmic", "lesson", "teacher", "recital", "news/", "faq", "access", "contact", "privacy"]
     import datetime
     import subprocess
     today = datetime.date.today().isoformat()
